@@ -49,6 +49,17 @@ public class AdminController {
         return new ResponseEntity<>(allgroups, HttpStatus.OK);
     }
 
+    @GetMapping("/users/{username}")
+    public ResponseEntity<Object> getUser(@PathVariable String username) {
+        Optional<User> optionalUser = userRepo.findByUsername(username);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("User Not Found", HttpStatus.NOT_FOUND);
+        }
+    }
+
     @PostMapping("/newgroup")
     public ResponseEntity<?> addNewGroup(@RequestBody Map<String, String> requestBody){
         String groupname = requestBody.get("group_name");
@@ -82,8 +93,7 @@ public class AdminController {
         userRepo.save(newUser);
         return newUser;
     }
-
-    @PutMapping("/{username}")
+    @PutMapping("/users/{username}")
     public ResponseEntity<?> updateUserByUsername(
             @PathVariable String username,
             @RequestBody Map<String, String> requestBody) {
