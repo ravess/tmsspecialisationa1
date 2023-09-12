@@ -6,7 +6,6 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,7 +33,7 @@ public class AdminController {
     @GetMapping("/users")
     public ResponseEntity<?> getAllUsers() {
         List<User> allusers = userRepo.findAll();
-        if(allusers.isEmpty()){
+        if (allusers.isEmpty()) {
             return new ResponseEntity<>("No users found.", HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(allusers, HttpStatus.OK);
@@ -43,7 +42,7 @@ public class AdminController {
     @GetMapping("/groups")
     public ResponseEntity<?> getAllGroups() {
         List<Group> allgroups = groupRepo.findAll();
-        if(allgroups.isEmpty()){
+        if (allgroups.isEmpty()) {
             return new ResponseEntity<>("No groups found.", HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(allgroups, HttpStatus.OK);
@@ -96,6 +95,7 @@ public class AdminController {
         // (Created)
         return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
+
     @PutMapping("/users/{username}")
     public ResponseEntity<?> updateUserByUsername(
             @PathVariable String username,
