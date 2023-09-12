@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,13 +32,21 @@ public class AdminController {
     private BCryptPasswordEncoder passwordEncoder;
 
     @GetMapping("/users")
-    public ResponseEntity<List<User>> getAllUsers() {
-        return new ResponseEntity<>(userRepo.findAll(), HttpStatus.OK);
+    public ResponseEntity<?> getAllUsers() {
+        List<User> allusers = userRepo.findAll();
+        if(allusers.isEmpty()){
+            return new ResponseEntity<>("No users found.", HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(allusers, HttpStatus.OK);
     }
 
     @GetMapping("/groups")
-    public ResponseEntity<List<Group>> getAllGroups() {
-        return new ResponseEntity<>(groupRepo.findAll(), HttpStatus.OK);
+    public ResponseEntity<?> getAllGroups() {
+        List<Group> allgroups = groupRepo.findAll();
+        if(allgroups.isEmpty()){
+            return new ResponseEntity<>("No groups found.", HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(allgroups, HttpStatus.OK);
     }
 
     @PostMapping("/newgroup")
@@ -47,7 +56,7 @@ public class AdminController {
         if(groupRepo.existsByGroupName(groupname)){
             return new ResponseEntity<>("Duplicate group name", HttpStatus.BAD_REQUEST);
         }
-        //else
+
         Group newgroup = new Group();
         newgroup.setGroupName(groupname);
         return new ResponseEntity<>(groupRepo.save(newgroup), HttpStatus.CREATED);
@@ -73,6 +82,7 @@ public class AdminController {
         userRepo.save(newUser);
         return newUser;
     }
+
     @PutMapping("/{username}")
     public ResponseEntity<?> updateUserByUsername(
             @PathVariable String username,
