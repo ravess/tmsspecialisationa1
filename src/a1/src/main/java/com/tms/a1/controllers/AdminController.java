@@ -2,13 +2,16 @@ package com.tms.a1.controllers;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -70,4 +73,42 @@ public class AdminController {
         userRepo.save(newUser);
         return newUser;
     }
+    @PutMapping("/{username}")
+    public ResponseEntity<?> updateUserByUsername(
+            @PathVariable String username,
+            @RequestBody Map<String, String> requestBody) {
+
+        // Retrieve the user by username.
+        Optional<User> optionalUser = userRepo.findByUsername(username);
+
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+
+            // Update the user's information.
+            String plainTextPassword = requestBody.get("password");
+            String email = requestBody.get("email");
+            String group = requestBody.get("groups");
+            int isActive = Integer.parseInt(requestBody.get("is_active"));
+
+            // Hash the new password using BCrypt if provided.
+            if (plainTextPassword != null && !plainTextPassword.isEmpty()) {
+                String hashedPassword = passwordEncoder.encode(plainTextPassword);
+                user.setPassword(hashedPassword);
+            }
+
+            user.setEmail(email);
+            user.setGroups(group);
+            user.setIs_active(isActive);
+
+            // Save the updated user back to the repository.
+            userRepo.save(user);
+
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        } else {
+            // User not found with the given username.
+            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+        }
+    }
 }
+
+
