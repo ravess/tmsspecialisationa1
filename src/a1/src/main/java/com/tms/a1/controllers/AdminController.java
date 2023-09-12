@@ -31,49 +31,72 @@ public class AdminController {
     private BCryptPasswordEncoder passwordEncoder;
 
     @GetMapping("/users")
-    public ResponseEntity<List<User>> getAllUsers() {
-        return new ResponseEntity<>(userRepo.findAll(), HttpStatus.OK);
+    public ResponseEntity<?> getAllUsers() {
+        List<User> allusers = userRepo.findAll();
+        if (allusers.isEmpty()) {
+            return new ResponseEntity<>("No users found.", HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(allusers, HttpStatus.OK);
     }
 
     @GetMapping("/groups")
-    public ResponseEntity<List<Group>> getAllGroups() {
-        return new ResponseEntity<>(groupRepo.findAll(), HttpStatus.OK);
+    public ResponseEntity<?> getAllGroups() {
+        List<Group> allgroups = groupRepo.findAll();
+        if (allgroups.isEmpty()) {
+            return new ResponseEntity<>("No groups found.", HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(allgroups, HttpStatus.OK);
+    }
+
+    @GetMapping("/users/{username}")
+    public ResponseEntity<Object> getUser(@PathVariable String username) {
+        Optional<User> optionalUser = userRepo.findByUsername(username);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("User Not Found", HttpStatus.NOT_FOUND);
+        }
     }
 
     @PostMapping("/newgroup")
-    public ResponseEntity<?> addNewGroup(@RequestBody Map<String, String> requestBody){
+    public ResponseEntity<?> addNewGroup(@RequestBody Map<String, String> requestBody) {
         String groupname = requestBody.get("group_name");
-        //check if groupname already exists
-        if(groupRepo.existsByGroupName(groupname)){
+        // check if groupname already exists
+        if (groupRepo.existsByGroupName(groupname)) {
             return new ResponseEntity<>("Duplicate group name", HttpStatus.BAD_REQUEST);
         }
-        //else
+
         Group newgroup = new Group();
         newgroup.setGroupName(groupname);
         return new ResponseEntity<>(groupRepo.save(newgroup), HttpStatus.CREATED);
     }
 
     @PostMapping("/newuser")
-    public User addNewUser(@RequestBody Map<String, String> requestBody) {
+    public ResponseEntity<User> addNewUser(@RequestBody Map<String, String> requestBody) {
         String username = requestBody.get("username");
-        String plainTextPassword = requestBody.get("password"); // Get the plain text password
+        String plainTextPassword = requestBody.get("password");
         String email = requestBody.get("email");
         String group = requestBody.get("groups");
         int isActive = Integer.parseInt(requestBody.get("is_active"));
 
-        // Hash the password using BCrypt
         String hashedPassword = passwordEncoder.encode(plainTextPassword);
 
         User newUser = new User();
         newUser.setUsername(username);
-        newUser.setPassword(hashedPassword); // Set the hashed password
+        newUser.setPassword(hashedPassword);
         newUser.setEmail(email);
         newUser.setGroups(group);
         newUser.setIs_active(isActive);
-        userRepo.save(newUser);
-        return newUser;
+
+        User savedUser = userRepo.save(newUser);
+
+        // Return a ResponseEntity with the saved user and a status code of 201
+        // (Created)
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
-    @PutMapping("/{username}")
+
+    @PutMapping("/users/{username}")
     public ResponseEntity<?> updateUserByUsername(
             @PathVariable String username,
             @RequestBody Map<String, String> requestBody) {
@@ -110,5 +133,3 @@ public class AdminController {
         }
     }
 }
-
-
