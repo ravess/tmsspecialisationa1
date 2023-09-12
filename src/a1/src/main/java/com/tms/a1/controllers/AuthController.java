@@ -1,7 +1,7 @@
 package com.tms.a1.controllers;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,23 +12,42 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.tms.a1.entity.Group;
 import com.tms.a1.entity.User;
-import com.tms.a1.repository.GroupRepo;
 import com.tms.a1.repository.UserRepo;
-
-import jakarta.persistence.EntityNotFoundException;
 
 @RestController
 public class AuthController {
+
   @Autowired
   private UserRepo userRepo;
   @Autowired
-  private GroupRepo groupRepo;
-  @Autowired
   private BCryptPasswordEncoder passwordEncoder;
 
-  @GetMapping("/checkgroup")
+  @PostMapping("/login")
+  public ResponseEntity<String> login(@RequestBody Map<String, String> requestBody) {
+    String username = requestBody.get("username");
+    String plainTextPassword = requestBody.get("password");
+
+    // Retrieve the user from the database based on the provided username
+    Optional<User> optionalUser = userRepo.findByUsername(username);
+
+    if (!optionalUser.isPresent()) {
+      // User not found
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+    }
+
+    User user = optionalUser.get();
+
+    // Verify the password using BCrypt
+    if (passwordEncoder.matches(plainTextPassword, user.getPassword())) {
+      // Passwords match, login successful
+      return ResponseEntity.status(HttpStatus.OK).body("Login successful");
+    } else {
+      // Passwords do not match
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid password");
+    }
+  }
+  @PostMapping("/checkgroup")
   public ResponseEntity<String> CheckGroup (@RequestBody Map<String, String> requestBody ) {
     String username = requestBody.get("username"); //Should be from JWToken instead of req body
     String group = requestBody.get("group");
