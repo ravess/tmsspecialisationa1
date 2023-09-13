@@ -52,11 +52,19 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
+        
+        // Get the client's IP address from the request
+        String clientIpAddress = getClientIpAddress(request);
+        
+        // Get the user agent (browser type) from the request
+        String userAgent = request.getHeader("User-Agent");
+
         String token = JWT.create()
             .withSubject(authResult.getName())
             .withExpiresAt(new Date(System.currentTimeMillis() + SecurityConstants.TOKEN_EXPIRATION))
+            .withClaim("ipAddress", clientIpAddress) // Add IP address as a custom claim
+            .withClaim("userAgent", userAgent) // Add user agent as a custom claim
             .sign(Algorithm.HMAC512(SecurityConstants.SECRET_KEY));
-
         // Create a cookie to hold the JWT token
         Cookie cookie = new Cookie(SecurityConstants.COOKIE_NAME, token);
         
@@ -67,6 +75,20 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         
         // Add the cookie to the response
         response.addCookie(cookie);
+    }
+
+    private String getClientIpAddress(HttpServletRequest request) {
+        String ipAddress = request.getHeader("X-Forwarded-For");
+        if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
+            ipAddress = request.getHeader("Proxy-Client-IP");
+        }
+        if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
+            ipAddress = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
+            ipAddress = request.getRemoteAddr();
+        }
+        return ipAddress;
     }
 
 }
