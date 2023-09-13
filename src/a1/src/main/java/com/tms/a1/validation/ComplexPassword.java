@@ -16,7 +16,7 @@ import jakarta.validation.Payload;
 //annotation available at runtime through reflection, can process by validation frameworks
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ComplexPassword {
-  String message() default "Password must contain at least one alphabet, one number, and one special character.";
+  String message() default "Password must contain at least one number, and one special character.";
 
   Class<?>[] groups() default {};
 
