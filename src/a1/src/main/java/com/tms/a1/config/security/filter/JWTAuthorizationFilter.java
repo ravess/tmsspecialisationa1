@@ -27,33 +27,42 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-    // Retrieve the JWT token from the cookie
-    Cookie[] cookies = request.getCookies();
-    String token = null;
+        // Retrieve the JWT token from the cookie
+        Cookie[] cookies = request.getCookies();
+        String token = null;
 
-    if (cookies != null) {
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals(SecurityConstants.COOKIE_NAME)) {
-                token = cookie.getValue();
-                break;
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals(SecurityConstants.COOKIE_NAME)) {
+                    token = cookie.getValue();
+                    break;
+                }
             }
         }
-    }
 
-    if (token == null || !token.startsWith(SecurityConstants.BEARER)) {
+        if (token == null || !token.startsWith(SecurityConstants.BEARER)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        System.out.println("TOKEN EXISTS?");
+        System.out.println("Token: " + token);
+
+        String user = JWT.require(Algorithm.HMAC512(SecurityConstants.SECRET_KEY))
+            .build()
+            .verify(token)
+            .getSubject();
+
+        System.out.println("WHOAMI");
+        System.out.println("USER: " + user);
+
+        //"Authentication token"
+        //UsernamePWAuthToken = "app-wide authentication token"
+        //1st param: authenticated user's username, 2nd param: user's credentials, set as null as pw not needed after authentication, 3rd param list of roles associated with user. use Arrays.asList() for none. 
+        Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, Arrays.asList());
+
+        //the following stores details of currently authenticated user, providing a way to access the authenticated info throughout the app
+        SecurityContextHolder.getContext().setAuthentication(authentication);
         filterChain.doFilter(request, response);
-        return;
     }
-
-    token = token.replace(SecurityConstants.BEARER, "");
-    String user = JWT.require(Algorithm.HMAC512(SecurityConstants.SECRET_KEY))
-        .build()
-        .verify(token)
-        .getSubject();
-
-    Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, Arrays.asList());
-    SecurityContextHolder.getContext().setAuthentication(authentication);
-    filterChain.doFilter(request, response);
-}
-
 }

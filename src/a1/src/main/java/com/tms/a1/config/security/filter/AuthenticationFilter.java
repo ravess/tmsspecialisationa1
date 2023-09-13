@@ -60,7 +60,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         String userAgent = request.getHeader("User-Agent");
 
         String token = JWT.create()
-            .withSubject(authResult.getName())
+            .withSubject(authResult.getName())  //username is saved as 'subject'
             .withExpiresAt(new Date(System.currentTimeMillis() + SecurityConstants.TOKEN_EXPIRATION))
             .withClaim("ipAddress", clientIpAddress) // Add IP address as a custom claim
             .withClaim("userAgent", userAgent) // Add user agent as a custom claim
