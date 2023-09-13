@@ -19,9 +19,10 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } catch (EntityNotFoundException e) { //Feel free to create a separate function.
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            response.getWriter().write("Invalid Username/Password");
+            response.getWriter().write("Invalid2 Username/Password");
             response.getWriter().flush();
         } catch (JWTVerificationException e) {
+            System.out.println("here");
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             response.getWriter().write("You are not authorised!");
             response.getWriter().flush();
