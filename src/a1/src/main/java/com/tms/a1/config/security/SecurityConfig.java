@@ -33,7 +33,8 @@ public class SecurityConfig {
     
     http
     .csrf(csrf -> csrf.disable())
-    .authorizeHttpRequests(authorize -> authorize  
+    .authorizeHttpRequests(authorize -> authorize
+        .requestMatchers("/**").permitAll()  
         .anyRequest().authenticated())
     .addFilterBefore(new ExceptionHandlerFilter(), AuthenticationFilter.class)
     .addFilter(authenticationFilter)

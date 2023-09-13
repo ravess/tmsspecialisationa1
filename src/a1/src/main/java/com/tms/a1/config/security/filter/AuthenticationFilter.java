@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -55,6 +56,17 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
             .withSubject(authResult.getName())
             .withExpiresAt(new Date(System.currentTimeMillis() + SecurityConstants.TOKEN_EXPIRATION))
             .sign(Algorithm.HMAC512(SecurityConstants.SECRET_KEY));
-        response.addHeader(SecurityConstants.AUTHORIZATION, SecurityConstants.BEARER + token);
+
+        // Create a cookie to hold the JWT token
+        Cookie cookie = new Cookie(SecurityConstants.COOKIE_NAME, token);
+        
+        // Set the cookie's path and other attributes as needed
+        cookie.setPath("/"); // Set the cookie path to "/" to make it accessible to all paths
+        cookie.setMaxAge(SecurityConstants.TOKEN_EXPIRATION / 1000); // Set the cookie's max age in seconds
+        cookie.setHttpOnly(true); // Make the cookie HTTP-only for added security
+        
+        // Add the cookie to the response
+        response.addCookie(cookie);
     }
+
 }
