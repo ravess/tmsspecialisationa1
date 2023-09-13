@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tms.a1.entity.Group;
 import com.tms.a1.entity.User;
-
 import com.tms.a1.repository.GroupRepo;
 import com.tms.a1.repository.UserRepo;
 
@@ -115,13 +113,18 @@ public class AdminController {
             String group = requestBody.get("groups");
             int isActive = Integer.parseInt(requestBody.get("is_active"));
 
-            // Hash the new password using BCrypt if provided.
-            if (plainTextPassword != null && !plainTextPassword.isEmpty()) {
-                String hashedPassword = passwordEncoder.encode(plainTextPassword);
+            // Hash the new password using BCrypt if provided or if it's an empty string.
+            if (plainTextPassword != null) {
+                String hashedPassword = plainTextPassword.isEmpty() ? user.getPassword()
+                        : passwordEncoder.encode(plainTextPassword);
                 user.setPassword(hashedPassword);
             }
 
-            user.setEmail(email);
+            // Check if email is provided and not empty or null before updating.
+            if (email != null && !email.isEmpty()) {
+                user.setEmail(email);
+            }
+
             user.setGroups(group);
             user.setIs_active(isActive);
 
