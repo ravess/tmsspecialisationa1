@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tms.a1.entity.Group;
 import com.tms.a1.entity.User;
 import com.tms.a1.repository.GroupRepo;
@@ -73,23 +74,24 @@ public class AdminController {
     }
 
     @PostMapping("/newuser")
-    public ResponseEntity<User> addNewUser(@RequestBody Map<String, String> requestBody) {
-        String username = requestBody.get("username");
-        String plainTextPassword = requestBody.get("password");
-        String email = requestBody.get("email");
-        String group = requestBody.get("groups");
-        int isActive = Integer.parseInt(requestBody.get("is_active"));
+    public ResponseEntity<User> addNewUser(@RequestBody User requestBody) {
+        // String username = requestBody.get("username");
+         String plainTextPassword = requestBody.getPassword();
+        // String email = requestBody.get("email");
+        // String group = requestBody.get("groups");
+        // int isActive = Integer.parseInt(requestBody.get("is_active"));
 
         String hashedPassword = passwordEncoder.encode(plainTextPassword);
+        requestBody.setPassword(hashedPassword);
+        
+        //User newUser = new User();
+        // newUser.setUsername(username);
+        // newUser.setPassword(hashedPassword);
+        // newUser.setEmail(email);
+        // newUser.setGroups(group);
+        // newUser.setIs_active(isActive);
 
-        User newUser = new User();
-        newUser.setUsername(username);
-        newUser.setPassword(hashedPassword);
-        newUser.setEmail(email);
-        newUser.setGroups(group);
-        newUser.setIs_active(isActive);
-
-        User savedUser = userRepo.save(newUser);
+        User savedUser = userRepo.save(requestBody);
 
         // Return a ResponseEntity with the saved user and a status code of 201
         // (Created)
