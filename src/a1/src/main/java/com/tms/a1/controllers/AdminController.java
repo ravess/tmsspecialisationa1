@@ -1,13 +1,16 @@
 package com.tms.a1.controllers;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,11 +18,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tms.a1.entity.Group;
 import com.tms.a1.entity.User;
 import com.tms.a1.repository.GroupRepo;
 import com.tms.a1.repository.UserRepo;
+
+import jakarta.validation.Valid;
 
 @RestController
 public class AdminController {
@@ -30,6 +34,8 @@ public class AdminController {
     private GroupRepo groupRepo;
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+    public String resMsg;
+    public Map<String, Object> response = new HashMap<>();
 
     @GetMapping("/users")
     public ResponseEntity<?> getAllUsers() {
@@ -74,28 +80,50 @@ public class AdminController {
     }
 
     @PostMapping("/newuser")
-    public ResponseEntity<User> addNewUser(@RequestBody User requestBody) {
-        // String username = requestBody.get("username");
-         String plainTextPassword = requestBody.getPassword();
-        // String email = requestBody.get("email");
-        // String group = requestBody.get("groups");
-        // int isActive = Integer.parseInt(requestBody.get("is_active"));
+    public ResponseEntity<?> addNewUser(@Valid @RequestBody User requestBody, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            // Handle validation errors here
+            Map<String, String> errorMap = new HashMap<>();
+            bindingResult.getFieldErrors().forEach(fieldError -> {
+                errorMap.put("msg", fieldError.getDefaultMessage());
+            });
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMap);
+        }
+        try {
+            String username = requestBody.getUsername();
+            String plainTextPassword = requestBody.getPassword();
+            // String email = requestBody.get("email");
+            // String group = requestBody.get("groups");
+            // int isActive = Integer.parseInt(requestBody.get("is_active"));
+            if (userRepo.existsByUsername(username)) {
+                resMsg = "Username already exists";
+                response.put("msg", resMsg);
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+            }
 
-        String hashedPassword = passwordEncoder.encode(plainTextPassword);
-        requestBody.setPassword(hashedPassword);
-        
-        //User newUser = new User();
-        // newUser.setUsername(username);
-        // newUser.setPassword(hashedPassword);
-        // newUser.setEmail(email);
-        // newUser.setGroups(group);
-        // newUser.setIs_active(isActive);
+            String hashedPassword = passwordEncoder.encode(plainTextPassword);
+            requestBody.setPassword(hashedPassword);
 
-        User savedUser = userRepo.save(requestBody);
+            // User newUser = new User();
+            // newUser.setUsername(username);
+            // newUser.setPassword(hashedPassword);
+            // newUser.setEmail(email);
+            // newUser.setGroups(group);
+            // newUser.setIs_active(isActive);
 
-        // Return a ResponseEntity with the saved user and a status code of 201
-        // (Created)
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
+            userRepo.save(requestBody);
+            resMsg = "User has been successfully created";
+            response.put("msg", resMsg);
+
+            // Return a ResponseEntity with the saved user and a status code of 201
+            // (Created)
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (DataIntegrityViolationException e) {
+            // Handle other errors
+            resMsg = "An error occurred creating user";
+            response.put("msg", resMsg);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
     }
 
     @PutMapping("/users/{username}")
