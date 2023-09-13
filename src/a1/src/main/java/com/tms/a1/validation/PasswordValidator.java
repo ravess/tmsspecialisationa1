@@ -7,7 +7,7 @@ import jakarta.validation.ConstraintValidatorContext;
 
 public class PasswordValidator implements ConstraintValidator<ComplexPassword, String> {
   private static final Pattern PASSWORD_PATTERN = Pattern
-      .compile("^(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).*[^A-Za-z0-9].*$");
+       .compile("^(?=.*[0-9])(?=.*[^A-Za-z0-9]).*$");
 
   @Override
   public void initialize(ComplexPassword constraintAnnotation) {

@@ -24,7 +24,7 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
         } catch (JWTVerificationException e) {
             System.out.println("here");
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            response.getWriter().write("You are not authorised!");
+            response.getWriter().write("You are not authenticated!");
             response.getWriter().flush();
         } catch (RuntimeException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
