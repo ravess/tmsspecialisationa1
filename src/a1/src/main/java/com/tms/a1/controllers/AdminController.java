@@ -129,7 +129,16 @@ public class AdminController {
     @PutMapping("/users/{username}")
     public ResponseEntity<?> updateUserByUsername(
             @PathVariable String username,
-            @RequestBody Map<String, String> requestBody) {
+            @Valid @RequestBody User requestBody, BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            // Handle validation errors here
+            Map<String, String> errorMap = new HashMap<>();
+            bindingResult.getFieldErrors().forEach(fieldError -> {
+                errorMap.put("msg", fieldError.getDefaultMessage());
+            });
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMap);
+        }
 
         // Retrieve the user by username.
         Optional<User> optionalUser = userRepo.findByUsername(username);
@@ -138,10 +147,10 @@ public class AdminController {
             User user = optionalUser.get();
 
             // Update the user's information.
-            String plainTextPassword = requestBody.get("password");
-            String email = requestBody.get("email");
-            String group = requestBody.get("groups");
-            int isActive = Integer.parseInt(requestBody.get("is_active"));
+            String plainTextPassword = requestBody.getPassword();
+            String email = requestBody.getEmail();
+            String group = requestBody.getGroups();
+            int isActive = requestBody.getIs_active();
 
             // Hash the new password using BCrypt if provided or if it's an empty string.
             if (plainTextPassword != null) {
@@ -161,7 +170,9 @@ public class AdminController {
             // Save the updated user back to the repository.
             userRepo.save(user);
 
-            return new ResponseEntity<>(user, HttpStatus.OK);
+            resMsg = "User has been successfully created";
+            response.put("msg", resMsg);
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
             // User not found with the given username.
             return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
