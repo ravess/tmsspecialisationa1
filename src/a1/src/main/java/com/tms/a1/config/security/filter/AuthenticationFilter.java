@@ -75,6 +75,9 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         
         // Add the cookie to the response
         response.addCookie(cookie);
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.getWriter().write("You are logged In!");
+        response.getWriter().flush();
     }
 
     private String getClientIpAddress(HttpServletRequest request) {
