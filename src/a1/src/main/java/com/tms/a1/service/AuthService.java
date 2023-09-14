@@ -12,6 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import com.tms.a1.dao.UserDAO;
 import com.tms.a1.entity.User;
 import com.tms.a1.repository.UserRepo;
 
@@ -19,7 +20,7 @@ import com.tms.a1.repository.UserRepo;
 @Service
 public class AuthService {
  
-  private UserRepo userRepo;
+  private UserDAO userRepo;
  
 
     public Map<String,Object> checkgroup(Map<String,String> requestBody){

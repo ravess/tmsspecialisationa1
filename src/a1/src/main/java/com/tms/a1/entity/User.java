@@ -34,7 +34,7 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "email", unique = true)
+    @Column(name = "email")
     @Email(message = "Invalid email address")
     private String email;
 

@@ -40,11 +40,11 @@ import lombok.NoArgsConstructor;
 public class AdminController {
 
     private UserRepo userRepo;
-
+   
     private GroupRepo groupRepo;
 
     private BCryptPasswordEncoder passwordEncoder;
-   
+  
     private AdminService adminService;
     @Nonnull
     private String resMsg = "default";
