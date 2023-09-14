@@ -5,9 +5,7 @@ import lombok.AllArgsConstructor;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,9 +14,9 @@ import com.tms.a1.repository.UserRepo;
 @AllArgsConstructor
 @Service
 public class AuthService {
-    @Autowired
+ 
   private UserRepo userRepo;
-  @Autowired
+ 
   private BCryptPasswordEncoder passwordEncoder;
 
   public Map<String,Object> checkgroup(Map<String,String> requestBody){

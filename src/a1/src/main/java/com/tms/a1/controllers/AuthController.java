@@ -17,15 +17,16 @@ import com.tms.a1.entity.User;
 import com.tms.a1.repository.UserRepo;
 import com.tms.a1.service.AuthService;
 
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
 @RestController
 public class AuthController {
 
-  @Autowired
+
   private UserRepo userRepo;
-  @Autowired
   private BCryptPasswordEncoder passwordEncoder;
 
-  @Autowired
   private AuthService authService;
 
   @PostMapping("/login")
