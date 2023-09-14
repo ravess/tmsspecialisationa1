@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tms.a1.entity.User;
 import com.tms.a1.repository.UserRepo;
+import com.tms.a1.service.AuthService;
 
 @RestController
 public class AuthController {
@@ -23,6 +24,9 @@ public class AuthController {
   private UserRepo userRepo;
   @Autowired
   private BCryptPasswordEncoder passwordEncoder;
+
+  @Autowired
+  private AuthService authService;
 
   @PostMapping("/login")
   public ResponseEntity<String> login(@RequestBody Map<String, String> requestBody) {
@@ -50,19 +54,7 @@ public class AuthController {
   }
   @PostMapping("/checkgroup")
   public ResponseEntity<Map<String,Object>> CheckGroup (@RequestBody Map<String, String> requestBody ) {
-    String username = requestBody.get("username"); //Should be from JWToken instead of req body
-    String group = requestBody.get("group");
-    String result = userRepo.checkgroup(username,group);
-    if (result != null){
-      String resMsg = "True";
-      Map<String, Object> response = new HashMap<>();
-    response.put("ingroup", resMsg);
-      return new ResponseEntity<>(response, HttpStatus.OK);
-    }else{
-      String resMsg = "False";
-      Map<String, Object> response = new HashMap<>();
-      response.put("ingroup", resMsg);
-      return new ResponseEntity<>(response, HttpStatus.OK);
+      return new ResponseEntity<>(authService.checkgroup(requestBody), HttpStatus.OK);
     }
     }
-}
+
