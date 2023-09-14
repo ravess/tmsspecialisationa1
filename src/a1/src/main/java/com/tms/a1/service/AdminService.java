@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -12,19 +13,18 @@ import com.tms.a1.entity.User;
 import com.tms.a1.repository.GroupRepo;
 import com.tms.a1.repository.UserRepo;
 
-import lombok.AllArgsConstructor;
-
-@AllArgsConstructor
 @Service
 public class AdminService {
     
+    @Autowired
     private UserRepo userRepo;
+    @Autowired
     private GroupRepo groupRepo;
     private BCryptPasswordEncoder passwordEncoder;
     public Map<String, Object> response = new HashMap<>();
 
     public List<User> getAllUsers() {
-        return (List<User>)userRepo.findAll();
+        return userRepo.findAll();
     }
 
     public List<Group> getAllGroups() {

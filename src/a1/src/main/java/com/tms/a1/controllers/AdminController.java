@@ -41,7 +41,8 @@ public class AdminController {
     public String resMsg;
     public Map<String, Object> response = new HashMap<>();
 
-    AdminService adminService;
+    @Autowired
+    private AdminService adminService;
 
     @GetMapping("/users")
     public ResponseEntity<?> getAllUsers() {
