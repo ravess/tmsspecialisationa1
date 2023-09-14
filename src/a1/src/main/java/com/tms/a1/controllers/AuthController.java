@@ -13,10 +13,9 @@ import com.tms.a1.config.security.SecurityConstants;
 
 import com.tms.a1.service.AuthService;
 
-import lombok.AllArgsConstructor;
-
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @RestController
@@ -36,8 +35,7 @@ public class AuthController {
   }
 
   @PostMapping("/checkgroup")
-  public ResponseEntity<Map<String,Object>> CheckGroup (@RequestBody Map<String, String> requestBody ) {
-      return new ResponseEntity<>(authService.checkgroup(requestBody), HttpStatus.OK);
-    }
+  public ResponseEntity<Map<String, Object>> CheckGroup(@RequestBody Map<String, String> requestBody) {
+    return new ResponseEntity<>(authService.checkgroup(requestBody), HttpStatus.OK);
+  }
 }
-
