@@ -7,12 +7,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import static org.springframework.security.config.Customizer.withDefaults; // Import the withDefaults() method
 import org.springframework.security.config.http.SessionCreationPolicy;
 // import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
 import com.tms.a1.config.security.filter.AuthenticationFilter;
 import com.tms.a1.config.security.filter.ExceptionHandlerFilter;
@@ -24,7 +25,7 @@ import lombok.AllArgsConstructor;
 @Configuration
 @AllArgsConstructor
 @EnableWebSecurity
-public class SecurityConfig{
+public class SecurityConfig {
 
   private CustomAuthenticationManager customAuthenticationManager;
 
@@ -35,17 +36,28 @@ public class SecurityConfig{
     authenticationFilter.setFilterProcessesUrl("/login2");
     
     http
+    .cors(withDefaults())
     .csrf(csrf -> csrf.disable())
-    // .cors(cors->cors.disable())
     .authorizeHttpRequests(authorize -> authorize
         //.requestMatchers("/**").permitAll()  
         .anyRequest().authenticated())
-  
     .addFilterBefore(new ExceptionHandlerFilter(), AuthenticationFilter.class)
     .addFilter(authenticationFilter)
     .addFilterAfter(new JWTAuthorizationFilter(), AuthenticationFilter.class)
     .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
     return http.build();
   }
+
+  @Bean
+	CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration configuration = new CorsConfiguration();
+		configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000")); // Specify the exact origin
+		configuration.setAllowedMethods(Arrays.asList("GET","POST", "PUT"));
+        configuration.setAllowCredentials(true);
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", configuration);
+		return source;
+	}
 
 }
