@@ -29,30 +29,7 @@ public class AuthController {
 
   private AuthService authService;
 
-  @PostMapping("/login")
-  public ResponseEntity<String> login(@RequestBody Map<String, String> requestBody) {
-    String username = requestBody.get("username");
-    String plainTextPassword = requestBody.get("password");
 
-    // Retrieve the user from the database based on the provided username
-    Optional<User> optionalUser = userRepo.findByUsername(username);
-
-    if (!optionalUser.isPresent()) {
-      // User not found
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-    }
-
-    User user = optionalUser.get();
-
-    // Verify the password using BCrypt
-    if (passwordEncoder.matches(plainTextPassword, user.getPassword())) {
-      // Passwords match, login successful
-      return ResponseEntity.status(HttpStatus.OK).body("Login successful");
-    } else {
-      // Passwords do not match
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid password");
-    }
-  }
   @PostMapping("/checkgroup")
   public ResponseEntity<Map<String,Object>> CheckGroup (@RequestBody Map<String, String> requestBody ) {
       return new ResponseEntity<>(authService.checkgroup(requestBody), HttpStatus.OK);
