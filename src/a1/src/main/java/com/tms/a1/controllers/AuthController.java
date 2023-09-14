@@ -61,7 +61,7 @@ public class AuthController {
     }else{
       String resMsg = "False";
       Map<String, Object> response = new HashMap<>();
-    response.put("ingroup", resMsg);
+      response.put("ingroup", resMsg);
       return new ResponseEntity<>(response, HttpStatus.OK);
     }
     }

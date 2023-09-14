@@ -16,6 +16,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.tms.a1.config.security.SecurityConstants;
+import com.tms.a1.exception.ForbiddenException;
 import com.tms.a1.repository.UserRepo;
 
 import jakarta.servlet.FilterChain;
@@ -59,10 +60,10 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
     String browser = decodedJWT.getClaim("userAgent").asString();
     
     String clientIpAddress = getClientIpAddress(request);
-
     String userAgent = request.getHeader("User-Agent");
-    if(ipAddress != clientIpAddress || userAgent != browser){
-        throw new RuntimeException();
+
+    if(!ipAddress.equals(clientIpAddress) || !userAgent.equals(browser)){
+        throw new ForbiddenException("Please Log in again");
     }
 
         System.out.println("WHOAMI");
