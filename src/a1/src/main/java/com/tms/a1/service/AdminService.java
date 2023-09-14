@@ -99,31 +99,30 @@ public class AdminService {
                 String permitgroup = "admin";
 
                 if (userRepo.checkgroup(username, permitgroup) != null) {
-
                     // Retrieve the user by username.
                     Optional<User> optionalUser = userRepo.findByUsername(user.getUsername());
 
                     if (optionalUser.isPresent()) {
-                        User retrievedUser = optionalUser.get();
+                        User existingUser = optionalUser.get();
 
                         // Update the user's information.
-                        String plainTextPassword = retrievedUser.getPassword();
-                        String email = retrievedUser.getEmail();
-                        String groupToUpdate = retrievedUser.getGroups();
-                        int isActive = retrievedUser.getIs_active();
+                        String plainTextPassword = user.getPassword();
+                        String email = user.getEmail();
+                        String groupToUpdate = user.getGroups();
+                        int isActive = user.getIs_active();
 
                         // Hash the new password using BCrypt if provided and not empty.
                         if (plainTextPassword != null && !plainTextPassword.isEmpty()) {
                             String hashedPassword = passwordEncoder.encode(plainTextPassword);
-                            retrievedUser.setPassword(hashedPassword);
+                            existingUser.setPassword(hashedPassword);
                         }
 
-                        retrievedUser.setEmail(email);
-                        retrievedUser.setGroups(groupToUpdate);
-                        retrievedUser.setIs_active(isActive);
+                        existingUser.setEmail(email);
+                        existingUser.setGroups(groupToUpdate);
+                        existingUser.setIs_active(isActive);
 
                         // Save the updated user back to the repository.
-                        userRepo.save(retrievedUser);
+                        userRepo.save(existingUser);
                         return "Success";
                     } else {
                         return "User not found";
@@ -143,4 +142,5 @@ public class AdminService {
             }
         }
     }
+
 }
