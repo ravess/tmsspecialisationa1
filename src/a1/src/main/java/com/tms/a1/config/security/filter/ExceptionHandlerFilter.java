@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.auth0.jwt.JWT;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 
 import com.tms.a1.exception.EntityNotFoundException;
@@ -16,13 +15,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 public class ExceptionHandlerFilter extends OncePerRequestFilter {
-     @Override
+    @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
             filterChain.doFilter(request, response);
         } catch (EntityNotFoundException e) { //Feel free to create a separate function.
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-
             response.getWriter().write("Invalid Username/Password");
             response.getWriter().flush();
         } catch (JWTVerificationException e) {

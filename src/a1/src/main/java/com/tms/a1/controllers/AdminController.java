@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +22,7 @@ import com.tms.a1.entity.Group;
 import com.tms.a1.entity.User;
 import com.tms.a1.repository.GroupRepo;
 import com.tms.a1.repository.UserRepo;
+import com.tms.a1.service.AdminService;
 
 import jakarta.validation.Valid;
 
@@ -39,9 +39,11 @@ public class AdminController {
     public String resMsg;
     public Map<String, Object> response = new HashMap<>();
 
+    AdminService adminService;
+
     @GetMapping("/users")
     public ResponseEntity<?> getAllUsers() {
-        List<User> allusers = userRepo.findAll();
+        List<User> allusers = adminService.getAllUsers();
         if (allusers.isEmpty()) {
             return new ResponseEntity<>("No users found.", HttpStatus.NOT_FOUND);
         }
@@ -50,7 +52,7 @@ public class AdminController {
 
     @GetMapping("/groups")
     public ResponseEntity<?> getAllGroups() {
-        List<Group> allgroups = groupRepo.findAll();
+        List<Group> allgroups = adminService.getAllGroups();
         if (allgroups.isEmpty()) {
             return new ResponseEntity<>("No groups found.", HttpStatus.NOT_FOUND);
         }
@@ -69,17 +71,25 @@ public class AdminController {
     }
 
     @PostMapping("/newgroup")
-    public ResponseEntity<?> addNewGroup(@RequestBody Map<String, String> requestBody) {
-        String groupname = requestBody.get("group_name");
-        // check if groupname already exists
-        if (groupRepo.existsByGroupName(groupname)) {
-            return new ResponseEntity<>("Duplicate group name", HttpStatus.BAD_REQUEST);
+    public ResponseEntity<?> addNewGroup(@RequestBody Group  requestBody) {
+        String res = adminService.newGroup(requestBody);
+        if(res.equals("Duplicate")){
+            resMsg = "Duplicate group name";
+            return new ResponseEntity<>(resMsg, HttpStatus.BAD_REQUEST);
         }
-
-        Group newgroup = new Group();
-        newgroup.setGroupName(groupname);
-        return new ResponseEntity<>(groupRepo.save(newgroup), HttpStatus.CREATED);
+        return new ResponseEntity<>(requestBody, HttpStatus.CREATED);
     }
+    // public ResponseEntity<?> addNewGroup(@RequestBody Map<String, String> requestBody) {
+    //     String groupname = requestBody.get("group_name");
+    //     // check if groupname already exists
+    //     if (groupRepo.existsByGroupName(groupname)) {
+    //         return new ResponseEntity<>("Duplicate group name", HttpStatus.BAD_REQUEST);
+    //     }
+
+    //     Group newgroup = new Group();
+    //     newgroup.setGroupName(groupname);
+    //     return new ResponseEntity<>(groupRepo.save(newgroup), HttpStatus.CREATED);
+    // }
 
     @PostMapping("/newuser")
     public ResponseEntity<?> addNewUser(@Valid @RequestBody User requestBody, BindingResult bindingResult) {
