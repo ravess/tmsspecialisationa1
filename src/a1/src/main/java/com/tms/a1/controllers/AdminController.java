@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,6 +51,7 @@ public class AdminController {
     @GetMapping("/groups")
     public ResponseEntity<?> getAllGroups() {
         List<Group> allgroups = groupRepo.findAll();
+
         if (allgroups.isEmpty()) {
             return new ResponseEntity<>("No groups found.", HttpStatus.NOT_FOUND);
         }
@@ -68,19 +71,49 @@ public class AdminController {
 
     @PostMapping("/newgroup")
     public ResponseEntity<?> addNewGroup(@RequestBody Map<String, String> requestBody) {
-        String groupname = requestBody.get("group_name");
-        // check if groupname already exists
-        if (groupRepo.existsByGroupName(groupname)) {
-            return new ResponseEntity<>("Duplicate group name", HttpStatus.BAD_REQUEST);
-        }
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication != null && authentication.isAuthenticated()) {
+                String username = authentication.getName();
+                String group = "admin";
 
-        Group newgroup = new Group();
-        newgroup.setGroupName(groupname);
-        return new ResponseEntity<>(groupRepo.save(newgroup), HttpStatus.CREATED);
+                if (userRepo.checkgroup(username, group) != null) {
+                    // User is in the group, continue with group creation logic
+                    String groupname = requestBody.get("group_name");
+
+                    // Check if groupname already exists
+                    if (groupRepo.existsByGroupName(groupname)) {
+                        return ResponseEntity.badRequest().body("Duplicate group name");
+                    }
+
+                    Group newgroup = new Group();
+                    newgroup.setGroupName(groupname);
+                    groupRepo.save(newgroup);
+                    resMsg = "New group " + groupname + " has been successfully created";
+                    response.put("msg", resMsg);
+                    return ResponseEntity.status(HttpStatus.CREATED).body(response);
+                } else {
+                    resMsg = "You are unauthorized for this action";
+                    response.put("msg", resMsg);
+                    // The user is not in the group, return unauthorized
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+                }
+            } else {
+                resMsg = "You are not an authenticated user";
+                response.put("msg", resMsg);
+                // The user is not authenticated
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred.");
+        }
     }
 
     @PostMapping("/newuser")
     public ResponseEntity<?> addNewUser(@Valid @RequestBody User requestBody, BindingResult bindingResult) {
+        Map<String, Object> response = new HashMap<>();
+        String resMsg;
+
         if (bindingResult.hasErrors()) {
             // Handle validation errors here
             Map<String, String> errorMap = new HashMap<>();
@@ -89,35 +122,44 @@ public class AdminController {
             });
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMap);
         }
+
         try {
-            String username = requestBody.getUsername();
-            String plainTextPassword = requestBody.getPassword();
-            // String email = requestBody.get("email");
-            // String group = requestBody.get("groups");
-            // int isActive = Integer.parseInt(requestBody.get("is_active"));
-            if (userRepo.existsByUsername(username)) {
-                resMsg = "Username already exists";
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication != null && authentication.isAuthenticated()) {
+                String username = authentication.getName();
+                String group = "admin";
+                if (userRepo.checkgroup(username, group) != null) {
+                    String newUsername = requestBody.getUsername();
+                    String plainTextPassword = requestBody.getPassword();
+                    if (userRepo.existsByUsername(newUsername)) {
+                        resMsg = "Username already exists";
+                        response.put("msg", resMsg);
+                        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+                    }
+
+                    String hashedPassword = passwordEncoder.encode(plainTextPassword);
+                    requestBody.setPassword(hashedPassword);
+
+                    userRepo.save(requestBody);
+
+                    resMsg = "User has been successfully created";
+                    response.put("msg", resMsg);
+
+                    // Return a ResponseEntity with the saved user and a status code of 201
+                    // (Created)
+                    return ResponseEntity.status(HttpStatus.CREATED).body(response);
+                } else {
+                    resMsg = "You are unauthorized for this action";
+                    response.put("msg", resMsg);
+                    // The user is not in the group, return unauthorized
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+                }
+            } else {
+                resMsg = "You are not an authenticated user";
                 response.put("msg", resMsg);
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+                // The user is not authenticated
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
             }
-
-            String hashedPassword = passwordEncoder.encode(plainTextPassword);
-            requestBody.setPassword(hashedPassword);
-
-            // User newUser = new User();
-            // newUser.setUsername(username);
-            // newUser.setPassword(hashedPassword);
-            // newUser.setEmail(email);
-            // newUser.setGroups(group);
-            // newUser.setIs_active(isActive);
-
-            userRepo.save(requestBody);
-            resMsg = "User has been successfully created";
-            response.put("msg", resMsg);
-
-            // Return a ResponseEntity with the saved user and a status code of 201
-            // (Created)
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (DataIntegrityViolationException e) {
             // Handle other errors
             resMsg = "An error occurred creating user";
@@ -129,54 +171,65 @@ public class AdminController {
     @PutMapping("/users/{username}")
     public ResponseEntity<?> updateUserByUsername(
             @PathVariable String username,
-            @Valid @RequestBody User requestBody, BindingResult bindingResult) {
+            @Valid @RequestBody User requestBody) {
+        Map<String, Object> response = new HashMap<>();
+        String resMsg;
 
-        if (bindingResult.hasErrors()) {
-            // Handle validation errors here
-            Map<String, String> errorMap = new HashMap<>();
-            bindingResult.getFieldErrors().forEach(fieldError -> {
-                errorMap.put("msg", fieldError.getDefaultMessage());
-            });
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMap);
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication != null && authentication.isAuthenticated()) {
+                String tokenName = authentication.getName();
+                String tokenGroup = "admin";
+
+                // Check if the authenticated user is in the "admin" group
+                if (userRepo.checkgroup(tokenName, tokenGroup) != null) {
+                    // Retrieve the user by username.
+                    Optional<User> optionalUser = userRepo.findByUsername(username);
+
+                    if (optionalUser.isPresent()) {
+                        User user = optionalUser.get();
+                        // Update the user's information.
+                        String plainTextPassword = requestBody.getPassword();
+                        String email = requestBody.getEmail();
+                        String groupToUpdate = requestBody.getGroups();
+                        int isActive = requestBody.getIs_active();
+
+                        // Hash the new password using BCrypt if provided and not empty.
+                        if (plainTextPassword != null && !plainTextPassword.isEmpty()) {
+                            String hashedPassword = passwordEncoder.encode(plainTextPassword);
+                            requestBody.setPassword(hashedPassword);
+                        }
+
+                        user.setEmail(email);
+
+                        user.setGroups(groupToUpdate);
+                        user.setIs_active(isActive);
+
+                        // Save the updated user back to the repository.
+                        userRepo.save(user);
+
+                        resMsg = "User has been successfully updated";
+                        response.put("msg", resMsg);
+                        return ResponseEntity.ok(response);
+                    } else {
+                        // User not found with the given username.
+                        return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+                    }
+                } else {
+                    resMsg = "You are unauthorized for this action";
+                    response.put("msg", resMsg);
+                    // The authenticated user is not in the "admin" group, return unauthorized
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+                }
+            } else {
+                resMsg = "You are not an authenticated user";
+                response.put("msg", resMsg);
+                // The user is not authenticated
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred.");
         }
 
-        // Retrieve the user by username.
-        Optional<User> optionalUser = userRepo.findByUsername(username);
-
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-
-            // Update the user's information.
-            String plainTextPassword = requestBody.getPassword();
-            String email = requestBody.getEmail();
-            String group = requestBody.getGroups();
-            int isActive = requestBody.getIs_active();
-
-            // Hash the new password using BCrypt if provided or if it's an empty string.
-            if (plainTextPassword != null) {
-                String hashedPassword = plainTextPassword.isEmpty() ? user.getPassword()
-                        : passwordEncoder.encode(plainTextPassword);
-                user.setPassword(hashedPassword);
-            }
-
-            // Check if email is provided and not empty or null before updating.
-            if (email != null && !email.isEmpty()) {
-                user.setEmail(email);
-            }
-
-            user.setGroups(group);
-            user.setIs_active(isActive);
-
-            // Save the updated user back to the repository.
-            userRepo.save(user);
-
-            resMsg = "User has been successfully created";
-            response.put("msg", resMsg);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } else {
-            // User not found with the given username.
-            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
-        }
     }
-
 }
