@@ -186,40 +186,53 @@ public class AdminController {
                 String tokenGroup = "admin";
 
                 // Check if the authenticated user is in the "admin" group
-                if (userRepo.checkgroup(tokenName, tokenGroup) != null) {
-                    // Retrieve the user by username.
-                    Optional<User> optionalUser = userRepo.findByUsername(username);
+                if (userRepo.checkgroup(tokenName, tokenGroup) == null) {
+                    resMsg = "You are unauthorized for this action";
+                    response.put("msg", resMsg);
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+                }
+            } else {
+                resMsg = "You are not an authenticated user";
+                response.put("msg", resMsg);
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            }
 
-                    if (optionalUser.isPresent()) {
-                        User user = optionalUser.get();
-                        // Update the user's information.
-                        String plainTextPassword = requestBody.getPassword();
-                        String email = requestBody.getEmail();
-                        String groupToUpdate = requestBody.getGroups();
-                        int isActive = requestBody.getIs_active();
+            // Retrieve the user by username.
+            Optional<User> optionalUser = userRepo.findByUsername(username);
 
-                        // Hash the new password using BCrypt if provided and not empty.
-                        if (plainTextPassword != null && !plainTextPassword.isEmpty()) {
-                            String hashedPassword = passwordEncoder.encode(plainTextPassword);
-                            requestBody.setPassword(hashedPassword);
-                        }
+            if (optionalUser.isPresent()) {
+                User user = optionalUser.get();
 
-                        user.setEmail(email);
+                // Update the user's information.
+                String plainTextPassword = requestBody.getPassword();
+                String email = requestBody.getEmail();
+                String groupToUpdate = requestBody.getGroups();
+                int isActive = requestBody.getIs_active();
 
-                        user.setGroups(groupToUpdate);
-                        user.setIs_active(isActive);
+                // Hash the new password using BCrypt if provided and not empty.
+                if (plainTextPassword != null && !plainTextPassword.isEmpty()) {
+                    String hashedPassword = passwordEncoder.encode(plainTextPassword);
+                    user.setPassword(hashedPassword);
+                }
 
-                        // Save the updated user back to the repository.
-                        userRepo.save(user);
+                user.setEmail(email);
+                user.setGroups(groupToUpdate);
+                user.setIs_active(isActive);
 
-            resMsg = "User has been successfully updated";
-            response.put("msg", resMsg);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } else {
-            // User not found with the given username.
-            resMsg = "User not found";
-            response.put("msg", resMsg);
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+                // Save the updated user back to the repository.
+                userRepo.save(user);
+
+                resMsg = "User has been successfully updated";
+                response.put("msg", resMsg);
+                return ResponseEntity.ok(response);
+            } else {
+                // User not found with the given username.
+                resMsg = "User not found";
+                response.put("msg", resMsg);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred.");
         }
     }
 
