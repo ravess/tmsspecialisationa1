@@ -17,9 +17,16 @@ import lombok.Setter;
 @Entity
 @Table(name="`groups`")
 public class Group {
-    
+
     @Id
     @Nonnull
     @Column(name="group_name", unique=true)
     private String groupName;
+
+    // public Group(String groupName) {
+    //     this.groupName = groupName;
+    // }
+
+    
+    
 }

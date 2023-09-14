@@ -35,8 +35,6 @@ public class AdminController {
     @Autowired
     private UserRepo userRepo;
     @Autowired
-    private GroupRepo groupRepo;
-    @Autowired
     private BCryptPasswordEncoder passwordEncoder;
     public String resMsg;
     public Map<String, Object> response = new HashMap<>();
@@ -55,8 +53,7 @@ public class AdminController {
 
     @GetMapping("/groups")
     public ResponseEntity<?> getAllGroups() {
-        List<Group> allgroups = groupRepo.findAll();
-
+        List<Group> allgroups = adminService.getAllGroups();
         if (allgroups.isEmpty()) {
             return new ResponseEntity<>("No groups found.", HttpStatus.NOT_FOUND);
         }
@@ -75,42 +72,18 @@ public class AdminController {
     }
 
     @PostMapping("/newgroup")
-    public ResponseEntity<?> addNewGroup(@RequestBody Map<String, String> requestBody) {
-        try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (authentication != null && authentication.isAuthenticated()) {
-                String username = authentication.getName();
-                String group = "admin";
-
-                if (userRepo.checkgroup(username, group) != null) {
-                    // User is in the group, continue with group creation logic
-                    String groupname = requestBody.get("group_name");
-
-                    // Check if groupname already exists
-                    if (groupRepo.existsByGroupName(groupname)) {
-                        return ResponseEntity.badRequest().body("Duplicate group name");
-                    }
-
-                    Group newgroup = new Group();
-                    newgroup.setGroupName(groupname);
-                    groupRepo.save(newgroup);
-                    resMsg = "New group " + groupname + " has been successfully created";
-                    response.put("msg", resMsg);
-                    return ResponseEntity.status(HttpStatus.CREATED).body(response);
-                } else {
-                    resMsg = "You are unauthorized for this action";
-                    response.put("msg", resMsg);
-                    // The user is not in the group, return unauthorized
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-                }
-            } else {
-                resMsg = "You are not an authenticated user";
-                response.put("msg", resMsg);
-                // The user is not authenticated
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred.");
+    public ResponseEntity<?> addNewGroup(@RequestBody Group requestBodyGroup) {
+        String res = adminService.newGroup(requestBodyGroup);
+        if(res.equals("Success")){
+            return new ResponseEntity<>(requestBodyGroup, HttpStatus.CREATED);
+        }else if(res.equals("Duplicate")){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Duplicate group name.");
+        }else if(res.equals("You are unauthorized for this action")){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You are unauthorized for this action");
+        }else if(res.equals("You are not an authenticated user")){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You are not an authenticated user");
+        }else{
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("An error occurred.");
         }
     }
 

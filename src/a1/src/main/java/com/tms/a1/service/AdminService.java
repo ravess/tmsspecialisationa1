@@ -5,7 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.tms.a1.entity.Group;
@@ -20,7 +23,6 @@ public class AdminService {
     private UserRepo userRepo;
     @Autowired
     private GroupRepo groupRepo;
-    private BCryptPasswordEncoder passwordEncoder;
     public Map<String, Object> response = new HashMap<>();
 
     public List<User> getAllUsers() {
@@ -28,14 +30,32 @@ public class AdminService {
     }
 
     public List<Group> getAllGroups() {
-        return (List<Group>)groupRepo.findAll();
+        return groupRepo.findAll();
     }
 
     public String newGroup(Group group){
-        if (groupRepo.existsByGroupName(group.getGroupName())) {
-            return "Duplicate";
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication != null && authentication.isAuthenticated()) {
+                String username = authentication.getName();
+                String permitgroup = "admin";
+                
+                if (userRepo.checkgroup(username, permitgroup) != null) {
+                    // User is in the group, continue with group creation logic
+                    if (groupRepo.existsByGroupName(group.getGroupName())) {
+                        return "Duplicate";
+                    }
+                    groupRepo.save(group);
+                    return "Success";
+                } else {
+                    return "You are unauthorized for this action";
+                }
+            } else {
+                return "You are not an authenticated user";
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return "An error occurred.";
         }
-        groupRepo.save(group);
-        return "Success";
     }
 }
