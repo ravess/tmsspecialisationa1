@@ -19,7 +19,7 @@ import lombok.AllArgsConstructor;
 @Configuration
 @AllArgsConstructor
 @EnableWebSecurity
-public class SecurityConfig {
+public class SecurityConfig{
 
   private CustomAuthenticationManager customAuthenticationManager;
 
@@ -31,6 +31,7 @@ public class SecurityConfig {
     
     http
     .csrf(csrf -> csrf.disable())
+    // .cors(cors->cors.disable())
     .authorizeHttpRequests(authorize -> authorize
         //.requestMatchers("/**").permitAll()  
         .anyRequest().authenticated())

@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,6 +26,7 @@ import com.tms.a1.repository.UserRepo;
 
 import jakarta.validation.Valid;
 
+// @CrossOrigin(origins = "http://localhost:3000", maxAge = 1600, allowedHeaders = "*")
 @RestController
 public class AdminController {
 
@@ -170,12 +172,14 @@ public class AdminController {
             // Save the updated user back to the repository.
             userRepo.save(user);
 
-            resMsg = "User has been successfully created";
+            resMsg = "User has been successfully updated";
             response.put("msg", resMsg);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
             // User not found with the given username.
-            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+            resMsg = "User not found";
+            response.put("msg", resMsg);
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
 
