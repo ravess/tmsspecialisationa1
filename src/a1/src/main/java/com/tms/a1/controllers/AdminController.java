@@ -45,19 +45,23 @@ public class AdminController {
     @GetMapping("/users")
     public ResponseEntity<?> getAllUsers() {
         List<User> allusers = adminService.getAllUsers();
+        System.out.println(allusers);
         if (allusers.isEmpty()) {
             return new ResponseEntity<>("No users found.", HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(allusers, HttpStatus.OK);
+        response.put("data", allusers);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/groups")
+    @GetMapping("/getGroups")
     public ResponseEntity<?> getAllGroups() {
         List<Group> allgroups = adminService.getAllGroups();
+        System.out.println(allgroups);
         if (allgroups.isEmpty()) {
             return new ResponseEntity<>("No groups found.", HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(allgroups, HttpStatus.OK);
+        response.put("data", allgroups);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/users/{username}")
@@ -71,11 +75,11 @@ public class AdminController {
         }
     }
 
-    @PostMapping("/newgroup")
+    @PostMapping("/createGroup")
     public ResponseEntity<?> addNewGroup(@RequestBody Group requestBodyGroup) {
         String res = adminService.newGroup(requestBodyGroup);
         if(res.equals("Success")){
-            return new ResponseEntity<>(requestBodyGroup, HttpStatus.CREATED);
+            return new ResponseEntity<>(requestBodyGroup, HttpStatus.OK);
         }else if(res.equals("Duplicate")){
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Duplicate group name.");
         }else if(res.equals("You are unauthorized for this action")){
@@ -181,7 +185,7 @@ public class AdminController {
                 String plainTextPassword = requestBody.getPassword();
                 String email = requestBody.getEmail();
                 String groupToUpdate = requestBody.getGroups();
-                int isActive = requestBody.getIs_active();
+                int isActive = requestBody.getIsActive();
 
                 // Hash the new password using BCrypt if provided and not empty.
                 if (plainTextPassword != null && !plainTextPassword.isEmpty()) {
@@ -191,7 +195,7 @@ public class AdminController {
 
                 user.setEmail(email);
                 user.setGroups(groupToUpdate);
-                user.setIs_active(isActive);
+                user.setIsActive(isActive);
 
                 // Save the updated user back to the repository.
                 userRepo.save(user);
@@ -209,5 +213,14 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred.");
         }
     }
+
+    @GetMapping("/getUser")
+    public ResponseEntity<?> getUser(){
+        Boolean resMsg = true;
+        Map<String, Object> response = new HashMap<>();
+        response.put("hasCookie", resMsg);
+        // The user is not in the group, return unauthorized
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+      }
 
 }
