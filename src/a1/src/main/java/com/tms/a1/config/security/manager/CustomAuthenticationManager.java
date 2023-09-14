@@ -12,30 +12,23 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import com.tms.a1.entity.User;
-import com.tms.a1.exception.EntityNotFoundException;
-import com.tms.a1.repository.UserRepo;
+import com.tms.a1.service.AdminService;
 
 
 
 @Component
 public class CustomAuthenticationManager implements AuthenticationManager {
     @Autowired
-    private UserRepo userRepo;
+    private AdminService adminService;
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        Optional<User> optionalUser = userRepo.findByUsername(authentication.getName());
-        if (!optionalUser.isPresent()) {
-            throw new EntityNotFoundException(authentication.getName(), User.class);
-        }
-
-        User user = optionalUser.get();
+        User user = adminService.getUser(authentication.getName());
         if (!passwordEncoder.matches(authentication.getCredentials().toString(), user.getPassword())) {
             throw new BadCredentialsException("Invalid Username/Password");
         }
-
         return new UsernamePasswordAuthenticationToken(authentication.getName(), user.getPassword());
     }
 
