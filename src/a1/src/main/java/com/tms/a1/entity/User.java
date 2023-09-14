@@ -40,7 +40,7 @@ public class User {
 
     @NotNull(message = "is_active should not be null")
     @Column(name = "is_active")
-    private int is_active;
+    private int isActive;
 
     @Column(name = "`groups`")
     private String groups;
