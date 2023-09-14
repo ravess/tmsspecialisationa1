@@ -3,6 +3,7 @@ package com.tms.a1.service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import com.tms.a1.entity.Group;
 import com.tms.a1.entity.User;
+import com.tms.a1.exception.EntityNotFoundException;
 import com.tms.a1.repository.GroupRepo;
 import com.tms.a1.repository.UserRepo;
 
@@ -31,6 +33,15 @@ public class AdminService {
 
     public List<Group> getAllGroups() {
         return groupRepo.findAll();
+    }
+
+    public User getUser(String username) {
+        Optional<User> user = userRepo.findByUsername(username);
+        if (user.isPresent()) {
+            return user.get();
+        } else {
+            throw new EntityNotFoundException(username, User.class);
+        }
     }
 
     public String newGroup(Group group){

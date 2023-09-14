@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tms.a1.entity.Group;
 import com.tms.a1.entity.User;
-import com.tms.a1.repository.GroupRepo;
 import com.tms.a1.repository.UserRepo;
 import com.tms.a1.service.AdminService;
 
@@ -62,13 +61,8 @@ public class AdminController {
 
     @GetMapping("/users/{username}")
     public ResponseEntity<Object> getUser(@PathVariable String username) {
-        Optional<User> optionalUser = userRepo.findByUsername(username);
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            return new ResponseEntity<>(user, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("User Not Found", HttpStatus.NOT_FOUND);
-        }
+        User user = adminService.getUser(username);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @PostMapping("/newgroup")
