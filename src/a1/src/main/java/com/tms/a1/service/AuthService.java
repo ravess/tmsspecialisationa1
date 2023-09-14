@@ -21,7 +21,6 @@ public class AuthService {
  
   private UserRepo userRepo;
  
-  private BCryptPasswordEncoder passwordEncoder;
 
     public Map<String,Object> checkgroup(Map<String,String> requestBody){
         String username = requestBody.get("username"); //Should be from JWToken instead of req body

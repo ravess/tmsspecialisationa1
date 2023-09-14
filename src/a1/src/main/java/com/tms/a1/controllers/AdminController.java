@@ -24,22 +24,30 @@ import com.tms.a1.repository.GroupRepo;
 import com.tms.a1.repository.UserRepo;
 import com.tms.a1.service.AdminService;
 
+
+import jakarta.annotation.Nonnull;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
 
 // @CrossOrigin(origins = "http://localhost:3000", maxAge = 1600, allowedHeaders = "*")
+@AllArgsConstructor
+@NoArgsConstructor
 @RestController
 public class AdminController {
 
-    @Autowired
     private UserRepo userRepo;
-    @Autowired
-    private GroupRepo groupRepo;
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
-    public String resMsg;
-    public Map<String, Object> response = new HashMap<>();
 
-    AdminService adminService;
+    private GroupRepo groupRepo;
+
+    private BCryptPasswordEncoder passwordEncoder;
+   
+    private AdminService adminService;
+    @Nonnull
+    private String resMsg = "default";
+    @Nonnull
+    private Map<String,Object> response = new HashMap<>();
 
     @GetMapping("/users")
     public ResponseEntity<?> getAllUsers() {
@@ -108,7 +116,7 @@ public class AdminController {
             // String group = requestBody.get("groups");
             // int isActive = Integer.parseInt(requestBody.get("is_active"));
             if (userRepo.existsByUsername(username)) {
-                resMsg = "Username already exists";
+                String resMsg = "Username already exists";
                 response.put("msg", resMsg);
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
             }

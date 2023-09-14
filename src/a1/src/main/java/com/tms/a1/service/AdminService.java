@@ -1,8 +1,7 @@
 package com.tms.a1.service;
 
-import java.util.HashMap;
+
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,6 +13,7 @@ import com.tms.a1.repository.UserRepo;
 
 import lombok.AllArgsConstructor;
 
+
 @AllArgsConstructor
 @Service
 public class AdminService {
@@ -21,7 +21,6 @@ public class AdminService {
     private UserRepo userRepo;
     private GroupRepo groupRepo;
     private BCryptPasswordEncoder passwordEncoder;
-    public Map<String, Object> response = new HashMap<>();
 
     public List<User> getAllUsers() {
         return (List<User>)userRepo.findAll();
