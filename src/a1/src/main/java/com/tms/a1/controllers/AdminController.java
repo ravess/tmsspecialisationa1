@@ -24,9 +24,11 @@ import com.tms.a1.entity.Group;
 import com.tms.a1.entity.User;
 import com.tms.a1.repository.GroupRepo;
 import com.tms.a1.repository.UserRepo;
+import com.tms.a1.service.AdminService;
 
 import jakarta.validation.Valid;
 
+// @CrossOrigin(origins = "http://localhost:3000", maxAge = 1600, allowedHeaders = "*")
 @RestController
 public class AdminController {
 
@@ -39,9 +41,11 @@ public class AdminController {
     public String resMsg;
     public Map<String, Object> response = new HashMap<>();
 
+    AdminService adminService;
+
     @GetMapping("/users")
     public ResponseEntity<?> getAllUsers() {
-        List<User> allusers = userRepo.findAll();
+        List<User> allusers = adminService.getAllUsers();
         if (allusers.isEmpty()) {
             return new ResponseEntity<>("No users found.", HttpStatus.NOT_FOUND);
         }
@@ -208,28 +212,15 @@ public class AdminController {
                         // Save the updated user back to the repository.
                         userRepo.save(user);
 
-                        resMsg = "User has been successfully updated";
-                        response.put("msg", resMsg);
-                        return ResponseEntity.ok(response);
-                    } else {
-                        // User not found with the given username.
-                        return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
-                    }
-                } else {
-                    resMsg = "You are unauthorized for this action";
-                    response.put("msg", resMsg);
-                    // The authenticated user is not in the "admin" group, return unauthorized
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-                }
-            } else {
-                resMsg = "You are not an authenticated user";
-                response.put("msg", resMsg);
-                // The user is not authenticated
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred.");
+            resMsg = "User has been successfully updated";
+            response.put("msg", resMsg);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } else {
+            // User not found with the given username.
+            resMsg = "User not found";
+            response.put("msg", resMsg);
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
-
     }
+
 }
