@@ -23,21 +23,20 @@ public class HibernateUtil {
                 // Hibernate settings equivalent to hibernate.cfg.xml's properties
                 Properties settings = new Properties();
                 settings.put(Environment.DRIVER, "com.mysql.cj.jdbc.Driver");
-                settings.put(Environment.URL, "jdbc:mysql://localhost:3306/a1s");
+                settings.put(Environment.URL, "jdbc:mysql://localhost:3306/nodelogin");
                 settings.put(Environment.USER, "root");
-                settings.put(Environment.PASS, "P@ssw0rd123");
+                settings.put(Environment.PASS, "password");
 
                 settings.put(Environment.SHOW_SQL, "true");
 
                 settings.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, "thread");
 
-
                 configuration.setProperties(settings);
 
                 configuration.addAnnotatedClass(User.class);
-configuration.addAnnotatedClass(Group.class);
+                configuration.addAnnotatedClass(Group.class);
                 ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
-                    .applySettings(configuration.getProperties()).build();
+                        .applySettings(configuration.getProperties()).build();
 
                 sessionFactory = configuration.buildSessionFactory(serviceRegistry);
             } catch (Exception e) {

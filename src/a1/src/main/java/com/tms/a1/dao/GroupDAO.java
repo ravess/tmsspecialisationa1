@@ -1,22 +1,16 @@
 package com.tms.a1.dao;
 
-
-
-
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import java.util.List;
 import org.springframework.stereotype.Component;
 
 import com.tms.a1.entity.Group;
 import com.tms.a1.utils.HibernateUtil;
 
-import jakarta.persistence.Query;
-
 @Component
 public class GroupDAO {
 
-  private HibernateUtil HibernateUtil;
+    private HibernateUtil HibernateUtil;
 
     public void getUser(int id) {
         Transaction transaction = null;
@@ -36,7 +30,6 @@ public class GroupDAO {
         }
     }
 
-    
     public void getGroupById(int id) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
@@ -45,7 +38,6 @@ public class GroupDAO {
 
             // Obtain an entity using byId() method
             Group Group = session.byId(Group.class).getReference(id);
-         
 
             // commit transaction
             transaction.commit();
