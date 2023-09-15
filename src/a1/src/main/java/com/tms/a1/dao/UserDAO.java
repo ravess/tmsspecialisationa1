@@ -74,14 +74,14 @@ public class UserDAO {
         }
     }
 
-    public List findAll() {
+    public List<User> findAll() {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             // start a transaction
             transaction = session.beginTransaction();
             // save the User object
             Query query = session.createQuery("FROM User", User.class);
-            List users = query.getResultList();
+            List<User> users = query.getResultList();
             // commit transaction
             transaction.commit();
             return users;

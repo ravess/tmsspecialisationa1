@@ -18,33 +18,37 @@ public class GroupDAO {
 
   private HibernateUtil HibernateUtil;
 
-    public void getUser(int id) {
+    public boolean existsByGroupName(String groupname) {
         Transaction transaction = null;
         try (Session session = com.tms.a1.utils.HibernateUtil.getSessionFactory().openSession()) {
             // start a transaction
             transaction = session.beginTransaction();
 
             // get User entity using get() method
-            Group Group = session.get(Group.class, id);
-            // commit transaction
+            String hql = "SELECT COUNT(g) FROM Group g WHERE g.groupName = :groupName";
+    Long count = session.createQuery(hql,Long.class)
+        .setParameter("groupName", groupname)
+        .uniqueResult();
             transaction.commit();
+            return count != null && count > 0;
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
             }
             e.printStackTrace();
+            return false;
         }
     }
 
     
-    public void getGroupById(int id) {
+    public void save(Group group) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             // start a transaction
             transaction = session.beginTransaction();
 
             // Obtain an entity using byId() method
-            Group Group = session.byId(Group.class).getReference(id);
+            session.persist(group);
          
 
             // commit transaction
