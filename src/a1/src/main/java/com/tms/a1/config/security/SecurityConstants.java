@@ -1,32 +1,10 @@
 package com.tms.a1.config.security;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
-
-@Configuration
-@PropertySource("classpath:application.properties") // Use this annotation to specify the properties file
 public class SecurityConstants {
-
-    @Value("${jwt.secret}")
-    private String jwtSecret;
-
-    @Value("${token.expiration}")
-    private int tokenExpiration;
-
-    @Value("${cookie.name}")
-    private String cookieName;
-
-    public String getJwtSecret() {
-        return jwtSecret;
-    }
-
-    public int getTokenExpiration() {
-        return tokenExpiration;
-    }
-
-    public String getCookieName() {
-        return cookieName;
-    }
+    public static final String SECRET_KEY = "bQeThWmZq4t7w!z$C&F)J@NcRfUjXn2r5u8x/A?D*G-KaPdSgVkYp3s6v9y$B&E)"; //Your secret should always be strong (uppercase, lowercase, numbers, symbols) so that nobody can potentially decode the signature.
+    public static final int TOKEN_EXPIRATION = 7200000; // 7200000 milliseconds = 7200 seconds = 2 hours.
+    public static final String BEARER = "Bearer "; // Authorization : "Bearer " + Token 
+    public static final String AUTHORIZATION = "Authorization"; // "Authorization" : Bearer Token
+    public static final String REGISTER_PATH = "/user/register"; // Public path that clients can use to register.
+    public static final String COOKIE_NAME = "testjwt";
 }
-
