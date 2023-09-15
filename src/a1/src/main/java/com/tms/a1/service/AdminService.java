@@ -50,7 +50,7 @@ public class AdminService {
         // }
     }
 
-    public String newGroup(Group group){
+    public String newGroup(Group group) {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (authentication != null && authentication.isAuthenticated()) {
@@ -105,19 +105,22 @@ public class AdminService {
     //     }
     // }
 
-    // public String updateUser(User user) {
-    //     try {
-    //         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    //         if (authentication != null && authentication.isAuthenticated()) {
-    //             String username = authentication.getName();
-    //             String permitgroup = "admin";
+    public String updateUser(String username, User user) {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication != null && authentication.isAuthenticated()) {
+                String tokenName = authentication.getName();
+                String permitgroup = "admin";
 
-    //             if (userRepo.checkgroup(username, permitgroup) != null) {
-    //                 // Retrieve the user by username.
-    //                 Optional<User> optionalUser = userRepo.findByUsername(user.getUsername());
+                if (userRepo.checkgroup(tokenName, permitgroup) != null) {
+                    // Retrieve the user by username.
+                    Optional<User> optionalUser = userRepo.findByUsername(username);
 
-    //                 if (optionalUser.isPresent()) {
-    //                     User existingUser = optionalUser.get();
+                    if (optionalUser.isPresent()) {
+                        User existingUser = optionalUser.get();
+                        if (user.getPassword() == null || user.getPassword() == "") {
+                            user.setPassword(existingUser.getPassword());
+                        }
 
     //                     // Update the user's information.
     //                     String plainTextPassword = user.getPassword();
@@ -125,36 +128,81 @@ public class AdminService {
     //                     String groupToUpdate = user.getGroups();
     //                     int isActive = user.getIsActive();
 
-    //                     // Hash the new password using BCrypt if provided and not empty.
-    //                     if (plainTextPassword != null && !plainTextPassword.isEmpty()) {
-    //                         String hashedPassword = passwordEncoder.encode(plainTextPassword);
-    //                         existingUser.setPassword(hashedPassword);
-    //                     }
+                        // Hash the new password using BCrypt if provided and not empty.
+                        if (plainTextPassword != null && !plainTextPassword.isEmpty()) {
+                            if (!isPasswordValid(plainTextPassword)) {
+                                return "Invalid password";
+                            }
+                            String hashedPassword = passwordEncoder.encode(plainTextPassword);
+                            existingUser.setPassword(hashedPassword);
+                        }
 
-    //                     existingUser.setEmail(email);
-    //                     existingUser.setGroups(groupToUpdate);
-    //                     existingUser.setIsActive(isActive);
+                        if (email != null && !email.isEmpty()) {
+                            if (!isValidEmail(email)) {
+                                return "Invalid email";
+                            }
+                            existingUser.setEmail(email);
+                        }
 
-    //                     // Save the updated user back to the repository.
-    //                     userRepo.save(existingUser);
-    //                     return "Success";
-    //                 } else {
-    //                     return "User not found";
-    //                 }
-    //             } else {
-    //                 return "You are unauthorized for this action";
-    //             }
-    //         } else {
-    //             return "You are not an authenticated user";
-    //         }
-    //     } catch (Exception e) {
-    //         // Handle different types of exceptions and return meaningful error messages
-    //         if (e instanceof DataIntegrityViolationException) {
-    //             return "Data integrity violation error occurred.";
-    //         } else {
-    //             return "An error occurred.";
-    //         }
-    //     }
-    // }
+                        existingUser.setGroups(groupToUpdate);
+                        existingUser.setIsActive(isActive);
+
+                        // Save the updated user back to the repository.
+                        userRepo.save(existingUser);
+
+                        return "Success";
+                    } else {
+                        return "User not found";
+                    }
+                } else {
+                    return "You are unauthorized for this action";
+                }
+            } else {
+                return "You are not an authenticated user";
+            }
+        } catch (Exception e) {
+            // Handle different types of exceptions and return meaningful error messages
+            if (e instanceof DataIntegrityViolationException) {
+                return "Data integrity violation error occurred.";
+            } else {
+                return "An error occurred.";
+            }
+        }
+    }
+
+    // Custom validation logic for password
+    private boolean isPasswordValid(String password) {
+        // Check if the password contains at least one alphabet character, one number,
+        // and one special character.
+        boolean hasAlphabet = false;
+        boolean hasNumber = false;
+        boolean hasSpecialCharacter = false;
+
+        for (char ch : password.toCharArray()) {
+            if (Character.isLetter(ch)) {
+                hasAlphabet = true;
+            } else if (Character.isDigit(ch)) {
+                hasNumber = true;
+            } else if (!Character.isLetterOrDigit(ch)) {
+                hasSpecialCharacter = true;
+            }
+
+            // If all required conditions are met, return true.
+            if (hasAlphabet && hasNumber && hasSpecialCharacter) {
+                return true;
+            }
+        }
+
+        // If any of the required conditions are not met, return false.
+        return false;
+    }
+
+    //custom validation for email check (if email input is not null/not empty string)
+    private boolean isValidEmail(String email) {
+        // Regular expression pattern for a valid email address
+        String emailPattern = "^[A-Za-z0-9+_.-]+@(.+)$";
+
+        return email.matches(emailPattern);
+    }
 
 }

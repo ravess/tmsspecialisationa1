@@ -3,7 +3,6 @@ package com.tms.a1.controllers;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -72,6 +71,7 @@ public class AdminController {
 
     @GetMapping("/users/{username}")
     public ResponseEntity<Object> getUser(@PathVariable String username) {
+
         User user = adminService.getUser(username);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
@@ -140,10 +140,11 @@ public class AdminController {
     //     }
     // }
 
-    // @PutMapping("/users/{username}")
-    // public ResponseEntity<?> updateUserByUsername(@Valid @RequestBody User requestBody, BindingResult bindingResult) {
-    //     Map<String, Object> response = new HashMap<>();
-    //     String resMsg;
+    @PutMapping("/users/{username}")
+    public ResponseEntity<?> updateUserByUsername(@PathVariable String username, @RequestBody User requestBody,
+            BindingResult bindingResult) {
+        Map<String, Object> response = new HashMap<>();
+        String resMsg;
 
     //     if (bindingResult.hasErrors()) {
     //         // Handle validation errors here
@@ -154,33 +155,49 @@ public class AdminController {
     //         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMap);
     //     }
 
-    //     String res = adminService.updateUser(requestBody);
-    //     if (res.equals("Success")) {
-    //         resMsg = "User Successfully Updated.";
-    //         response.put("msg", resMsg);
-    //         return new ResponseEntity<>(response, HttpStatus.OK);
-    //     } else if (res.equals("You are unauthorized for this action")) {
-    //         resMsg = "You are unauthorized for this action.";
-    //         response.put("msg", resMsg);
-    //         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-    //     } else if (res.equals("You are not an authenticated user")) {
-    //         resMsg = "You are not an authenticated user.";
-    //         response.put("msg", resMsg);
-    //         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-    //     } else {
-    //         resMsg = "An error occured when updating user.";
-    //         response.put("msg", resMsg);
-    //         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-    //     }
-    // }
+        String res = adminService.updateUser(username, requestBody);
+        if (res.equals("Success")) {
+            resMsg = "User Successfully Updated.";
+            response.put("msg", resMsg);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } else if (res.equals("You are unauthorized for this action")) {
+            resMsg = "You are unauthorized for this action.";
+            response.put("msg", resMsg);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        } else if (res.equals("You are not an authenticated user")) {
+            resMsg = "You are not an authenticated user.";
+            response.put("msg", resMsg);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        } else {
+            if (res.equals("Invalid email")) {
+                System.out.println(res);
+                resMsg = "Invalid email";
+                response.put("msg", resMsg);
+                System.out.println(resMsg);
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            }
+            if (res.equals("Invalid password")) {
+                resMsg = "Invalid password";
+                response.put("msg", resMsg);
+                System.out.println(resMsg);
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            } else {
+                System.out.println(res);
+                resMsg = "An error occured when updating user.";
+            }
+            response.put("msg", resMsg);
+            System.out.println(resMsg);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+    }
 
     @GetMapping("/getUser")
-    public ResponseEntity<?> getUser(){
+    public ResponseEntity<?> getUser() {
         Boolean resMsg = true;
         Map<String, Object> response = new HashMap<>();
         response.put("hasCookie", resMsg);
         // The user is not in the group, return unauthorized
         return ResponseEntity.status(HttpStatus.OK).body(response);
-      }
+    }
 
 }
