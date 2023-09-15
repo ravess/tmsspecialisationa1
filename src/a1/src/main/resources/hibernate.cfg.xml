@@ -29,8 +29,8 @@
 		<property name="hibernate.dbcp.minIdle">5</property>
 		<property name="hibernate.dbcp.maxWaitMillis">-1</property>
 
-		<mapping class="net.javaguides.hibernate.entity.User" />
-    <mapping class="net.javaguides.hibernate.entity.Group" />
+		<mapping class="com.tms.a1.entity.User" />
+    <mapping class="com.tms.a1.entity.Group" />
 	</session-factory>
 
 </hibernate-configuration>

@@ -6,6 +6,8 @@ package com.tms.a1.dao;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.stereotype.Component;
 
 import com.tms.a1.entity.User;
@@ -18,21 +20,36 @@ public class UserDAO {
 
   private HibernateUtil HibernateUtil;
 
-    public void getUser(int id) {
+    public User findByUsername(String username) {
         Transaction transaction = null;
         try (Session session = com.tms.a1.utils.HibernateUtil.getSessionFactory().openSession()) {
             // start a transaction
             transaction = session.beginTransaction();
+            String hql = "FROM User u WHERE u.username = :username ";
+            Query query = session.createQuery(hql, User.class)
+                .setParameter("username", username);
+                
+            List<User> resultList =  query.getResultList();
+            if (!resultList.isEmpty()) {
+                User result = resultList.get(0); // Get the first result
+                transaction.commit();
+                return result;
+            }else{
+                transaction.commit();
+                return null;
+            }
 
-            // get User entity using get() method
-            User User = session.get(User.class, id);
-            // commit transaction
-            transaction.commit();
+            
+            
+
+            // transaction.commit();
+            // return result.get(0);
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
             }
             e.printStackTrace();
+            return null;
         }
     }
 
@@ -57,20 +74,23 @@ public class UserDAO {
         }
     }
 
-    public void saveUser(User User) {
+    public List<User> findAll() {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             // start a transaction
             transaction = session.beginTransaction();
             // save the User object
-            session.persist(User);
+            Query query = session.createQuery("FROM User", User.class);
+            List<User> users = query.getResultList();
             // commit transaction
             transaction.commit();
+            return users;
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
             }
             e.printStackTrace();
+            return null;
         }
     }
 

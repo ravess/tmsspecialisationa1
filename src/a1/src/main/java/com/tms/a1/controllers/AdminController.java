@@ -102,43 +102,43 @@ public class AdminController {
         }
     }
 
-    @PostMapping("/newuser")
-    public ResponseEntity<?> addNewUser(@Valid @RequestBody User requestBody, BindingResult bindingResult) {
-        Map<String, Object> response = new HashMap<>();
-        String resMsg;
+    // @PostMapping("/newuser")
+    // public ResponseEntity<?> addNewUser(@Valid @RequestBody User requestBody, BindingResult bindingResult) {
+    //     Map<String, Object> response = new HashMap<>();
+    //     String resMsg;
 
-        if (bindingResult.hasErrors()) {
-            // Handle validation errors here
-            Map<String, String> errorMap = new HashMap<>();
-            bindingResult.getFieldErrors().forEach(fieldError -> {
-                errorMap.put("msg", fieldError.getDefaultMessage());
-            });
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMap);
-        }
+    //     if (bindingResult.hasErrors()) {
+    //         // Handle validation errors here
+    //         Map<String, String> errorMap = new HashMap<>();
+    //         bindingResult.getFieldErrors().forEach(fieldError -> {
+    //             errorMap.put("msg", fieldError.getDefaultMessage());
+    //         });
+    //         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMap);
+    //     }
 
-        String res = adminService.newUser(requestBody);
-        if (res.equals("Success")) {
-            resMsg = "User Successfully Created.";
-            response.put("msg", resMsg);
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
-        } else if (res.equals("Duplicate")) {
-            resMsg = "Username Already Exists.";
-            response.put("msg", resMsg);
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
-        } else if (res.equals("You are unauthorized for this action")) {
-            resMsg = "You are unauthorized for this action.";
-            response.put("msg", resMsg);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        } else if (res.equals("You are not an authenticated user")) {
-            resMsg = "You are not an authenticated user.";
-            response.put("msg", resMsg);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        } else {
-            resMsg = "An error occured when creating user";
-            response.put("msg", resMsg);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        }
-    }
+    //     String res = adminService.newUser(requestBody);
+    //     if (res.equals("Success")) {
+    //         resMsg = "User Successfully Created.";
+    //         response.put("msg", resMsg);
+    //         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    //     } else if (res.equals("Duplicate")) {
+    //         resMsg = "Username Already Exists.";
+    //         response.put("msg", resMsg);
+    //         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    //     } else if (res.equals("You are unauthorized for this action")) {
+    //         resMsg = "You are unauthorized for this action.";
+    //         response.put("msg", resMsg);
+    //         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    //     } else if (res.equals("You are not an authenticated user")) {
+    //         resMsg = "You are not an authenticated user.";
+    //         response.put("msg", resMsg);
+    //         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    //     } else {
+    //         resMsg = "An error occured when creating user";
+    //         response.put("msg", resMsg);
+    //         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    //     }
+    // }
 
     @PutMapping("/users/{username}")
     public ResponseEntity<?> updateUserByUsername(@PathVariable String username, @RequestBody User requestBody,
@@ -146,14 +146,14 @@ public class AdminController {
         Map<String, Object> response = new HashMap<>();
         String resMsg;
 
-        if (bindingResult.hasErrors()) {
-            // Handle validation errors here
-            Map<String, String> errorMap = new HashMap<>();
-            bindingResult.getFieldErrors().forEach(fieldError -> {
-                errorMap.put("msg", fieldError.getDefaultMessage());
-            });
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMap);
-        }
+    //     if (bindingResult.hasErrors()) {
+    //         // Handle validation errors here
+    //         Map<String, String> errorMap = new HashMap<>();
+    //         bindingResult.getFieldErrors().forEach(fieldError -> {
+    //             errorMap.put("msg", fieldError.getDefaultMessage());
+    //         });
+    //         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMap);
+    //     }
 
         String res = adminService.updateUser(username, requestBody);
         if (res.equals("Success")) {
