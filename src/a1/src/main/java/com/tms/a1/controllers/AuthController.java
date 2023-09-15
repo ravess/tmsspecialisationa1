@@ -36,24 +36,8 @@ public class AuthController {
     return new ResponseEntity<>(message, HttpStatus.OK);
   }
 
-<<<<<<< HEAD
-  @PostMapping("/checkGroup")
-  public ResponseEntity<Map<String,Object>> CheckGroup (@RequestBody Map<String, String> requestBody ) {
-    return new ResponseEntity<>(authService.checkgroup(requestBody), HttpStatus.OK);
-  }
-
-  @GetMapping("/validateCookie")
-  public ResponseEntity<?> checkCookie(){
-    Boolean resMsg = true;
-    Map<String, Object> response = new HashMap<>();
-    response.put("hasCookie", resMsg);
-    // The user is not in the group, return unauthorized
-    return ResponseEntity.status(HttpStatus.OK).body(response);
-  }
-=======
   @PostMapping("/checkgroup")
   public ResponseEntity<Map<String, Object>> CheckGroup(@RequestBody Map<String, String> requestBody) {
     return new ResponseEntity<>(authService.checkgroup(requestBody), HttpStatus.OK);
   }
->>>>>>> d1758617c3ca36db5d4141fdc739b08e7286f7d5
 }

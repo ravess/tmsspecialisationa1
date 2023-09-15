@@ -3,6 +3,7 @@ package com.tms.a1.service;
 import java.util.HashMap;
 import java.util.Map;
 
+import java.util.List;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,8 +24,8 @@ public class AuthService {
     public Map<String, Object> checkgroup(Map<String, String> requestBody) {
         String username = requestBody.get("username"); // Should be from JWToken instead of req body
         String group = requestBody.get("group");
-        String result = userRepo.checkgroup(username, group);
-        if (result != null) {
+        List result = userRepo.checkgroup(username, group);
+        if (result != null && !result.isEmpty()) {
             String resMsg = "True";
             Map<String, Object> response = new HashMap<>();
             response.put("ingroup", resMsg);

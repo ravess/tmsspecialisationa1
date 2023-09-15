@@ -1,8 +1,11 @@
 package com.tms.a1.dao;
 
 
+
+
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import java.util.List;
 import org.springframework.stereotype.Component;
 
 import com.tms.a1.entity.User;
@@ -71,21 +74,23 @@ public class UserDAO {
         }
     }
 
-    public String checkgroup(String username, String usergroup) {
+    public List checkgroup(String username, String usergroup) {
         Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = com.tms.a1.utils.HibernateUtil.getSessionFactory().openSession()) {
             // start a transaction
             transaction = session.beginTransaction();
             String hql = "SELECT u.username FROM User u WHERE u.username = :username AND u.groups LIKE :userGroupPattern";
             Query query = session.createQuery(hql, String.class)
                 .setParameter("username", username)
                 .setParameter("userGroupPattern", "%." + usergroup + ".%");
-            String result = (String) query.getSingleResult();
+            List result =  query.getResultList();
             // commit transaction
+            
+      
             transaction.commit();
             return result;
         } catch (Exception e) {
-            if (transaction != null) {
+            if (transaction != null && transaction.isActive()) {
                 transaction.rollback();
             }
             e.printStackTrace();
