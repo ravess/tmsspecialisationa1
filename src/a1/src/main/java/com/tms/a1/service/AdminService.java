@@ -1,6 +1,6 @@
 package com.tms.a1.service;
 
-import java.util.HashMap;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -27,7 +27,6 @@ public class AdminService {
     private GroupRepo groupRepo;
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
-    public Map<String, Object> response = new HashMap<>();
 
     public List<User> getAllUsers() {
         return userRepo.findAll();
