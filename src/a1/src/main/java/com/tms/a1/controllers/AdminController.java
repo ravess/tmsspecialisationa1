@@ -52,18 +52,18 @@ public class AdminController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/getGroups")
-    public ResponseEntity<?> getAllGroups() {
-        List<Group> allgroups = adminService.getAllGroups();
-        System.out.println(allgroups);
-        if (allgroups.isEmpty()) {
-            resMsg = "No Groups Found.";
-            response.put("msg", resMsg);
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-        }
-        response.put("data", allgroups);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
+    // @GetMapping("/getGroups")
+    // public ResponseEntity<?> getAllGroups() {
+    //     List<Group> allgroups = adminService.getAllGroups();
+    //     System.out.println(allgroups);
+    //     if (allgroups.isEmpty()) {
+    //         resMsg = "No Groups Found.";
+    //         response.put("msg", resMsg);
+    //         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    //     }
+    //     response.put("data", allgroups);
+    //     return new ResponseEntity<>(response, HttpStatus.OK);
+    // }
 
     @GetMapping("/users/{username}")
     public ResponseEntity<Object> getUser(@PathVariable String username) {
@@ -113,7 +113,7 @@ public class AdminController {
         }
 
         String res = adminService.newUser(requestBody);
-        
+
         if (res.equals("Success")) {
             resMsg = "User Successfully Created.";
             response.put("msg", resMsg);

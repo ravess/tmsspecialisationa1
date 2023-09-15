@@ -19,7 +19,7 @@ public class HibernateUtil {
         if (sessionFactory == null) {
             try {
                 Configuration configuration = new Configuration();
-
+                configuration.configure("hibernate.cfg.xml");
                 // Hibernate settings equivalent to hibernate.cfg.xml's properties
                 Properties settings = new Properties();
                 settings.put(Environment.DRIVER, "com.mysql.cj.jdbc.Driver");
@@ -27,11 +27,11 @@ public class HibernateUtil {
                 settings.put(Environment.USER, "root");
                 settings.put(Environment.PASS, "password");
 
-                settings.put(Environment.SHOW_SQL, "true");
+//                 settings.put(Environment.SHOW_SQL, "true");
 
                 settings.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, "thread");
 
-                configuration.setProperties(settings);
+//                 configuration.setProperties(settings);
 
                 configuration.addAnnotatedClass(User.class);
                 configuration.addAnnotatedClass(Group.class);

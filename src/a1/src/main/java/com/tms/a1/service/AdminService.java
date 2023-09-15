@@ -8,10 +8,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.tms.a1.dao.GroupDAO;
 import com.tms.a1.dao.UserDAO;
 import com.tms.a1.entity.Group;
 import com.tms.a1.entity.User;
-import com.tms.a1.repository.GroupRepo;
+import com.tms.a1.exception.EntityNotFoundException;
 
 @Service
 public class AdminService {
@@ -19,7 +20,7 @@ public class AdminService {
     @Autowired
     private UserDAO userRepo;
     @Autowired
-    private GroupRepo groupRepo;
+    private GroupDAO groupRepo;
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
@@ -27,21 +28,18 @@ public class AdminService {
         return userRepo.findAll();
     }
 
-    public List<Group> getAllGroups() {
-        return groupRepo.findAll();
-    }
+    // public List<Group> getAllGroups() {
+    // return groupRepo.findAll();
+    // }
 
     public User getUser(String username) {
         User user = userRepo.findByUsername(username);
-        return user;
-        // if (!resultList.isEmpty()) {
-        // User result = resultList.get(0); // Get the first result
 
-        // return result;
-        // }
-        // else {
-        // throw new EntityNotFoundException(username, User.class);
-        // }
+        if (user != null) {
+            return user;
+        } else {
+            throw new EntityNotFoundException(username, User.class);
+        }
     }
 
     public String newGroup(Group group) {
