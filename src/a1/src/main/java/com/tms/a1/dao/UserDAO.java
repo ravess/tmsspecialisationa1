@@ -1,24 +1,21 @@
 package com.tms.a1.dao;
 
-
-
+import java.util.List;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import java.util.List;
-import java.util.Optional;
-
 import org.springframework.stereotype.Component;
 
 import com.tms.a1.entity.User;
 import com.tms.a1.utils.HibernateUtil;
 
 import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 @Component
 public class UserDAO {
 
-  private HibernateUtil HibernateUtil;
+    private HibernateUtil HibernateUtil;
 
     public User findByUsername(String username) {
         Transaction transaction = null;
@@ -26,24 +23,18 @@ public class UserDAO {
             // start a transaction
             transaction = session.beginTransaction();
             String hql = "FROM User u WHERE u.username = :username ";
-            Query query = session.createQuery(hql, User.class)
-                .setParameter("username", username);
-                
-            List<User> resultList =  query.getResultList();
+            TypedQuery<User> query = session.createQuery(hql, User.class)
+                    .setParameter("username", username);
+
+            List<User> resultList = query.getResultList();
             if (!resultList.isEmpty()) {
                 User result = resultList.get(0); // Get the first result
                 transaction.commit();
                 return result;
-            }else{
+            } else {
                 transaction.commit();
                 return null;
             }
-
-            
-            
-
-            // transaction.commit();
-            // return result.get(0);
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
@@ -53,7 +44,6 @@ public class UserDAO {
         }
     }
 
-    
     public void getUserById(int id) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
@@ -62,7 +52,6 @@ public class UserDAO {
 
             // Obtain an entity using byId() method
             User User = session.byId(User.class).getReference(id);
-         
 
             // commit transaction
             transaction.commit();
@@ -101,12 +90,11 @@ public class UserDAO {
             transaction = session.beginTransaction();
             String hql = "SELECT u.username FROM User u WHERE u.username = :username AND u.groups LIKE :userGroupPattern";
             Query query = session.createQuery(hql, String.class)
-                .setParameter("username", username)
-                .setParameter("userGroupPattern", "%." + usergroup + ".%");
-            List result =  query.getResultList();
+                    .setParameter("username", username)
+                    .setParameter("userGroupPattern", "%." + usergroup + ".%");
+            List result = query.getResultList();
             // commit transaction
-            
-      
+
             transaction.commit();
             return result;
         } catch (Exception e) {
@@ -117,5 +105,49 @@ public class UserDAO {
             return null;
         }
     }
-}
 
+    public Boolean existByUsername(String username) {
+        Transaction transaction = null;
+        try (Session session = com.tms.a1.utils.HibernateUtil.getSessionFactory().openSession()) {
+            // start a transaction
+            transaction = session.beginTransaction();
+            String hql = "FROM User u WHERE u.username = :username ";
+            TypedQuery<User> query = session.createQuery(hql, User.class)
+                    .setParameter("username", username);
+
+            List<User> resultList = query.getResultList();
+            if (!resultList.isEmpty()) {
+                Boolean result = true; // Get the first result
+                transaction.commit();
+                return result;
+            } else {
+                transaction.commit();
+                return false;
+            }
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public void saveUser(User User) {
+        Transaction transaction = null;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            // start a transaction
+            transaction = session.beginTransaction();
+            // save the Group object
+            session.persist(User);
+            // commit transaction
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+        }
+    }
+
+}
