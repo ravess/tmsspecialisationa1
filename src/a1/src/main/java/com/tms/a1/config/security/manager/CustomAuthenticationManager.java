@@ -11,6 +11,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import com.tms.a1.config.security.SecurityConstants;
 import com.tms.a1.entity.User;
 import com.tms.a1.service.AdminService;
 
@@ -22,6 +23,7 @@ public class CustomAuthenticationManager implements AuthenticationManager {
     private AdminService adminService;
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+    
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {

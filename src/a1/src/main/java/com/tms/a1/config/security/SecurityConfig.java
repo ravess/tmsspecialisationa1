@@ -3,6 +3,7 @@ package com.tms.a1.config.security;
 
 import java.util.Arrays;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -28,13 +29,15 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @EnableWebSecurity
 public class SecurityConfig {
+  @Autowired
+  private SecurityConstants securityConstants;
 
   private CustomAuthenticationManager customAuthenticationManager;
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     
-    AuthenticationFilter authenticationFilter = new AuthenticationFilter(customAuthenticationManager);
+    AuthenticationFilter authenticationFilter = new AuthenticationFilter(securityConstants, customAuthenticationManager);
     authenticationFilter.setFilterProcessesUrl("/login");
     CookieClearingLogoutHandler cookies = new CookieClearingLogoutHandler("our-custom-cookie");
 
@@ -52,7 +55,7 @@ public class SecurityConfig {
             .logoutUrl("/logout") // Configure the logout URL
             .clearAuthentication(true) // Clear the user's authentication
             .invalidateHttpSession(true) // Invalidate the HTTP session
-            .deleteCookies(SecurityConstants.COOKIE_NAME) // List the names of cookies to be deleted upon logout
+            .deleteCookies(securityConstants.getCookieName()) // List the names of cookies to be deleted upon logout
             .addLogoutHandler(cookies) // Additional logout handler if needed
             .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler()) // Configure the logout success handler
         );
