@@ -21,13 +21,19 @@ import com.tms.a1.entity.User;
 import com.tms.a1.repository.UserRepo;
 import com.tms.a1.service.AdminService;
 
+
+import jakarta.annotation.Nonnull;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
 
 // @CrossOrigin(origins = "http://localhost:3000", maxAge = 1600, allowedHeaders = "*")
+@AllArgsConstructor
+@NoArgsConstructor
 @RestController
 public class AdminController {
 
-    @Autowired
     private UserRepo userRepo;
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;

@@ -38,26 +38,27 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
             }
         }
 
-    if (token == null ) {
-        filterChain.doFilter(request, response);
-        return;
-    }
+        if (token == null ) {
+            throw new ForbiddenException("You are not logged in!");
+            // filterChain.doFilter(request, response);
+            // return;
+        }
 
     
-    DecodedJWT  decodedJWT = JWT.require(Algorithm.HMAC512(SecurityConstants.SECRET_KEY))
-        .build()
-        .verify(token);
-    
-    String user = decodedJWT.getSubject();
-    String ipAddress = decodedJWT.getClaim("ipAddress").asString();
-    String browser = decodedJWT.getClaim("userAgent").asString();
-    
-    String clientIpAddress = getClientIpAddress(request);
-    String userAgent = request.getHeader("User-Agent");
+        DecodedJWT  decodedJWT = JWT.require(Algorithm.HMAC512(SecurityConstants.SECRET_KEY))
+            .build()
+            .verify(token);
+        
+        String user = decodedJWT.getSubject();
+        String ipAddress = decodedJWT.getClaim("ipAddress").asString();
+        String browser = decodedJWT.getClaim("userAgent").asString();
+        
+        String clientIpAddress = getClientIpAddress(request);
+        String userAgent = request.getHeader("User-Agent");
 
-    if(!ipAddress.equals(clientIpAddress) || !userAgent.equals(browser)){
-        throw new ForbiddenException("Please Log in again");
-    }
+        if(!ipAddress.equals(clientIpAddress) || !userAgent.equals(browser)){
+            throw new ForbiddenException("Please Log in again");
+        }
 
         System.out.println("WHOAMI");
         System.out.println("USER: " + user);
@@ -71,17 +72,19 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         filterChain.doFilter(request, response);
     }
-private String getClientIpAddress(HttpServletRequest request) {
-    String ipAddress = request.getHeader("X-Forwarded-For");
-    if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
-        ipAddress = request.getHeader("Proxy-Client-IP");
+
+    
+    private String getClientIpAddress(HttpServletRequest request) {
+        String ipAddress = request.getHeader("X-Forwarded-For");
+        if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
+            ipAddress = request.getHeader("Proxy-Client-IP");
+        }
+        if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
+            ipAddress = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
+            ipAddress = request.getRemoteAddr();
+        }
+        return ipAddress;
     }
-    if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
-        ipAddress = request.getHeader("WL-Proxy-Client-IP");
-    }
-    if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
-        ipAddress = request.getRemoteAddr();
-    }
-    return ipAddress;
-}
 }
