@@ -1,12 +1,8 @@
 package com.tms.a1.service;
 
-
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,8 +13,6 @@ import com.tms.a1.dao.UserDAO;
 import com.tms.a1.entity.Group;
 import com.tms.a1.entity.User;
 import com.tms.a1.exception.EntityNotFoundException;
-import com.tms.a1.repository.GroupRepo;
-
 
 @Service
 public class AdminService {
@@ -35,21 +29,20 @@ public class AdminService {
     }
 
     // public List<Group> getAllGroups() {
-    //     return groupRepo.findAll();
+    // return groupRepo.findAll();
     // }
 
     public User getUser(String username) {
         User user = userRepo.findByUsername(username);
-      
-        if (user!=null) {
+
+        if (user != null) {
             return user;
-        }
-            else {
+        } else {
             throw new EntityNotFoundException(username, User.class);
         }
     }
 
-    public String newGroup(Group group) {
+    public String createGroup(Group group){
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (authentication != null && authentication.isAuthenticated()) {
@@ -75,84 +68,25 @@ public class AdminService {
         }
     }
 
-    // public String newUser(User user) {
-    //     try {
-    //         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    //         if (authentication != null && authentication.isAuthenticated()) {
-    //             String username = authentication.getName();
-    //             String permitgroup = "admin";
-
-    //             if (userRepo.checkgroup(username, permitgroup) != null) {
-    //                 // User is in the group, continue with group creation logic
-    //                 if (userRepo.existsByUsername(user.getUsername())) {
-    //                     return "Duplicate";
-    //                 }
-    //                 String plainTextPassword = user.getPassword();
-    //                 String hashedPassword = passwordEncoder.encode(plainTextPassword);
-    //                 user.setPassword(hashedPassword);
-    //                 userRepo.save(user);
-    //                 return "Success";
-    //             } else {
-    //                 return "You are unauthorized for this action";
-    //             }
-    //         } else {
-    //             return "You are not an authenticated user";
-    //         }
-    //     } catch (Exception e) {
-    //         System.out.println(e);
-    //         return "An error occurred.";
-    //     }
-    // }
-
-    public String updateUser(String username, User user) {
+    public String newUser(User user) {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (authentication != null && authentication.isAuthenticated()) {
-                String tokenName = authentication.getName();
+                String username = authentication.getName();
                 String permitgroup = "admin";
 
-                if (userRepo.checkgroup(tokenName, permitgroup) != null) {
-                    // Retrieve the user by username.
-                    Optional<User> optionalUser = userRepo.findByUsername(username);
+                System.out.println(user);
 
-                    if (optionalUser.isPresent()) {
-                        User existingUser = optionalUser.get();
-                        if (user.getPassword() == null || user.getPassword() == "") {
-                            user.setPassword(existingUser.getPassword());
-                        }
-
-    //                     // Update the user's information.
-    //                     String plainTextPassword = user.getPassword();
-    //                     String email = user.getEmail();
-    //                     String groupToUpdate = user.getGroups();
-    //                     int isActive = user.getIsActive();
-
-                        // Hash the new password using BCrypt if provided and not empty.
-                        if (plainTextPassword != null && !plainTextPassword.isEmpty()) {
-                            if (!isPasswordValid(plainTextPassword)) {
-                                return "Invalid password";
-                            }
-                            String hashedPassword = passwordEncoder.encode(plainTextPassword);
-                            existingUser.setPassword(hashedPassword);
-                        }
-
-                        if (email != null && !email.isEmpty()) {
-                            if (!isValidEmail(email)) {
-                                return "Invalid email";
-                            }
-                            existingUser.setEmail(email);
-                        }
-
-                        existingUser.setGroups(groupToUpdate);
-                        existingUser.setIsActive(isActive);
-
-                        // Save the updated user back to the repository.
-                        userRepo.save(existingUser);
-
-                        return "Success";
-                    } else {
-                        return "User not found";
+                if (userRepo.checkgroup(username, permitgroup) != null) {
+                    // User is in the group, continue with group creation logic
+                    if (userRepo.existByUsername(user.getUsername())) {
+                        return "Duplicate";
                     }
+                    String plainTextPassword = user.getPassword();
+                    String hashedPassword = passwordEncoder.encode(plainTextPassword);
+                    user.setPassword(hashedPassword);
+                    userRepo.saveUser(user);
+                    return "Success";
                 } else {
                     return "You are unauthorized for this action";
                 }
@@ -160,14 +94,76 @@ public class AdminService {
                 return "You are not an authenticated user";
             }
         } catch (Exception e) {
-            // Handle different types of exceptions and return meaningful error messages
-            if (e instanceof DataIntegrityViolationException) {
-                return "Data integrity violation error occurred.";
-            } else {
-                return "An error occurred.";
-            }
+            System.out.println(e);
+            return "An error occurred.";
         }
     }
+
+    // public String updateUser(String username, User user) {
+    // try {
+    // Authentication authentication =
+    // SecurityContextHolder.getContext().getAuthentication();
+    // if (authentication != null && authentication.isAuthenticated()) {
+    // String tokenName = authentication.getName();
+    // String permitgroup = "admin";
+
+    // if (userRepo.checkgroup(tokenName, permitgroup) != null) {
+    // // Retrieve the user by username.
+    // Optional<User> optionalUser = userRepo.findByUsername(username);
+
+    // if (optionalUser.isPresent()) {
+    // User existingUser = optionalUser.get();
+    // if (user.getPassword() == null || user.getPassword() == "") {
+    // user.setPassword(existingUser.getPassword());
+    // }
+
+    // // Update the user's information.
+    // String plainTextPassword = user.getPassword();
+    // String email = user.getEmail();
+    // String groupToUpdate = user.getGroups();
+    // int isActive = user.getIsActive();
+
+    // Hash the new password using BCrypt if provided and not empty.
+    // if (plainTextPassword != null && !plainTextPassword.isEmpty()) {
+    // if (!isPasswordValid(plainTextPassword)) {
+    // return "Invalid password";
+    // }
+    // String hashedPassword = passwordEncoder.encode(plainTextPassword);
+    // existingUser.setPassword(hashedPassword);
+    // }
+
+    // if (email != null && !email.isEmpty()) {
+    // if (!isValidEmail(email)) {
+    // return "Invalid email";
+    // }
+    // existingUser.setEmail(email);
+    // }
+
+    // existingUser.setGroups(groupToUpdate);
+    // existingUser.setIsActive(isActive);
+
+    // // Save the updated user back to the repository.
+    // userRepo.save(existingUser);
+
+    // return "Success";
+    // } else {
+    // return "User not found";
+    // }
+    // } else {
+    // return "You are unauthorized for this action";
+    // }
+    // } else {
+    // return "You are not an authenticated user";
+    // }
+    // } catch (Exception e) {
+    // // Handle different types of exceptions and return meaningful error messages
+    // if (e instanceof DataIntegrityViolationException) {
+    // return "Data integrity violation error occurred.";
+    // } else {
+    // return "An error occurred.";
+    // }
+    // }
+    // }
 
     // Custom validation logic for password
     private boolean isPasswordValid(String password) {
@@ -196,7 +192,8 @@ public class AdminService {
         return false;
     }
 
-    //custom validation for email check (if email input is not null/not empty string)
+    // custom validation for email check (if email input is not null/not empty
+    // string)
     private boolean isValidEmail(String email) {
         // Regular expression pattern for a valid email address
         String emailPattern = "^[A-Za-z0-9+_.-]+@(.+)$";
