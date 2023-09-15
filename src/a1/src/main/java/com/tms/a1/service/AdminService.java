@@ -46,7 +46,7 @@ public class AdminService {
         }
     }
 
-    public String newGroup(Group group){
+    public String createGroup(Group group){
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (authentication != null && authentication.isAuthenticated()) {

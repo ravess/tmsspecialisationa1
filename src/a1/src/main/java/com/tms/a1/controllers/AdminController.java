@@ -38,6 +38,7 @@ public class AdminController {
     @Autowired
     private AdminService adminService;
 
+    //get all users
     @GetMapping("/users")
     public ResponseEntity<?> getAllUsers() {
         List<User> allusers = adminService.getAllUsers();
@@ -51,6 +52,7 @@ public class AdminController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    //get all groups
     @GetMapping("/getGroups")
     public ResponseEntity<?> getAllGroups() {
         List<Group> allgroups = adminService.getAllGroups();
@@ -64,15 +66,17 @@ public class AdminController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    //get user by username
     @GetMapping("/users/{username}")
     public ResponseEntity<Object> getUser(@PathVariable String username) {
         User user = adminService.getUser(username);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
+    //create new group
     @PostMapping("/createGroup")
-    public ResponseEntity<?> addNewGroup(@RequestBody Group requestBodyGroup) {
-        String res = adminService.newGroup(requestBodyGroup);
+    public ResponseEntity<?> createGroup(@RequestBody Group requestBodyGroup) {
+        String res = adminService.createGroup(requestBodyGroup);
         if (res.equals("Success")) {
             resMsg = "New Group " + requestBodyGroup.getGroupName() + " Created.";
             response.put("msg", resMsg);
@@ -96,6 +100,7 @@ public class AdminController {
         }
     }
 
+    //create new user
     @PostMapping("/newuser")
     public ResponseEntity<?> addNewUser(@Valid @RequestBody User requestBody, BindingResult bindingResult) {
         Map<String, Object> response = new HashMap<>();
@@ -134,6 +139,7 @@ public class AdminController {
         }
     }
 
+    //update user
     @PutMapping("/users/{username}")
     public ResponseEntity<?> updateUserByUsername(@Valid @RequestBody User requestBody, BindingResult bindingResult) {
         Map<String, Object> response = new HashMap<>();
@@ -167,14 +173,5 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
     }
-
-    @GetMapping("/getUser")
-    public ResponseEntity<?> getUser(){
-        Boolean resMsg = true;
-        Map<String, Object> response = new HashMap<>();
-        response.put("hasCookie", resMsg);
-        // The user is not in the group, return unauthorized
-        return ResponseEntity.status(HttpStatus.OK).body(response);
-      }
 
 }
