@@ -28,9 +28,9 @@ public class AdminService {
         return userRepo.findAll();
     }
 
-    // public List<Group> getAllGroups() {
-    // return groupRepo.findAll();
-    // }
+    public List<Group> getAllGroups() {
+    return groupRepo.findAll();
+    }
 
     public User getUser(String username) {
         User user = userRepo.findByUsername(username);
