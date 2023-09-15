@@ -20,7 +20,7 @@ public class HibernateUtil {
                 configuration.addAnnotatedClass(User.class);
                 configuration.addAnnotatedClass(Group.class);
                 ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
-                    .applySettings(configuration.getProperties()).build();
+                        .applySettings(configuration.getProperties()).build();
 
                 sessionFactory = configuration.buildSessionFactory(serviceRegistry);
             } catch (Exception e) {
