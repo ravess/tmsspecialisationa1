@@ -82,7 +82,7 @@ public class AdminController {
         if (res.equals("Success")) {
             resMsg = "New Group " + requestBodyGroup.getGroupName() + " Created.";
             response.put("msg", resMsg);
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } else if (res.equals("Duplicate")) {
             resMsg = "Duplicate Group Name.";
             response.put("msg", resMsg);

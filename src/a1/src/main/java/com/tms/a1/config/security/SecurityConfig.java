@@ -11,6 +11,8 @@ import static org.springframework.security.config.Customizer.withDefaults; // Im
 import org.springframework.security.config.http.SessionCreationPolicy;
 // import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.logout.CookieClearingLogoutHandler;
+import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -33,8 +35,9 @@ public class SecurityConfig {
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     
     AuthenticationFilter authenticationFilter = new AuthenticationFilter(customAuthenticationManager);
-    authenticationFilter.setFilterProcessesUrl("/login2");
-    
+    authenticationFilter.setFilterProcessesUrl("/login");
+    CookieClearingLogoutHandler cookies = new CookieClearingLogoutHandler("our-custom-cookie");
+
     http
     .cors(withDefaults())
     .csrf(csrf -> csrf.disable())
@@ -44,7 +47,16 @@ public class SecurityConfig {
     .addFilterBefore(new ExceptionHandlerFilter(), AuthenticationFilter.class)
     .addFilter(authenticationFilter)
     .addFilterAfter(new JWTAuthorizationFilter(), AuthenticationFilter.class)
-    .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+    .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+    .logout(logout -> logout
+            .logoutUrl("/logout") // Configure the logout URL
+            .clearAuthentication(true) // Clear the user's authentication
+            .invalidateHttpSession(true) // Invalidate the HTTP session
+            .deleteCookies(SecurityConstants.COOKIE_NAME) // List the names of cookies to be deleted upon logout
+            .addLogoutHandler(cookies) // Additional logout handler if needed
+            .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler()) // Configure the logout success handler
+        );
+    
     return http.build();
   }
 
