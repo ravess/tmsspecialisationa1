@@ -43,7 +43,7 @@ public class AdminController {
     @GetMapping("/users")
     public ResponseEntity<?> getAllUsers() {
         List<User> allusers = adminService.getAllUsers();
-        System.out.println(allusers);
+        if(allusers!=null){
         if (allusers.isEmpty()) {
             resMsg = "No Users Found.";
             response.put("msg", resMsg);
@@ -51,28 +51,46 @@ public class AdminController {
         }
         response.put("data", allusers);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }else{
+            resMsg = "You are unauthorized for this action";
+            response.put("msg", resMsg);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+
     }
 
     //get all groups
-    // @GetMapping("/getGroups")
-    // public ResponseEntity<?> getAllGroups() {
-    //     List<Group> allgroups = adminService.getAllGroups();
-    //     System.out.println(allgroups);
-    //     if (allgroups.isEmpty()) {
-    //         resMsg = "No Groups Found.";
-    //         response.put("msg", resMsg);
-    //         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-    //     }
-    //     response.put("data", allgroups);
-    //     return new ResponseEntity<>(response, HttpStatus.OK);
-    // }
+    @GetMapping("/getGroups")
+    public ResponseEntity<?> getAllGroups() {
+        List<Group> allgroups = adminService.getAllGroups();
+        if(allgroups!=null){
+        if (allgroups.isEmpty()) {
+            resMsg = "No Groups Found.";
+            response.put("msg", resMsg);
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+        response.put("data", allgroups);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+        else{
+            resMsg = "You are unauthorized for this action";
+            response.put("msg", resMsg);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+    }
 
     //get user by username
     @GetMapping("/users/{username}")
     public ResponseEntity<Object> getUser(@PathVariable String username) {
 
         User user = adminService.getUser(username);
+        if(user!=null){
         return new ResponseEntity<>(user, HttpStatus.OK);
+    }else{
+            resMsg = "You are unauthorized for this action";
+            response.put("msg", resMsg);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
     }
 
     //create new group
@@ -194,13 +212,6 @@ public class AdminController {
     // }
     // }
 
-    @GetMapping("/getUser")
-    public ResponseEntity<?> getUser() {
-        Boolean resMsg = true;
-        Map<String, Object> response = new HashMap<>();
-        response.put("hasCookie", resMsg);
-        // The user is not in the group, return unauthorized
-        return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
+   
 
 }
