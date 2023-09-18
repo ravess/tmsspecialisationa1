@@ -31,10 +31,6 @@ import lombok.NoArgsConstructor;
 @RestController
 public class AdminController {
 
-    private UserRepo userRepo;
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
-
     @Autowired
     private AdminService adminService;
 

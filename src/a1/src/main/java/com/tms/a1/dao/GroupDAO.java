@@ -7,7 +7,6 @@ import org.hibernate.Transaction;
 import org.springframework.stereotype.Component;
 
 import com.tms.a1.entity.Group;
-import com.tms.a1.entity.User;
 import com.tms.a1.utils.HibernateUtil;
 
 import jakarta.persistence.Query;
