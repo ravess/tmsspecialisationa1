@@ -25,67 +25,21 @@ public class AdminService {
     private BCryptPasswordEncoder passwordEncoder;
 
     public List<User> getAllUsers() {
-        try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (authentication != null && authentication.isAuthenticated()) {
-                String username = authentication.getName();
-                String permitgroup = "admin";
-                List result = userRepo.checkgroup(username, permitgroup);
-                if (result != null && !result.isEmpty()) {
-    return userRepo.findAll();
-    }else {
-                    return null;
-                }
-            } else {
-                return null;
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
+        return userRepo.findAll();
     }
 
     public List<Group> getAllGroups() {
-        try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (authentication != null && authentication.isAuthenticated()) {
-                String username = authentication.getName();
-                String permitgroup = "admin";
-                List result = userRepo.checkgroup(username, permitgroup);
-                if (result != null && !result.isEmpty()) {
-    return groupRepo.findAll();
-    }else {
-                    return null;
-                }
-            } else {
-                return null;
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-            return null;
-        }
+        return groupRepo.findAll();
     }
 
     public User getUser(String Username) {
         try {
-            // Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            // if (authentication != null && authentication.isAuthenticated()) {
-            //     String username = authentication.getName();
-            //     String permitgroup = "admin";
-            //     List result = userRepo.checkgroup(username, permitgroup);
-            //     if (result != null && !result.isEmpty()) {
-                    User user = userRepo.findByUsername(Username);
-                    if (user != null) {
-                        return user;
-                    } else {
-                        throw new EntityNotFoundException(Username, User.class);
-                    }
-            //     }else {
-            //         return null;
-            //     }
-            // } else {
-            //     return null;
-            // }
+            User user = userRepo.findByUsername(Username);
+            if (user != null) {
+                return user;
+            } else {
+                throw new EntityNotFoundException(Username, User.class);
+            }
         } catch (Exception e) {
             System.out.println(e);
             return null;
@@ -93,59 +47,22 @@ public class AdminService {
     }
 
     public String createGroup(Group group){
-        try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (authentication != null && authentication.isAuthenticated()) {
-                String username = authentication.getName();
-                String permitgroup = "admin";
-                List result = userRepo.checkgroup(username, permitgroup);
-                if (result != null && !result.isEmpty()) {
-                    // User is in the group, continue with group creation logic
-                    if (groupRepo.existsByGroupName(group.getGroupName())) {
-                        return "Duplicate";
-                    }
-                    groupRepo.save(group);
-                    return "Success";
-                } else {
-                    return "You are unauthorized for this action";
-                }
-            } else {
-                return "You are not an authenticated user";
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-            return "An error occurred.";
+        if (groupRepo.existsByGroupName(group.getGroupName())) {
+            return "Duplicate";
         }
+        groupRepo.save(group);
+        return "Success";
     }
 
     public String newUser(User user) {
-        try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (authentication != null && authentication.isAuthenticated()) {
-                String username = authentication.getName();
-                String permitgroup = "admin";
-
-                List result = userRepo.checkgroup(username, permitgroup);
-                if (result != null && !result.isEmpty()) {
-                    // User is in the group, continue with group creation logic
-                    if (userRepo.existByUsername(user.getUsername())) {
-                        return "Duplicate";
-                    }
-                    String plainTextPassword = user.getPassword();
-                    String hashedPassword = passwordEncoder.encode(plainTextPassword);
-                    user.setPassword(hashedPassword);
-                    userRepo.saveUser(user);
-                    return "Success";
-                } else {
-                    return "You are unauthorized for this action";
-                }
-            } else {
-                return "You are not an authenticated user";
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-            return "An error occurred.";
+        if (userRepo.existByUsername(user.getUsername())) {
+            return "Duplicate";
         }
+        String plainTextPassword = user.getPassword();
+        String hashedPassword = passwordEncoder.encode(plainTextPassword);
+        user.setPassword(hashedPassword);
+        userRepo.saveUser(user);
+        return "Success";
     }
 
     public List checkGroup (){
