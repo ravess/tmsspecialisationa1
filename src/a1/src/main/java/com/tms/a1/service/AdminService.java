@@ -44,8 +44,6 @@ public class AdminService {
             return null;
         }
     }
-        
-    
 
     public List<Group> getAllGroups() {
         try {
@@ -70,32 +68,29 @@ public class AdminService {
 
     public User getUser(String Username) {
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (authentication != null && authentication.isAuthenticated()) {
-                String username = authentication.getName();
-                String permitgroup = "admin";
-                List result = userRepo.checkgroup(username, permitgroup);
-                if (result != null && !result.isEmpty()) {
-    User user = userRepo.findByUsername(Username);
-
-        if (user != null) {
-            return user;
-        } else {
-            throw new EntityNotFoundException(username, User.class);
-        }
-    }else {
-                    return null;
-                }
-            } else {
-                return null;
-            }
+            // Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            // if (authentication != null && authentication.isAuthenticated()) {
+            //     String username = authentication.getName();
+            //     String permitgroup = "admin";
+            //     List result = userRepo.checkgroup(username, permitgroup);
+            //     if (result != null && !result.isEmpty()) {
+                    User user = userRepo.findByUsername(Username);
+                    if (user != null) {
+                        return user;
+                    } else {
+                        throw new EntityNotFoundException(Username, User.class);
+                    }
+            //     }else {
+            //         return null;
+            //     }
+            // } else {
+            //     return null;
+            // }
         } catch (Exception e) {
             System.out.println(e);
             return null;
         }
     }
-        
-    
 
     public String createGroup(Group group){
         try {
@@ -103,7 +98,7 @@ public class AdminService {
             if (authentication != null && authentication.isAuthenticated()) {
                 String username = authentication.getName();
                 String permitgroup = "admin";
-List result = userRepo.checkgroup(username, permitgroup);
+                List result = userRepo.checkgroup(username, permitgroup);
                 if (result != null && !result.isEmpty()) {
                     // User is in the group, continue with group creation logic
                     if (groupRepo.existsByGroupName(group.getGroupName())) {
@@ -151,6 +146,16 @@ List result = userRepo.checkgroup(username, permitgroup);
             System.out.println(e);
             return "An error occurred.";
         }
+    }
+
+    public List checkGroup (){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication != null && authentication.isAuthenticated()){
+            String username = authentication.getName();
+            String permitgroup = "admin";
+            return userRepo.checkgroup(username, permitgroup);
+        }
+        return null;
     }
 
     // public String updateUser(String username, User user) {

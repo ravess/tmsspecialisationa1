@@ -86,10 +86,17 @@ public class AdminController {
         String resMsg;
         Map<String, Object> response = new HashMap<>();
 
-        User user = adminService.getUser(username);
-        if (user != null) {
-            return new ResponseEntity<>(user, HttpStatus.OK);
-        } else {
+        List permitted = adminService.checkGroup();
+        if(permitted != null){
+            User user = adminService.getUser(username);
+            if (user != null) {
+                return new ResponseEntity<>(user, HttpStatus.OK);
+            } else {
+                resMsg = "User does not exist";
+                response.put("msg", resMsg);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            }
+        }else{
             resMsg = "You are unauthorized for this action";
             response.put("msg", resMsg);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
