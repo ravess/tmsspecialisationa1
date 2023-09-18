@@ -87,7 +87,7 @@ public class AdminController {
         Map<String, Object> response = new HashMap<>();
 
         List permitted = adminService.checkGroup();
-        if(permitted != null){
+        if(permitted != null && !permitted.isEmpty()){
             User user = adminService.getUser(username);
             if (user != null) {
                 return new ResponseEntity<>(user, HttpStatus.OK);
