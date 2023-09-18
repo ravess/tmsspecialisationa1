@@ -140,7 +140,7 @@ public class AdminController {
     }
 
     // create new user
-    @PostMapping("/newuser")
+    @PostMapping("/user/new")
     public ResponseEntity<?> addNewUser(@Valid @RequestBody User requestBody, BindingResult bindingResult) {
         Map<String, Object> response = new HashMap<>();
         String resMsg;
