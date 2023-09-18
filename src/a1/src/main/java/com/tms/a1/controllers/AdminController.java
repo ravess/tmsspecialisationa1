@@ -43,21 +43,23 @@ public class AdminController {
     public ResponseEntity<?> getAllUsers() {
         String resMsg;
         Map<String, Object> response = new HashMap<>();
-        List<User> allusers = adminService.getAllUsers();
-        if (allusers != null) {
-            if (allusers.isEmpty()) {
+
+        List permitted = adminService.checkGroup();
+        if(permitted != null && !permitted.isEmpty()){
+            List<User> allusers = adminService.getAllUsers();
+            if (allusers != null && !allusers.isEmpty()) {
+                response.put("data", allusers);
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            }else{
                 resMsg = "No Users Found.";
                 response.put("msg", resMsg);
                 return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
             }
-            response.put("data", allusers);
-            return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
             resMsg = "You are unauthorized for this action";
             response.put("msg", resMsg);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
-
     }
 
     // get all groups
@@ -65,15 +67,18 @@ public class AdminController {
     public ResponseEntity<?> getAllGroups() {
         String resMsg;
         Map<String, Object> response = new HashMap<>();
-        List<Group> allgroups = adminService.getAllGroups();
-        if (allgroups != null) {
-            if (allgroups.isEmpty()) {
+
+        List permitted = adminService.checkGroup();
+        if(permitted != null && !permitted.isEmpty()){
+            List<Group> allgroups = adminService.getAllGroups();
+            if (allgroups != null && !allgroups.isEmpty()) {
+                response.put("data", allgroups);
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            }else{
                 resMsg = "No Groups Found.";
                 response.put("msg", resMsg);
                 return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
             }
-            response.put("data", allgroups);
-            return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
             resMsg = "You are unauthorized for this action";
             response.put("msg", resMsg);
@@ -109,28 +114,29 @@ public class AdminController {
     public ResponseEntity<?> createGroup(@RequestBody Group requestBodyGroup) {
         String resMsg;
         Map<String, Object> response = new HashMap<>();
-        String res = adminService.createGroup(requestBodyGroup);
-        if (res.equals("Success")) {
-            resMsg = "New Group " + requestBodyGroup.getGroupName() + " Created.";
-            response.put("msg", resMsg);
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } else if (res.equals("Duplicate")) {
-            resMsg = "Duplicate Group Name.";
-            response.put("msg", resMsg);
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
-        } else if (res.equals("You are unauthorized for this action")) {
+
+        List permitted = adminService.checkGroup();
+        if(permitted != null && !permitted.isEmpty()){
+            String res = adminService.createGroup(requestBodyGroup);
+            if (res.equals("Success")) {
+                resMsg = "New Group " + requestBodyGroup.getGroupName() + " Created.";
+                response.put("msg", resMsg);
+                return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            } else if (res.equals("Duplicate")) {
+                resMsg = "Duplicate Group Name.";
+                response.put("msg", resMsg);
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+            } else {
+                resMsg = "An error occurred.";
+                response.put("msg", resMsg);
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            }
+        }else{
             resMsg = "You are unauthorized for this action";
             response.put("msg", resMsg);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        } else if (res.equals("You are not an authenticated user")) {
-            resMsg = "You are not an authenticated user";
-            response.put("msg", resMsg);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        } else {
-            resMsg = "An error occurred.";
-            response.put("msg", resMsg);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
+        
     }
 
     // create new user
@@ -148,26 +154,25 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMap);
         }
 
-        String res = adminService.newUser(requestBody);
+        List permitted = adminService.checkGroup();
+        if(permitted != null && !permitted.isEmpty()){
+            String res = adminService.newUser(requestBody);
 
-        if (res.equals("Success")) {
-            resMsg = "User Successfully Created.";
-            response.put("msg", resMsg);
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
-        } else if (res.equals("Duplicate")) {
-            resMsg = "Username Already Exists.";
-            response.put("msg", resMsg);
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
-        } else if (res.equals("You are unauthorized for this action")) {
+            if (res.equals("Success")) {
+                resMsg = "User Successfully Created.";
+                response.put("msg", resMsg);
+                return new ResponseEntity<>(response, HttpStatus.CREATED);
+            } else if (res.equals("Duplicate")) {
+                resMsg = "Username Already Exists.";
+                response.put("msg", resMsg);
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+            } else {
+                resMsg = "An error occured when creating user";
+                response.put("msg", resMsg);
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            }
+        }else{
             resMsg = "You are unauthorized for this action.";
-            response.put("msg", resMsg);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        } else if (res.equals("You are not an authenticated user")) {
-            resMsg = "You are not an authenticated user.";
-            response.put("msg", resMsg);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        } else {
-            resMsg = "An error occured when creating user";
             response.put("msg", resMsg);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
