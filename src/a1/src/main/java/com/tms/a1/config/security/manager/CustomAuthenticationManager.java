@@ -13,11 +13,14 @@ import org.springframework.stereotype.Component;
 
 import com.tms.a1.entity.User;
 import com.tms.a1.service.AdminService;
+import com.tms.a1.service.UserService;
 
 
 
 @Component
 public class CustomAuthenticationManager implements AuthenticationManager {
+    @Autowired
+    private UserService userService;
     @Autowired
     private AdminService adminService;
     @Autowired
@@ -25,7 +28,7 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        User user = adminService.getUser(authentication.getName());
+        User user = userService.login(authentication.getName());
         if (!passwordEncoder.matches(authentication.getCredentials().toString(), user.getPassword())) {
             throw new BadCredentialsException("Invalid Username/Password");
         }
