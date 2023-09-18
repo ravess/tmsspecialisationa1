@@ -44,9 +44,9 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
         }
 
         if (token == null ) {
-            throw new ForbiddenException("You are not logged in!");
-            // filterChain.doFilter(request, response);
-            // return;
+            // throw new ForbiddenException("You are not logged in!");
+            filterChain.doFilter(request, response);
+            return;
         }
 
     
@@ -56,7 +56,8 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
         
         String user = decodedJWT.getSubject();
         String ipAddress = decodedJWT.getClaim("ipAddress").asString();
-        String browser = decodedJWT.getClaim("userAgent").asString();
+        String browser = decodedJWT.getClaim("userAgent").asString(); 
+        System.out.println(browser + "Testing browser");
         
         String clientIpAddress = getClientIpAddress(request);
         String userAgent = request.getHeader("User-Agent");

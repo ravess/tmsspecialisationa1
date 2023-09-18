@@ -7,7 +7,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tms.a1.entity.Group;
 import com.tms.a1.entity.User;
-import com.tms.a1.repository.UserRepo;
 import com.tms.a1.service.AdminService;
 
 import jakarta.validation.Valid;
@@ -30,10 +28,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @RestController
 public class AdminController {
-
-    private UserRepo userRepo;
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
     private AdminService adminService;
@@ -140,7 +134,7 @@ public class AdminController {
     }
 
     // create new user
-    @PostMapping("/newuser")
+    @PostMapping("/user/new")
     public ResponseEntity<?> addNewUser(@Valid @RequestBody User requestBody, BindingResult bindingResult) {
         Map<String, Object> response = new HashMap<>();
         String resMsg;
@@ -178,17 +172,12 @@ public class AdminController {
         }
     }
 
+    //admin update user
     @PutMapping("/users/{username}")
     public ResponseEntity<?> updateUserByUsername(@PathVariable String username,
     @RequestBody User requestBody,
     BindingResult bindingResult) {
     Map<String, Object> response = new HashMap<>();
-
-     List permitted = adminService.checkGroup();
-        if(permitted != null && !permitted.isEmpty()){
-
-            
-        }
     String resMsg;
 
         if (bindingResult.hasErrors()) {
@@ -199,43 +188,34 @@ public class AdminController {
             });
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMap);
         }
-
-        String res = adminService.updateUser(username, requestBody);
-        if (res.equals("Success")) {
-            resMsg = "User Successfully Updated.";
-            response.put("msg", resMsg);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } else if (res.equals("You are unauthorized for this action")) {
-            resMsg = "You are unauthorized for this action.";
-            response.put("msg", resMsg);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        } else if (res.equals("You are not an authenticated user")) {
-            resMsg = "You are not an authenticated user.";
-            response.put("msg", resMsg);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        } else {
-            if (res.equals("Invalid email")) {
+        
+        List permitted = adminService.checkGroup();
+        if(permitted != null && !permitted.isEmpty()){
+            String res = adminService.updateUser(username, requestBody);
+            if (res.equals("Success")) {
+                resMsg = "User Successfully Updated.";
+                response.put("msg", resMsg);
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            } else if (res.equals("Invalid email")) {
                 System.out.println(res);
                 resMsg = "Invalid email";
                 response.put("msg", resMsg);
-                System.out.println(resMsg);
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-            }
-            if (res.equals("Invalid password")) {
+            }else if (res.equals("Invalid password")) {
                 resMsg = "Invalid password";
+                response.put("msg", resMsg);
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            } else {
+                resMsg = "An error occurred when updating user.";
                 response.put("msg", resMsg);
                 System.out.println(resMsg);
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-            } else {
-                System.out.println(res);
-               
-                resMsg = "An error occurred when updating user.";
             }
+        }else{
+            resMsg = "You are unauthorized for this action.";
             response.put("msg", resMsg);
-            System.out.println(resMsg);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
-        
     }
 
 }

@@ -2,6 +2,9 @@ package com.tms.a1.config.security.filter;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -75,10 +78,21 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         
         // Add the cookie to the response
         response.addCookie(cookie);
+        // Create a JSON response object
+        Map<String, String> jsonResponse = new HashMap<>();
+        jsonResponse.put("status", String.valueOf(HttpServletResponse.SC_OK));
+        jsonResponse.put("msg", "You are logged In!");
+        
+        // Set the response content type to JSON
+        response.setContentType("application/json");
+        
+        // Set the HTTP status code to 200 (OK)
         response.setStatus(HttpServletResponse.SC_OK);
-        response.getWriter().write("You are logged In!");
-        response.getWriter().flush();
-    }
+        
+        // Write the JSON response to the response output stream
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.writeValue(response.getWriter(), jsonResponse);
+        }
 
     private String getClientIpAddress(HttpServletRequest request) {
         String ipAddress = request.getHeader("X-Forwarded-For");

@@ -11,15 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.tms.a1.service.AuthService;
 
 import lombok.AllArgsConstructor;
-
 @AllArgsConstructor
 @RestController
 public class AuthController {
 
   private AuthService authService;
-
-
-
 
   @PostMapping("/checkGroup")
   public ResponseEntity<Map<String,Object>> CheckGroup (@RequestBody Map<String, String> requestBody ) {
