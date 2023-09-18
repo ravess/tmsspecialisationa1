@@ -5,8 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import com.tms.a1.exception.ErrorResponse;
 import com.tms.a1.exception.EntityNotFoundException;
+import com.tms.a1.exception.ErrorResponse;
 
 @ControllerAdvice // This is a class level annotation that allows you to define global exception handlers.
 public class ApplicationExceptionHandler {

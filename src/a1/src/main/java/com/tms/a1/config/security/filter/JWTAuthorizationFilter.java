@@ -15,7 +15,6 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.tms.a1.config.security.SecurityConstants;
 import com.tms.a1.exception.ForbiddenException;
 
-
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;

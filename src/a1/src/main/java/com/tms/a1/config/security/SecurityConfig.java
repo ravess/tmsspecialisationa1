@@ -1,6 +1,8 @@
 package com.tms.a1.config.security;
 
 
+import static org.springframework.security.config.Customizer.withDefaults; // Import the withDefaults() method
+
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +10,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import static org.springframework.security.config.Customizer.withDefaults; // Import the withDefaults() method
 import org.springframework.security.config.http.SessionCreationPolicy;
 // import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;

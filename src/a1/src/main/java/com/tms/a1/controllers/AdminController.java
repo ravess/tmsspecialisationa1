@@ -183,6 +183,12 @@ public class AdminController {
     @RequestBody User requestBody,
     BindingResult bindingResult) {
     Map<String, Object> response = new HashMap<>();
+
+     List permitted = adminService.checkGroup();
+        if(permitted != null && !permitted.isEmpty()){
+
+            
+        }
     String resMsg;
 
         if (bindingResult.hasErrors()) {
