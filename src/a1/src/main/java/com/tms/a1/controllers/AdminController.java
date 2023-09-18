@@ -12,6 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -39,7 +40,7 @@ public class AdminController {
     @Autowired
     private AdminService adminService;
 
-    //get all users
+    // get all users
     @GetMapping("/users")
     public ResponseEntity<?> getAllUsers() {
         List<User> allusers = adminService.getAllUsers();
@@ -53,21 +54,21 @@ public class AdminController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    //get all groups
-    // @GetMapping("/getGroups")
-    // public ResponseEntity<?> getAllGroups() {
-    //     List<Group> allgroups = adminService.getAllGroups();
-    //     System.out.println(allgroups);
-    //     if (allgroups.isEmpty()) {
-    //         resMsg = "No Groups Found.";
-    //         response.put("msg", resMsg);
-    //         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-    //     }
-    //     response.put("data", allgroups);
-    //     return new ResponseEntity<>(response, HttpStatus.OK);
-    // }
+    // get all groups
+    @GetMapping("/getGroups")
+    public ResponseEntity<?> getAllGroups() {
+        List<Group> allgroups = adminService.getAllGroups();
+        System.out.println(allgroups);
+        if (allgroups.isEmpty()) {
+            resMsg = "No Groups Found.";
+            response.put("msg", resMsg);
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+        response.put("data", allgroups);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
-    //get user by username
+    // get user by username
     @GetMapping("/users/{username}")
     public ResponseEntity<Object> getUser(@PathVariable String username) {
 
@@ -75,7 +76,7 @@ public class AdminController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    //create new group
+    // create new group
     @PostMapping("/createGroup")
     public ResponseEntity<?> createGroup(@RequestBody Group requestBodyGroup) {
         String res = adminService.createGroup(requestBodyGroup);
@@ -102,7 +103,7 @@ public class AdminController {
         }
     }
 
-    //create new user
+    // create new user
     @PostMapping("/newuser")
     public ResponseEntity<?> addNewUser(@Valid @RequestBody User requestBody, BindingResult bindingResult) {
         Map<String, Object> response = new HashMap<>();
@@ -142,57 +143,61 @@ public class AdminController {
         }
     }
 
-    // @PutMapping("/users/{username}")
-    // public ResponseEntity<?> updateUserByUsername(@PathVariable String username,
-    // @RequestBody User requestBody,
-    // BindingResult bindingResult) {
-    // Map<String, Object> response = new HashMap<>();
-    // String resMsg;
 
-    // if (bindingResult.hasErrors()) {
-    // // Handle validation errors here
-    // Map<String, String> errorMap = new HashMap<>();
-    // bindingResult.getFieldErrors().forEach(fieldError -> {
-    // errorMap.put("msg", fieldError.getDefaultMessage());
-    // });
-    // return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMap);
-    // }
+    @PutMapping("/users/{username}")
+    public ResponseEntity<?> updateUserByUsername(
+            @PathVariable String username,
+            @RequestBody User requestBody,
+            BindingResult bindingResult) {
+        Map<String, Object> response = new HashMap<>();
+        String resMsg;
 
-    // String res = adminService.updateUser(username, requestBody);
-    // if (res.equals("Success")) {
-    // resMsg = "User Successfully Updated.";
-    // response.put("msg", resMsg);
-    // return new ResponseEntity<>(response, HttpStatus.OK);
-    // } else if (res.equals("You are unauthorized for this action")) {
-    // resMsg = "You are unauthorized for this action.";
-    // response.put("msg", resMsg);
-    // return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-    // } else if (res.equals("You are not an authenticated user")) {
-    // resMsg = "You are not an authenticated user.";
-    // response.put("msg", resMsg);
-    // return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-    // } else {
-    // if (res.equals("Invalid email")) {
-    // System.out.println(res);
-    // resMsg = "Invalid email";
-    // response.put("msg", resMsg);
-    // System.out.println(resMsg);
-    // return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-    // }
-    // if (res.equals("Invalid password")) {
-    // resMsg = "Invalid password";
-    // response.put("msg", resMsg);
-    // System.out.println(resMsg);
-    // return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-    // } else {
-    // System.out.println(res);
-    // resMsg = "An error occured when updating user.";
-    // }
-    // response.put("msg", resMsg);
-    // System.out.println(resMsg);
-    // return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-    // }
-    // }
+        if (bindingResult.hasErrors()) {
+            // Handle validation errors here
+            Map<String, String> errorMap = new HashMap<>();
+            bindingResult.getFieldErrors().forEach(fieldError -> {
+                errorMap.put("msg", fieldError.getDefaultMessage());
+            });
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMap);
+        }
+
+        String res = adminService.updateUser(username, requestBody);
+        if (res.equals("Success")) {
+            resMsg = "User Successfully Updated.";
+            response.put("msg", resMsg);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } else if (res.equals("You are unauthorized for this action")) {
+            resMsg = "You are unauthorized for this action.";
+            response.put("msg", resMsg);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        } else if (res.equals("You are not an authenticated user")) {
+            resMsg = "You are not an authenticated user.";
+            response.put("msg", resMsg);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        } else {
+            if (res.equals("Invalid email")) {
+                System.out.println(res);
+                resMsg = "Invalid email";
+                response.put("msg", resMsg);
+                System.out.println(resMsg);
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            }
+            if (res.equals("Invalid password")) {
+                resMsg = "Invalid password";
+                response.put("msg", resMsg);
+                System.out.println(resMsg);
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            } else {
+                System.out.println(res);
+               
+                resMsg = "An error occurred when updating user.";
+            }
+            response.put("msg", resMsg);
+            System.out.println(resMsg);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+        
+    }
 
     @GetMapping("/getUser")
     public ResponseEntity<?> getUser() {

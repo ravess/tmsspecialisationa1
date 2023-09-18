@@ -164,7 +164,62 @@ public class AdminService {
     // }
     // }
     // }
-
+    public String updateUser(String username, User user) {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication != null && authentication.isAuthenticated()) {
+                String permitgroup = "admin";
+    
+                // Check if the authenticated user has permission to perform this action
+                if (userRepo.checkgroup(authentication.getName(), permitgroup) != null) {
+                    // Retrieve the user by username
+                    User existingUser = userRepo.findByUsername(username);
+    
+                    if (existingUser != null) {
+                        // Update the user's information
+                        String plainTextPassword = user.getPassword();
+                        String email = user.getEmail();
+                        String groupToUpdate = user.getGroups();
+                        int isActive = user.getIsActive();
+    
+                        // Hash the new password using BCrypt if provided and not empty
+                        if (plainTextPassword != null && !plainTextPassword.isEmpty()) {
+                            if (!isPasswordValid(plainTextPassword)) {
+                                return "Invalid password";
+                            }
+                            String hashedPassword = passwordEncoder.encode(plainTextPassword);
+                            existingUser.setPassword(hashedPassword);
+                        }
+    
+                        if (email != null && !email.isEmpty()) {
+                            if (!isValidEmail(email)) {
+                                return "Invalid email";
+                            }
+                            existingUser.setEmail(email);
+                        }
+    
+                        existingUser.setGroups(groupToUpdate);
+                        existingUser.setIsActive(isActive);
+    
+                        // Save the updated user back to the repository
+                        userRepo.saveUser(existingUser);
+    
+                        return "Success";
+                    } else {
+                        return "User not found";
+                    }
+                } else {
+                    return "You are unauthorized for this action";
+                }
+            } else {
+                return "You are not an authenticated user";
+            }
+        } catch (Exception e) {
+            e.printStackTrace(); // Log the exception stack trace
+            return "An error occurred: " + e.getMessage(); // Return the exception message
+        }
+    }
+    
     // Custom validation logic for password
     private boolean isPasswordValid(String password) {
         // Check if the password contains at least one alphabet character, one number,
