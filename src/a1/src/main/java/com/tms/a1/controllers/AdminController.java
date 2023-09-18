@@ -178,12 +178,13 @@ public class AdminController {
         }
     }
 
+    //admin update user
     @PutMapping("/users/{username}")
     public ResponseEntity<?> updateUserByUsername(@PathVariable String username,
     @RequestBody User requestBody,
     BindingResult bindingResult) {
-    Map<String, Object> response = new HashMap<>();
-    String resMsg;
+        Map<String, Object> response = new HashMap<>();
+        String resMsg;
 
         if (bindingResult.hasErrors()) {
             // Handle validation errors here
@@ -193,43 +194,34 @@ public class AdminController {
             });
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMap);
         }
-
-        String res = adminService.updateUser(username, requestBody);
-        if (res.equals("Success")) {
-            resMsg = "User Successfully Updated.";
-            response.put("msg", resMsg);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } else if (res.equals("You are unauthorized for this action")) {
-            resMsg = "You are unauthorized for this action.";
-            response.put("msg", resMsg);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        } else if (res.equals("You are not an authenticated user")) {
-            resMsg = "You are not an authenticated user.";
-            response.put("msg", resMsg);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        } else {
-            if (res.equals("Invalid email")) {
+        
+        List permitted = adminService.checkGroup();
+        if(permitted != null && !permitted.isEmpty()){
+            String res = adminService.updateUser(username, requestBody);
+            if (res.equals("Success")) {
+                resMsg = "User Successfully Updated.";
+                response.put("msg", resMsg);
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            } else if (res.equals("Invalid email")) {
                 System.out.println(res);
                 resMsg = "Invalid email";
                 response.put("msg", resMsg);
-                System.out.println(resMsg);
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-            }
-            if (res.equals("Invalid password")) {
+            }else if (res.equals("Invalid password")) {
                 resMsg = "Invalid password";
+                response.put("msg", resMsg);
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            } else {
+                resMsg = "An error occurred when updating user.";
                 response.put("msg", resMsg);
                 System.out.println(resMsg);
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-            } else {
-                System.out.println(res);
-               
-                resMsg = "An error occurred when updating user.";
             }
+        }else{
+            resMsg = "You are unauthorized for this action.";
             response.put("msg", resMsg);
-            System.out.println(resMsg);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
-        
     }
 
 }

@@ -75,124 +75,40 @@ public class AdminService {
         return null;
     }
 
-    // public String updateUser(String username, User user) {
-    // try {
-    // Authentication authentication =
-    // SecurityContextHolder.getContext().getAuthentication();
-    // if (authentication != null && authentication.isAuthenticated()) {
-    // String tokenName = authentication.getName();
-    // String permitgroup = "admin";
-
-    // if (userRepo.checkgroup(tokenName, permitgroup) != null) {
-    // // Retrieve the user by username.
-    // Optional<User> optionalUser = userRepo.findByUsername(username);
-
-    // if (optionalUser.isPresent()) {
-    // User existingUser = optionalUser.get();
-    // if (user.getPassword() == null || user.getPassword() == "") {
-    // user.setPassword(existingUser.getPassword());
-    // }
-
-    // // Update the user's information.
-    // String plainTextPassword = user.getPassword();
-    // String email = user.getEmail();
-    // String groupToUpdate = user.getGroups();
-    // int isActive = user.getIsActive();
-
-    // Hash the new password using BCrypt if provided and not empty.
-    // if (plainTextPassword != null && !plainTextPassword.isEmpty()) {
-    // if (!isPasswordValid(plainTextPassword)) {
-    // return "Invalid password";
-    // }
-    // String hashedPassword = passwordEncoder.encode(plainTextPassword);
-    // existingUser.setPassword(hashedPassword);
-    // }
-
-    // if (email != null && !email.isEmpty()) {
-    // if (!isValidEmail(email)) {
-    // return "Invalid email";
-    // }
-    // existingUser.setEmail(email);
-    // }
-
-    // existingUser.setGroups(groupToUpdate);
-    // existingUser.setIsActive(isActive);
-
-    // // Save the updated user back to the repository.
-    // userRepo.save(existingUser);
-
-    // return "Success";
-    // } else {
-    // return "User not found";
-    // }
-    // } else {
-    // return "You are unauthorized for this action";
-    // }
-    // } else {
-    // return "You are not an authenticated user";
-    // }
-    // } catch (Exception e) {
-    // // Handle different types of exceptions and return meaningful error messages
-    // if (e instanceof DataIntegrityViolationException) {
-    // return "Data integrity violation error occurred.";
-    // } else {
-    // return "An error occurred.";
-    // }
-    // }
-    // }
     public String updateUser(String username, User user) {
-        try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (authentication != null && authentication.isAuthenticated()) {
-                String permitgroup = "admin";
-    
-                // Check if the authenticated user has permission to perform this action
-                if (userRepo.checkgroup(authentication.getName(), permitgroup) != null) {
-                    // Retrieve the user by username
-                    User existingUser = userRepo.findByUsername(username);
-    
-                    if (existingUser != null) {
-                        // Update the user's information
-                        String plainTextPassword = user.getPassword();
-                        String email = user.getEmail();
-                        String groupToUpdate = user.getGroups();
-                        int isActive = user.getIsActive();
-    
-                        // Hash the new password using BCrypt if provided and not empty
-                        if (plainTextPassword != null && !plainTextPassword.isEmpty()) {
-                            if (!isPasswordValid(plainTextPassword)) {
-                                return "Invalid password";
-                            }
-                            String hashedPassword = passwordEncoder.encode(plainTextPassword);
-                            existingUser.setPassword(hashedPassword);
-                        }
-    
-                        if (email != null && !email.isEmpty()) {
-                            if (!isValidEmail(email)) {
-                                return "Invalid email";
-                            }
-                            existingUser.setEmail(email);
-                        }
-    
-                        existingUser.setGroups(groupToUpdate);
-                        existingUser.setIsActive(isActive);
-    
-                        // Save the updated user back to the repository
-                        userRepo.saveUser(existingUser);
-    
-                        return "Success";
-                    } else {
-                        return "User not found";
-                    }
-                } else {
-                    return "You are unauthorized for this action";
+        User existingUser = userRepo.findByUsername(username);
+        if (existingUser != null) {
+            // Update the user's information
+            String plainTextPassword = user.getPassword();
+            String email = user.getEmail();
+            String groupToUpdate = user.getGroups();
+            int isActive = user.getIsActive();
+
+            // Hash the new password using BCrypt if provided and not empty
+            if (plainTextPassword != null && !plainTextPassword.isEmpty()) {
+                if (!isPasswordValid(plainTextPassword)) {
+                    return "Invalid password";
                 }
-            } else {
-                return "You are not an authenticated user";
+                String hashedPassword = passwordEncoder.encode(plainTextPassword);
+                existingUser.setPassword(hashedPassword);
             }
-        } catch (Exception e) {
-            e.printStackTrace(); // Log the exception stack trace
-            return "An error occurred: " + e.getMessage(); // Return the exception message
+
+            if (email != null && !email.isEmpty()) {
+                if (!isValidEmail(email)) {
+                    return "Invalid email";
+                }
+                existingUser.setEmail(email);
+            }
+
+            existingUser.setGroups(groupToUpdate);
+            existingUser.setIsActive(isActive);
+
+            // Save the updated user back to the repository
+            userRepo.saveUser(existingUser);
+
+            return "Success";
+        } else {
+            return "User not found";
         }
     }
     
