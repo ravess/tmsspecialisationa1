@@ -65,7 +65,7 @@ public class AdminService {
         return "Success";
     }
 
-    public List checkGroup (){
+    public List<?> checkGroup (){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if(authentication != null && authentication.isAuthenticated()){
             String username = authentication.getName();

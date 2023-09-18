@@ -11,21 +11,19 @@ import com.tms.a1.utils.HibernateUtil;
 
 import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
-
 @Component
 public class UserDAO {
 
     private HibernateUtil HibernateUtil;
- 
 
     public User findByUsername(String username) {
         Transaction transaction = null;
-        try (Session session = com.tms.a1.utils.HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             // start a transaction
             transaction = session.beginTransaction();
             String hql = "FROM User u WHERE u.username = :username ";
             TypedQuery<User> query = session.createQuery(hql, User.class)
-                    .setParameter("username", username);
+                .setParameter("username", username);
 
             List<User> resultList = query.getResultList();
             if (!resultList.isEmpty()) {
@@ -84,7 +82,7 @@ public class UserDAO {
         }
     }
 
-    public List checkgroup(String username, String usergroup) {
+    public List<?> checkgroup(String username, String usergroup) {
         Transaction transaction = null;
         try (Session session = com.tms.a1.utils.HibernateUtil.getSessionFactory().openSession()) {
             // start a transaction
@@ -93,7 +91,7 @@ public class UserDAO {
             Query query = session.createQuery(hql, String.class)
                     .setParameter("username", username)
                     .setParameter("userGroupPattern", "%." + usergroup + ".%");
-            List result = query.getResultList();
+            List<?> result = query.getResultList();
             // commit transaction
 
             transaction.commit();
