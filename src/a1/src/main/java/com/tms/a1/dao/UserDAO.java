@@ -16,6 +16,7 @@ import jakarta.persistence.TypedQuery;
 public class UserDAO {
 
     private HibernateUtil HibernateUtil;
+ 
 
     public User findByUsername(String username) {
         Transaction transaction = null;
@@ -138,8 +139,10 @@ public class UserDAO {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             // start a transaction
             transaction = session.beginTransaction();
+            User detachedUser = User;
+            User managedUser = session.merge(detachedUser);
             // save the Group object
-            session.persist(User);
+            session.persist(managedUser);
             // commit transaction
             transaction.commit();
         } catch (Exception e) {
@@ -149,5 +152,5 @@ public class UserDAO {
             e.printStackTrace();
         }
     }
-
+  
 }
