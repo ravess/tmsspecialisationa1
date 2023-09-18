@@ -6,6 +6,7 @@ import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import static org.springframework.security.config.Customizer.withDefaults; // Import the withDefaults() method
@@ -46,8 +47,13 @@ public class SecurityConfig {
     .cors(withDefaults())
     .csrf(csrf -> csrf.disable())
     .authorizeHttpRequests(authorize -> authorize
-        //.requestMatchers("/**").permitAll()  
-        .anyRequest().authenticated())
+        .requestMatchers(HttpMethod.POST, "/**").authenticated()
+        .requestMatchers(HttpMethod.PUT, "/**").authenticated()
+        .requestMatchers("/users/**").authenticated() 
+        .requestMatchers("/users").authenticated() 
+        .requestMatchers("/getUser").authenticated() 
+        .requestMatchers("/getGroups").authenticated() 
+        .anyRequest().permitAll())
     .addFilterBefore(new ExceptionHandlerFilter(), AuthenticationFilter.class)
     .addFilter(authenticationFilter)
     .addFilterAfter(new JWTAuthorizationFilter(securityConstants), AuthenticationFilter.class)

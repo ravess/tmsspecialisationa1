@@ -1,6 +1,5 @@
 package com.tms.a1.config.security.manager;
 
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,7 +11,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import com.tms.a1.entity.User;
-import com.tms.a1.service.AdminService;
 import com.tms.a1.service.UserService;
 
 
@@ -21,8 +19,6 @@ import com.tms.a1.service.UserService;
 public class CustomAuthenticationManager implements AuthenticationManager {
     @Autowired
     private UserService userService;
-    @Autowired
-    private AdminService adminService;
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
