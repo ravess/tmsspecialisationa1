@@ -17,7 +17,7 @@ import lombok.AllArgsConstructor;
 
 @Service
 public class AuthService {
- 
+    @Autowired
   private UserDAO userRepo;
 
     public Map<String, Object> checkgroup(Map<String, String> requestBody) {
