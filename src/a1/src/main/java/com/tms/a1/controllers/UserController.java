@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tms.a1.entity.User;
+import com.tms.a1.exception.ForbiddenException;
 import com.tms.a1.service.UserService;
 
 import lombok.AllArgsConstructor;
@@ -28,7 +29,11 @@ public class UserController {
     @GetMapping("/getUser")
     public ResponseEntity<?> getUser() {
         User user = userService.getUser();
-
+        user.setPassword(null);
+        int isActive = user.getIsActive();
+        if(isActive == 0){
+            throw new ForbiddenException("Your account is inactive");
+        }
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
