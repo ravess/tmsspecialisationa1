@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,7 +14,9 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.tms.a1.config.security.SecurityConstants;
+import com.tms.a1.entity.User;
 import com.tms.a1.exception.ForbiddenException;
+import com.tms.a1.service.UserService;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -27,6 +30,9 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
     @Autowired
     private SecurityConstants securityConstants;
+
+    @Autowired
+    private UserService userService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -55,6 +61,12 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
             .verify(token);
         
         String user = decodedJWT.getSubject();
+        User user2 = userService.login(user);
+        
+      
+        if(user2.getIsActive()==0){
+            throw new ForbiddenException("Your account is inactive");
+        }
         String ipAddress = decodedJWT.getClaim("ipAddress").asString();
         String browser = decodedJWT.getClaim("userAgent").asString(); 
         System.out.println(browser + "Testing browser");
