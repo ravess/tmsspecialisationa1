@@ -28,7 +28,7 @@ public class UserController {
     @GetMapping("/getUser")
     public ResponseEntity<?> getUser() {
         User user = userService.getUser();
-
+        user.setPassword(null);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
