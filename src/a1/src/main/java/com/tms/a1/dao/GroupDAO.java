@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.tms.a1.entity.Group;
@@ -14,11 +15,12 @@ import jakarta.persistence.Query;
 @Component
 public class GroupDAO {
 
-    private HibernateUtil HibernateUtil;
+    @Autowired
+    private HibernateUtil hibernateUtil;
 
     public boolean existsByGroupName(String groupname) {
         Transaction transaction = null;
-        try (Session session = com.tms.a1.utils.HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
             // start a transaction
             transaction = session.beginTransaction();
 
@@ -41,7 +43,7 @@ public class GroupDAO {
     
     public void save(Group group) {
         Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
             // start a transaction
             transaction = session.beginTransaction();
 
@@ -61,7 +63,7 @@ public class GroupDAO {
 
     public List<Group> findAll() {
         Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
             // start a transaction
             transaction = session.beginTransaction();
             // save the Group object

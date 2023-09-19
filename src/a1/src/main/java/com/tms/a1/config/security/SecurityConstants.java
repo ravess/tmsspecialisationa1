@@ -10,7 +10,6 @@ import lombok.Setter;
 
 // import jakarta.annotation.PostConstruct;
 @AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
 @Component
@@ -21,7 +20,6 @@ public class SecurityConstants {
     private String cookieName;
     @Value("${token.expiration}")
     private int tokenExp;
-
 
     // This is to check if the secretkey cookieName is correctly inserted to the database.
     // @PostConstruct

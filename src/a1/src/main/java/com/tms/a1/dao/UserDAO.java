@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.tms.a1.entity.User;
@@ -11,14 +12,16 @@ import com.tms.a1.utils.HibernateUtil;
 
 import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
+// import lombok.AllArgsConstructor;
 @Component
 public class UserDAO {
 
-    private HibernateUtil HibernateUtil;
+    @Autowired
+    private HibernateUtil hibernateUtil;
 
     public User findByUsername(String username) {
         Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
             // start a transaction
             transaction = session.beginTransaction();
             String hql = "FROM User u WHERE u.username = :username ";
@@ -45,7 +48,7 @@ public class UserDAO {
 
     public void getUserById(int id) {
         Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
             // start a transaction
             transaction = session.beginTransaction();
 
@@ -64,7 +67,7 @@ public class UserDAO {
 
     public List<User> findAll() {
         Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
             // start a transaction
             transaction = session.beginTransaction();
             // save the User object
@@ -84,7 +87,7 @@ public class UserDAO {
 
     public List<?> checkgroup(String username, String usergroup) {
         Transaction transaction = null;
-        try (Session session = com.tms.a1.utils.HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
             // start a transaction
             transaction = session.beginTransaction();
             String hql = "SELECT u.username FROM User u WHERE u.username = :username AND u.groups LIKE :userGroupPattern";
@@ -107,7 +110,7 @@ public class UserDAO {
 
     public Boolean existByUsername(String username) {
         Transaction transaction = null;
-        try (Session session = com.tms.a1.utils.HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
             // start a transaction
             transaction = session.beginTransaction();
             String hql = "FROM User u WHERE u.username = :username ";
@@ -134,7 +137,7 @@ public class UserDAO {
 
     public void saveUser(User User) {
         Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
             // start a transaction
             transaction = session.beginTransaction();
             User detachedUser = User;
