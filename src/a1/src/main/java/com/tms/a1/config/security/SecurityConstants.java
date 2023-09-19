@@ -10,6 +10,7 @@ import lombok.Setter;
 
 // import jakarta.annotation.PostConstruct;
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @Component
