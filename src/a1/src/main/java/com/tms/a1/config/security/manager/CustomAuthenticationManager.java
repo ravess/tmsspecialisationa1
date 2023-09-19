@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import com.tms.a1.entity.User;
+import com.tms.a1.exception.ForbiddenException;
 import com.tms.a1.service.UserService;
 
 
@@ -28,6 +29,11 @@ public class CustomAuthenticationManager implements AuthenticationManager {
         if (!passwordEncoder.matches(authentication.getCredentials().toString(), user.getPassword())) {
             throw new BadCredentialsException("Invalid Username/Password");
         }
+      
+        if(user.getIsActive()==0){
+            throw new ForbiddenException("Your account is inactive");
+        }
+
         return new UsernamePasswordAuthenticationToken(authentication.getName(), user.getPassword());
     }
 
