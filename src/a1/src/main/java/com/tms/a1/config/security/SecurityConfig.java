@@ -35,7 +35,7 @@ public class SecurityConfig {
   @Autowired
   private SecurityConstants securityConstants;
   @Autowired
-    private UserService userService;
+  private UserService userService;
 
   private CustomAuthenticationManager customAuthenticationManager;
 
@@ -76,7 +76,7 @@ public class SecurityConfig {
   @Bean
 	CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000")); // Specify the exact origin
+		configuration.setAllowedOrigins(Arrays.asList(securityConstants.getFrontendURL())); // Specify the exact origin
 		configuration.setAllowedMethods(Arrays.asList("GET","POST", "PUT"));
         configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));

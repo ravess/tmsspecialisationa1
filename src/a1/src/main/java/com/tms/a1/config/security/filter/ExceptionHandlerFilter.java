@@ -29,7 +29,7 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
             response.getWriter().flush();
         } catch (ForbiddenException e) { //Feel free to create a separate function.
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            response.getWriter().write("You are not logged In");
+            // response.getWriter().write("You are not logged In");
             response.getWriter().flush();
         } catch (RuntimeException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);

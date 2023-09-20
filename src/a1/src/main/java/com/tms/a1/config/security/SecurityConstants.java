@@ -21,6 +21,8 @@ public class SecurityConstants {
     private String cookieName;
     @Value("${token.expiration}")
     private int tokenExp;
+    @Value("${frontend.url}")
+    private String frontendURL;
 
     // This is to check if the secretkey cookieName is correctly inserted to the database.
     // @PostConstruct
