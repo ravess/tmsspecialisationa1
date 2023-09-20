@@ -23,6 +23,8 @@ public class CustomAuthenticationManager implements AuthenticationManager {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
+
+    // This entire method is to use bcryptencoder and userservice layer to check against our database record if it matches for authentication
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         User user = userService.login(authentication.getName());
@@ -34,6 +36,7 @@ public class CustomAuthenticationManager implements AuthenticationManager {
             throw new ForbiddenException("Your account is inactive");
         }
 
+        // The below still returns an authentication object after it passes through all the database check for correct password and user. Spring will internally invoke the successfulauthenticationattempt
         return new UsernamePasswordAuthenticationToken(authentication.getName(), user.getPassword());
     }
 

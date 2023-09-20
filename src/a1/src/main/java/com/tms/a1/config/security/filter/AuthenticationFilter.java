@@ -39,13 +39,19 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
             throws AuthenticationException {
         try {
             User user = new ObjectMapper().readValue(request.getInputStream(), User.class);
+
+            // The below code is to create an authentication object and pass to our authentication manager to authenticate the user from our database record.
             Authentication authentication = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
+
+            // The authenticate method when return with the authentication object which the manager checks from userInput based on the above user
+            // Spring internally will invoke either the unsuccessfulauthentication or the successfulauthentication method depending on the 2 diff scenario
             return authenticationManager.authenticate(authentication);
         } catch (IOException e) {
             throw new RuntimeException();
         } 
     }
 
+    // Pending what the authencationManager returns after invoking the authenticate method above. it will trigger either the unsuccessfulauthentication or successfulauthentication
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -74,7 +80,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         // Set the cookie's path and other attributes as needed
         cookie.setPath("/"); // Set the cookie path to "/" to make it accessible to all paths
         cookie.setMaxAge(securityConstants.getTokenExp() / 1000); // Set the cookie's max age in seconds
-        cookie.setHttpOnly(true); // Make the cookie HTTP-only for added security
+        cookie.setHttpOnly(true); // Make the cookie HTTP-only for added security frontend js cannot access
         
         // Add the cookie to the response
         response.addCookie(cookie);

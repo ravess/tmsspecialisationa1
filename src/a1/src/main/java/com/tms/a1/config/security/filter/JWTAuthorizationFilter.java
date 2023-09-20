@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,6 +24,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 
+
+// If only the request is coming in with JWT, it will not invoke the authenticationfilter method in it/bypassing it and coming here to check for authorization
 @AllArgsConstructor
 public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
@@ -55,7 +56,6 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
             return;
         }
 
-    
         DecodedJWT  decodedJWT = JWT.require(Algorithm.HMAC512(securityConstants.getSecretKey()))
             .build()
             .verify(token);
@@ -77,9 +77,6 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
         if(!ipAddress.equals(clientIpAddress) || !userAgent.equals(browser)){
             throw new ForbiddenException("Please Log in again");
         }
-
-        System.out.println("WHOAMI");
-        System.out.println("USER: " + user);
 
         //"Authentication token"
         //UsernamePWAuthToken = "app-wide authentication token"
