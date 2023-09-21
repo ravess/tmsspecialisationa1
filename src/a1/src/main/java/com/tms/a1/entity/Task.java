@@ -18,34 +18,34 @@ public class Task {
     @Column(name = "task_id", unique = true)
     private String taskID;
 
-    @NotNull(message = "Task name should not be null")
-    @NotBlank
-    @Column(name = "task_name")
-    private String taskName;
+    // @NotNull(message = "Task name should not be null")
+    // @NotBlank
+    // @Column(name = "task_name")
+    // private String taskName;
 
-    @NotNull(message = "RNumber should not be null")
-    @Column(name = "task_", unique = true)
-    private long taskDescription;
+    // @NotNull(message = "RNumber should not be null")
+    // @Column(name = "task_", unique = true)
+    // private long taskDescription;
 
-    @Column(name = "app_start_date")
-    private String taskNotes;
+    // @Column(name = "app_start_date")
+    // private String taskNotes;
 
-    @Column(name = "app_end_date")
-    private int taskPlan;
+    // @Column(name = "app_end_date")
+    // private int taskPlan;
 
-    @Column(name = "app_permit_open")
-    private String taskAppAcronym;
+    // @Column(name = "app_permit_open")
+    // private String taskAppAcronym;
 
-    @Column(name = "app_permit_open")
-    private String taskState;
+    // @Column(name = "app_permit_open")
+    // private String taskState;
 
-    @Column(name = "app_permit_open")
-    private String taskCreator;
+    // @Column(name = "app_permit_open")
+    // private String taskCreator;
 
-    @Column(name = "app_permit_open")
-    private String taskOwner;
+    // @Column(name = "app_permit_open")
+    // private String taskOwner;
 
-    @Column(name = "app_permit_open")
-    private String taskCreateDate;
+    // @Column(name = "app_permit_open")
+    // private String taskCreateDate;
 }
 
