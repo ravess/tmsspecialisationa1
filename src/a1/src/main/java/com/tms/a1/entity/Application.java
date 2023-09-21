@@ -38,15 +38,15 @@ public class Application {
     @Column(name = "app_permit_open")
     private String appPermitOpen;
 
-    @Column(name = "app_permit_open")
+    @Column(name = "app_permit_todolist")
     private String appPermitToDoList;
 
-    @Column(name = "app_permit_open")
+    @Column(name = "app_permit_doing")
     private String appPermitDoing;
 
-    @Column(name = "app_permit_open")
+    @Column(name = "app_permit_done")
     private String appPermitDone;
 
-    @Column(name = "app_permit_open")
+    @Column(name = "app_permit_create")
     private String appPermitCreate;
 }
