@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.CookieClearingLogoutHandler;
@@ -55,7 +56,7 @@ public class SecurityConfig {
         .requestMatchers("/users/**").authenticated() 
         .requestMatchers("/users").authenticated() 
         .requestMatchers("/getUser").authenticated() 
-        .requestMatchers("/getGroups").authenticated() 
+        .requestMatchers("/getGroups").hasAnyAuthority("admin")
         .anyRequest().permitAll())
     .addFilterBefore(new ExceptionHandlerFilter(), AuthenticationFilter.class)
     .addFilter(authenticationFilter)
@@ -74,15 +75,21 @@ public class SecurityConfig {
   }
 
   @Bean
-	CorsConfigurationSource corsConfigurationSource() {
-		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(Arrays.asList(securityConstants.getFrontendURL())); // Specify the exact origin
-		configuration.setAllowedMethods(Arrays.asList("GET","POST", "PUT"));
-        configuration.setAllowCredentials(true);
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", configuration);
-		return source;
-	}
+  CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration configuration = new CorsConfiguration();
+    configuration.setAllowedOrigins(Arrays.asList(securityConstants.getFrontendURL())); // Specify the exact origin
+    configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT"));
+    configuration.setAllowCredentials(true);
+    configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", configuration);
+    return source;
+  }
+  
+  @Bean
+  static GrantedAuthorityDefaults grantedAuthorityDefaults() {
+
+    return new GrantedAuthorityDefaults("");
+  }
 
 }
