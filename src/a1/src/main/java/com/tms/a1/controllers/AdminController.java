@@ -23,7 +23,6 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
-// @CrossOrigin(origins = "http://localhost:3000", maxAge = 1600, allowedHeaders = "*")
 @AllArgsConstructor
 @NoArgsConstructor
 @RestController
@@ -62,8 +61,8 @@ public class AdminController {
         String resMsg;
         Map<String, Object> response = new HashMap<>();
 
-        List permitted = adminService.checkGroup();
-        if(permitted != null && !permitted.isEmpty()){
+        // List permitted = adminService.checkGroup();
+        // if(permitted != null && !permitted.isEmpty()){
             List<Group> allgroups = adminService.getAllGroups();
             if (allgroups != null && !allgroups.isEmpty()) {
                 response.put("data", allgroups);
@@ -73,11 +72,11 @@ public class AdminController {
                 response.put("msg", resMsg);
                 return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
             }
-        } else {
-            resMsg = "You are unauthorized for this action";
-            response.put("msg", resMsg);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        }
+        // } else {
+        //     resMsg = "You are unauthorized for this action";
+        //     response.put("msg", resMsg);
+        //     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        // }
     }
 
     // get user by username

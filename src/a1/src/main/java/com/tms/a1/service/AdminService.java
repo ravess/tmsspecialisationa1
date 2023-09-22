@@ -3,6 +3,7 @@ package com.tms.a1.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -61,7 +62,10 @@ public class AdminService {
         String plainTextPassword = user.getPassword();
         String hashedPassword = passwordEncoder.encode(plainTextPassword);
         user.setPassword(hashedPassword);
-        userRepo.saveUser(user);
+
+        System.out.println(user.getGroups());
+
+        // userRepo.saveUser(user);
         return "Success";
     }
 

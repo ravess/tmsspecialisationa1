@@ -1,11 +1,15 @@
 package com.tms.a1.config.security.filter;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -60,11 +64,17 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
             .build()
             .verify(token);
         
-        String user = decodedJWT.getSubject();
-        User user2 = userService.login(user);
-        
+        String username = decodedJWT.getSubject();
+        User userObject = userService.login(username);
+        String[] groupList = Arrays.stream((userObject.getGroups()).split("\\.")).filter(s->!s.isEmpty()).toArray(String[]::new);
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        if(groupList.length!=0){
+            for (String g : groupList){
+                authorities.add(new SimpleGrantedAuthority("ROLE_"+g));
+            }
+        }
       
-        if(user2.getIsActive()==0){
+        if(userObject.getIsActive()==0){
             throw new ForbiddenException("Your account is inactive");
         }
         String ipAddress = decodedJWT.getClaim("ipAddress").asString();
@@ -81,7 +91,16 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
         //"Authentication token"
         //UsernamePWAuthToken = "app-wide authentication token"
         //1st param: authenticated user's username, 2nd param: user's credentials, set as null as pw not needed after authentication, 3rd param list of roles associated with user. use Arrays.asList() for none. 
-        Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, Arrays.asList());
+        Authentication authentication;
+        if(groupList.length!=0){
+            System.out.println("has roles");
+            authentication = new UsernamePasswordAuthenticationToken(username, null, authorities);
+            System.out.println(authentication.getAuthorities());
+            
+        }else{
+            System.out.println("no roles");
+            authentication = new UsernamePasswordAuthenticationToken(username, null, Arrays.asList());
+        }
 
         //the following stores details of currently authenticated user, providing a way to access the authenticated info throughout the app
         SecurityContextHolder.getContext().setAuthentication(authentication);
