@@ -199,6 +199,27 @@ public class TmsDAO {
         }
     }
 
+    //create new plan
+    public void savePlan(Plan plan) {
+        Transaction transaction = null;
+        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
+            // start a transaction
+            transaction = session.beginTransaction();
+
+            Plan detachedPlan = plan;
+            Plan managedPlan = session.merge(detachedPlan);
+            // save the Group object
+            session.persist(managedPlan);
+            // commit transaction
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+        }
+    }
+
      // Check for existing Task
     public Boolean existByTaskID(String taskid) {
         Transaction transaction = null;

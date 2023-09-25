@@ -51,8 +51,8 @@ public class SecurityConfig {
     .cors(withDefaults())
     .csrf(csrf -> csrf.disable())
     .authorizeHttpRequests(authorize -> authorize
-        .requestMatchers(HttpMethod.POST, "/**").authenticated()
-        .requestMatchers(HttpMethod.PUT, "/**").authenticated()
+        // .requestMatchers(HttpMethod.POST, "/**").authenticated()
+        // .requestMatchers(HttpMethod.PUT, "/**").authenticated()
         .requestMatchers("/users/**").authenticated()
         .requestMatchers("/users").authenticated()
         .requestMatchers("/getUser").authenticated() 

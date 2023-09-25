@@ -175,6 +175,50 @@ public class TmsController {
         }
     }
 
+    // Create new Plan
+    @PostMapping("/apps/{appacronym}/plans/new")
+    public ResponseEntity<?> addNewPlan(@Valid @RequestBody Plan requestBody, @PathVariable String appacronym, BindingResult bindingResult) {
+        Map<String, Object> response = new HashMap<>();
+        String resMsg;
+        if (bindingResult.hasErrors()) {
+            // Handle validation errors here
+            Map<String, String> errorMap = new HashMap<>();
+            bindingResult.getFieldErrors().forEach(fieldError -> {
+                errorMap.put("msg", fieldError.getDefaultMessage());
+            });
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMap);
+        }
+
+        // List permitted = adminService.checkGroup();
+        // if(permitted != null && !permitted.isEmpty()){
+        System.out.println(requestBody);
+        requestBody.setPlanAppAcronym(appacronym);
+        String res = tmsService.newPlan(requestBody, appacronym);
+
+        if (res.equals("Success")) {
+            resMsg = "Plan Successfully Created.";
+            response.put("msg", resMsg);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } else if (res.equals("Duplicate")) {
+            resMsg = "Plan Already Exists.";
+            response.put("msg", resMsg);
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+        } else if (res.equals("NonexistentApp")){
+            resMsg = "App does not exist.";
+            response.put("msg", resMsg);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        } else {
+            resMsg = "An error occured when creating plan";
+            response.put("msg", resMsg);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+        // }else{
+        //     resMsg = "You are unauthorized for this action.";
+        //     response.put("msg", resMsg);
+        //     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        // }
+    }
+    
     //Update Plan
     @PutMapping("/apps/{appacronym}/plans/{planid}/edit")
     public ResponseEntity<?> updatePlanByPlanID(@PathVariable String appacronym, @PathVariable String planid,

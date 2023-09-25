@@ -26,7 +26,7 @@ public class Plan {
     @Column(name = "plan_end_date")
     private String planEndDate;
 
-    @NotNull(message = "Plan App Acronym should not be null")
+    // @NotNull(message = "Plan App Acronym should not be null")
     @Column(name = "plan_app_acronym")
     private String planAppAcronym;
 
