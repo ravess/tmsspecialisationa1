@@ -26,9 +26,9 @@ public class GroupDAO {
 
             // get User entity using get() method
             String hql = "SELECT COUNT(g) FROM Group g WHERE g.groupName = :groupName";
-    Long count = session.createQuery(hql,Long.class)
-        .setParameter("groupName", groupname)
-        .uniqueResult();
+            Long count = session.createQuery(hql,Long.class)
+                .setParameter("groupName", groupname)
+                .uniqueResult();
             transaction.commit();
             return count != null && count > 0;
         } catch (Exception e) {

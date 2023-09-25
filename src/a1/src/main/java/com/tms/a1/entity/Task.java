@@ -7,8 +7,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
 
+@Getter
+@Setter
 @Entity
 @Table(name = "task")
 public class Task {
@@ -25,13 +29,13 @@ public class Task {
 
     @NotNull(message = "Task Description should not be null")
     @Column(name = "task_description")
-    private long taskDescription;
+    private String taskDescription;
 
     @Column(name = "task_notes")
     private String taskNotes;
 
     @Column(name = "task_plan")
-    private int taskPlan;
+    private String taskPlan;
 
     @NotNull(message = "Task acronym should not be null")
     @Column(name = "task_app_acronym")
