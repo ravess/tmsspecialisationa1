@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.tms.a1.entity.Application;
 import com.tms.a1.entity.Plan;
 import com.tms.a1.entity.Task;
-import com.tms.a1.entity.User;
-import com.tms.a1.exception.ForbiddenException;
 import com.tms.a1.service.TmsService;
 
 import jakarta.validation.Valid;
@@ -162,10 +160,14 @@ public class TmsController {
     }
     //Get Single Plan
     @GetMapping("/apps/{appacronym}/plans/{planid}")
-    public ResponseEntity<Object> getPlan(@PathVariable String appacrnoym, @PathVariable String planid) {
+    public ResponseEntity<Object> getPlan(@PathVariable String appacronym, @PathVariable String planid) {
+        System.out.println("**********");
+        System.out.println("It came to get single plan route");
+        System.out.println(planid);
+        System.out.println("**********");
         String resMsg;
         Map<String, Object> response = new HashMap<>();
-        Plan plan = tmsService.getPlan(appacrnoym, planid);
+        Plan plan = tmsService.getPlan(planid, appacronym);
         if (plan != null) {
             return new ResponseEntity<>(plan, HttpStatus.OK);
         } else {
@@ -277,14 +279,14 @@ public class TmsController {
 
     //Get Single Task
     @GetMapping("/apps/{appacronym}/tasks/{taskid}")
-    public ResponseEntity<Object> getTask(@PathVariable String appacrnoym, @PathVariable String taskid) {
+    public ResponseEntity<Object> getTask(@PathVariable String appacronym, @PathVariable String taskid) {
         String resMsg;
         Map<String, Object> response = new HashMap<>();
-        Task task = tmsService.getTask(appacrnoym, taskid);
+        Task task = tmsService.getTask(appacronym, taskid);
         if (task != null) {
             return new ResponseEntity<>(task, HttpStatus.OK);
         } else {
-            resMsg = "Plan does not exist";
+            resMsg = "Task does not exist";
             response.put("msg", resMsg);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }

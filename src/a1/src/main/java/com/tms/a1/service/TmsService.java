@@ -105,6 +105,10 @@ public class TmsService {
     //Get single Plan
     public Plan getPlan(String planid, String appacronym) {
         try {
+            System.out.println("********************");
+            System.out.println("In plan service layer");
+            System.out.println(planid);
+            System.out.println("*********************");
             Plan plan = tmsRepo.findByPlan(planid, appacronym);
             if (plan != null) {
                 return plan;
@@ -179,9 +183,9 @@ public class TmsService {
     }
 
     //Get Single Task
-    public Task getTask(String taskid, String appacronym) {
+    public Task getTask(String appacronym, String taskid) {
         try {
-            Task task = tmsRepo.findByTask(taskid, appacronym);
+            Task task = tmsRepo.findByTask(appacronym, taskid);
             if (task != null) {
                 return task;
             } else {
