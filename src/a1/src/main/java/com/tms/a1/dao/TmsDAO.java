@@ -318,4 +318,27 @@ public class TmsDAO {
             e.printStackTrace();
         }
     }
+
+    public List<String> getPermit(String app, String state) {
+         Transaction transaction = null;
+         try (Session session = hibernateUtil.getSessionFactory().openSession()) {
+             // start a transaction
+             transaction = session.beginTransaction();
+             String columnName = "appPermit" + state;
+             String hql = "SELECT a." + columnName +" FROM Application a WHERE a.appAcronym = :app";
+             Query query = session.createQuery(hql, String.class)
+                     .setParameter("app", app);
+             List<String> result = query.getResultList();
+             // commit transaction
+ 
+             transaction.commit();
+             return result;
+         } catch (Exception e) {
+             if (transaction != null && transaction.isActive()) {
+                 transaction.rollback();
+             }
+             e.printStackTrace();
+             return null;
+         }
+     }
 }

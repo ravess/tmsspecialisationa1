@@ -1,11 +1,16 @@
 package com.tms.a1.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.tms.a1.dao.TmsDAO;
+import com.tms.a1.dao.UserDAO;
 import com.tms.a1.entity.Application;
 import com.tms.a1.entity.Plan;
 import com.tms.a1.entity.Task;
@@ -16,6 +21,9 @@ import com.tms.a1.exception.EntityNotFoundException;
 public class TmsService {
     @Autowired
     private TmsDAO tmsRepo;
+
+    @Autowired
+  private UserDAO userRepo;
 
     //Get All Apps
     public List<Application> getAllApps() {
@@ -246,6 +254,31 @@ public class TmsService {
         } else {
             return "User not found";
         }
+    }
+
+    //Has Access to
+    public Boolean hasAccess(Map<String, String> requestBody) {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication != null && authentication.isAuthenticated()) {
+                String username = authentication.getName(); 
+        String app = requestBody.get("app_acronym");
+        String state = requestBody.get("app_state");
+        List<String> grouplist = tmsRepo.getPermit(app,state);
+        String group  = grouplist.get(0);
+        List result = userRepo.checkgroup(username, group);
+        if (result != null && !result.isEmpty()) {
+            
+            return true;
+        } else {
+            
+            return false;
+        }
+    }return null;
+}catch (Exception e) {
+    System.out.println(e);
+    return null;
+}
     }
 
 }

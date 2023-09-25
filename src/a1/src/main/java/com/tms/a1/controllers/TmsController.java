@@ -98,6 +98,14 @@ public class TmsController {
         //     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         // }
     }
+
+    @PostMapping("/hasAccess")
+    public ResponseEntity<?> hasAccess(@RequestBody Map<String, String> requestBody) {
+        Map<String, Object> response = new HashMap<>();
+        Boolean res = tmsService.hasAccess(requestBody);
+        response.put("allowedAccess",res);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
     
     // Update Single App
     @PutMapping("/apps/{appacronym}/edit")
