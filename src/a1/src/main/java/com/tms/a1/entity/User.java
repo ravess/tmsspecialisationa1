@@ -34,13 +34,13 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "email", unique = true)
+    @Column(name = "email")
     @Email(message = "Invalid email address")
     private String email;
 
     @NotNull(message = "is_active should not be null")
     @Column(name = "is_active")
-    private int is_active;
+    private int isActive;
 
     @Column(name = "`groups`")
     private String groups;

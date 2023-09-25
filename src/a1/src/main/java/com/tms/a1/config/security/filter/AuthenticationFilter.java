@@ -2,7 +2,11 @@ package com.tms.a1.config.security.filter;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -10,25 +14,24 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import com.tms.a1.config.security.SecurityConstants;
+import com.tms.a1.config.security.manager.CustomAuthenticationManager;
+import com.tms.a1.entity.User;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import com.tms.a1.config.security.SecurityConstants;
-import com.tms.a1.config.security.manager.CustomAuthenticationManager;
-import com.tms.a1.entity.User;
-
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+
+    @Autowired
+    private SecurityConstants securityConstants;
+
     private CustomAuthenticationManager authenticationManager;
 
     @Override
@@ -61,24 +64,35 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
         String token = JWT.create()
             .withSubject(authResult.getName())  //username is saved as 'subject'
-            .withExpiresAt(new Date(System.currentTimeMillis() + SecurityConstants.TOKEN_EXPIRATION))
+            .withExpiresAt(new Date(System.currentTimeMillis() + securityConstants.getTokenExp()))
             .withClaim("ipAddress", clientIpAddress) // Add IP address as a custom claim
             .withClaim("userAgent", userAgent) // Add user agent as a custom claim
-            .sign(Algorithm.HMAC512(SecurityConstants.SECRET_KEY));
+            .sign(Algorithm.HMAC512(securityConstants.getSecretKey()));
         // Create a cookie to hold the JWT token
-        Cookie cookie = new Cookie(SecurityConstants.COOKIE_NAME, token);
+        Cookie cookie = new Cookie(securityConstants.getCookieName(), token);
         
         // Set the cookie's path and other attributes as needed
         cookie.setPath("/"); // Set the cookie path to "/" to make it accessible to all paths
-        cookie.setMaxAge(SecurityConstants.TOKEN_EXPIRATION / 1000); // Set the cookie's max age in seconds
+        cookie.setMaxAge(securityConstants.getTokenExp() / 1000); // Set the cookie's max age in seconds
         cookie.setHttpOnly(true); // Make the cookie HTTP-only for added security
         
         // Add the cookie to the response
         response.addCookie(cookie);
+        // Create a JSON response object
+        Map<String, String> jsonResponse = new HashMap<>();
+        jsonResponse.put("status", String.valueOf(HttpServletResponse.SC_OK));
+        jsonResponse.put("msg", "You are logged In!");
+        
+        // Set the response content type to JSON
+        response.setContentType("application/json");
+        
+        // Set the HTTP status code to 200 (OK)
         response.setStatus(HttpServletResponse.SC_OK);
-        response.getWriter().write("You are logged In!");
-        response.getWriter().flush();
-    }
+        
+        // Write the JSON response to the response output stream
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.writeValue(response.getWriter(), jsonResponse);
+        }
 
     private String getClientIpAddress(HttpServletRequest request) {
         String ipAddress = request.getHeader("X-Forwarded-For");

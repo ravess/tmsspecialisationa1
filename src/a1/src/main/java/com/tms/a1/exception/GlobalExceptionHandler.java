@@ -40,4 +40,10 @@ public class GlobalExceptionHandler {
 
     return ResponseEntity.status(HttpStatus.ACCEPTED).body(errors);
   }
+
+  @ExceptionHandler(EntityNotFoundException.class)
+  public ResponseEntity<Object> handleUserNotFoundException(EntityNotFoundException ex) {
+      ErrorResponse errorResponse = new ErrorResponse(ex.getMessage());
+      return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+  }
 }
