@@ -1,5 +1,6 @@
 package com.tms.a1.service;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -142,38 +143,35 @@ public class TmsService {
     //Update plan
     public String updatePlan(String appacronym, String planid, Plan plan) {
         Plan existingPlan = tmsRepo.findByPlan(planid, appacronym);
+        System.out.println(existingPlan);
         if (existingPlan != null) {
-            // Update the user's information
-            // String plainTextPassword = user.getPassword();
-            // String email = user.getEmail();
-            // String groupToUpdate = user.getGroups();
-            // int isActive = user.getIsActive();
+            // Update plans's information
+            // Iterate over the fields of the Plan class
+            for (Field field : Plan.class.getDeclaredFields()) {
+                field.setAccessible(true);
+                try {
+                    // Get the field name and value from the request body
+                    String fieldName = field.getName();
+                    Object fieldValue = field.get(plan);
 
-            // Hash the new password using BCrypt if provided and not empty
-            // if (plainTextPassword != null && !plainTextPassword.isEmpty()) {
-            //     if (!isPasswordValid(plainTextPassword)) {
-            //         return "Invalid password";
-            //     }
-            //     String hashedPassword = passwordEncoder.encode(plainTextPassword);
-            //     existingUser.setPassword(hashedPassword);
-            // }
+                    // Check if the field value is not null and update the existingPlan
+                    if (fieldValue != null) {
+                        Field existingField = Plan.class.getDeclaredField(fieldName);
+                        existingField.setAccessible(true);
+                        existingField.set(existingPlan, fieldValue);
+                    }
 
-            // if (email != null && !email.isEmpty()) {
-            //     if (!isValidEmail(email)) {
-            //         return "Invalid email";
-            //     }
-            //     existingUser.setEmail(email);
-            // }
-
-            // existingUser.setGroups(groupToUpdate);
-            // existingUser.setIsActive(isActive);
-
-            // Save the updated user back to the repository
-            // userRepo.saveUser(existingUser);
-
+                } catch (Exception e) {
+                    // Handle any exceptions or errors
+                    e.printStackTrace();
+                    return "Error updating plan";
+                }
+            }
+            // Save the updated plan back to the repository
+            tmsRepo.savePlan(existingPlan);
             return "Success";
         } else {
-            return "User not found";
+            return "Plan not found";
         }
     }
 

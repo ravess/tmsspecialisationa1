@@ -100,7 +100,7 @@ public class TmsController {
     // Update Single App
     @PutMapping("/apps/{appacronym}/edit")
     public ResponseEntity<?> updateAppByAppAcronym(@PathVariable String appacronym,
-    @RequestBody Application requestBody,
+    @Valid @RequestBody Application requestBody,
     BindingResult bindingResult) {
     Map<String, Object> response = new HashMap<>();
     String resMsg;
@@ -161,10 +161,6 @@ public class TmsController {
     //Get Single Plan
     @GetMapping("/apps/{appacronym}/plans/{planid}")
     public ResponseEntity<Object> getPlan(@PathVariable String appacronym, @PathVariable String planid) {
-        System.out.println("**********");
-        System.out.println("It came to get single plan route");
-        System.out.println(planid);
-        System.out.println("**********");
         String resMsg;
         Map<String, Object> response = new HashMap<>();
         Plan plan = tmsService.getPlan(planid, appacronym);
@@ -218,11 +214,16 @@ public class TmsController {
     //Update Plan
     @PutMapping("/apps/{appacronym}/plans/{planid}/edit")
     public ResponseEntity<?> updatePlanByPlanID(@PathVariable String appacronym, @PathVariable String planid,
-    @RequestBody Plan requestBody,
-    BindingResult bindingResult) {
-    Map<String, Object> response = new HashMap<>();
-    String resMsg;
-
+    @Valid @RequestBody Plan requestBody,
+            BindingResult bindingResult) {
+        System.out.println("**********");
+        System.out.println("It came to update plan route");
+        System.out.println(requestBody);
+        System.out.println("**********");
+        Map<String, Object> response = new HashMap<>();
+        String resMsg;
+        requestBody.setPlanAppAcronym(appacronym);
+        requestBody.setPlanMVPName(planid);
         if (bindingResult.hasErrors()) {
             // Handle validation errors here
             Map<String, String> errorMap = new HashMap<>();
@@ -335,7 +336,7 @@ public class TmsController {
     // Update Single Task
     @PutMapping("/apps/{appacronym}/tasks/{taskid}/edit")
     public ResponseEntity<?> updateTaskByTaskID(@PathVariable String appacronym, @PathVariable String taskid,
-    @RequestBody Task requestBody,
+    @Valid @RequestBody Task requestBody,
     BindingResult bindingResult) {
     Map<String, Object> response = new HashMap<>();
     String resMsg;
