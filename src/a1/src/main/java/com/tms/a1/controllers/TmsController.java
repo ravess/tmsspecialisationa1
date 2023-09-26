@@ -108,8 +108,7 @@ public class TmsController {
     // Update Single App
     @PutMapping("/apps/{appacronym}/edit")
     public ResponseEntity<?> updateAppByAppAcronym(@PathVariable String appacronym,
-    @RequestBody Application requestBody,
-    BindingResult bindingResult) {
+    @RequestBody Application requestBody, BindingResult bindingResult) {
     Map<String, Object> response = new HashMap<>();
     String resMsg;
 
@@ -121,29 +120,53 @@ public class TmsController {
             });
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMap);
         }
+
+        // WIP
+        // ObjectMapper objectMapper = new ObjectMapper();
+        // Map<String, Object> requestBodyMap = objectMapper.convertValue(requestBody, Map.class);
+        // Field[] fields = (Application.class).getDeclaredFields();
+        // Set<String> validKeys = Arrays.stream(fields)
+        //     .map(Field::getName)
+        //     .collect(Collectors.toSet());
+
+        // Boolean valid = true;
+        // for (String key : requestBodyMap.keySet()){
+        //     System.out.println(key);
+        //     if(!validKeys.contains(key)){
+        //         valid = false;
+        //     }
+        // }
         
         // List permitted = adminService.checkGroup();
         // if(permitted != null && !permitted.isEmpty()){
-            String res = tmsService.updateApp(appacronym, requestBody);
-            if (res.equals("Success")) {
-                resMsg = "App Successfully Updated.";
-                response.put("msg", resMsg);
-                return new ResponseEntity<>(response, HttpStatus.OK);
-            } else if (res.equals("Change some stuff here")) {
-                System.out.println(res);
-                resMsg = "Invalid some stuff";
-                response.put("msg", resMsg);
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-            }else if (res.equals("Change some stuff here")) {
-                resMsg = "Invalid some stuff";
-                response.put("msg", resMsg);
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-            } else {
-                resMsg = "An error occurred when updating app.";
-                response.put("msg", resMsg);
-                System.out.println(resMsg);
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-            }
+            // if(valid){
+                String res = tmsService.updateApp(appacronym, requestBody);
+                if (res.equals("Success")) {
+                    resMsg = "App Successfully Updated.";
+                    response.put("msg", resMsg);
+                    return new ResponseEntity<>(response, HttpStatus.OK);
+                } else if (res.equals("Change some stuff here")) {
+                    System.out.println(res);
+                    resMsg = "Invalid some stuff";
+                    response.put("msg", resMsg);
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+                }else if (res.equals("Change some stuff here")) {
+                    resMsg = "Invalid some stuff";
+                    response.put("msg", resMsg);
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+                } else {
+                    resMsg = "An error occurred when updating app.";
+                    response.put("msg", resMsg);
+                    System.out.println(resMsg);
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+                }
+            // }else{
+            //     resMsg = "Invalid keys entered.";
+            //     response.put("msg", resMsg);
+            //     System.out.println(resMsg);
+            //     return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+            // }
+            
         // }else{
         //     resMsg = "You are unauthorized for this action.";
         //     response.put("msg", resMsg);

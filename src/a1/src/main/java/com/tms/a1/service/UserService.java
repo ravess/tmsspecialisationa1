@@ -43,44 +43,45 @@ public class UserService {
             throw new EntityNotFoundException(Username, User.class);
         }
     }
-  public String updateOwnProfile(String newPassword, String newEmail) {
-    try{
-    // Get the username of the authenticated user
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    if (authentication != null && authentication.isAuthenticated()) {
-        String username = authentication.getName();
 
-        // Ensure that the user being updated matches the authenticated user
-        User authenticatedUser = userRepo.findByUsername(username);
-        if (authenticatedUser != null) {
+    public String updateOwnProfile(String newPassword, String newEmail) {
+        try{
+        // Get the username of the authenticated user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            String username = authentication.getName();
 
-            // Check if newPassword and newEmail are provided
-            if (newPassword != null && !newPassword.isEmpty()) {
-                if (!isPasswordValid(newPassword)) {
-                    return "Invalid password";
+            // Ensure that the user being updated matches the authenticated user
+            User authenticatedUser = userRepo.findByUsername(username);
+            if (authenticatedUser != null) {
+
+                // Check if newPassword and newEmail are provided
+                if (newPassword != null && !newPassword.isEmpty()) {
+                    if (!isPasswordValid(newPassword)) {
+                        return "Invalid password";
+                    }
+                    // Hash the new password
+                    String hashedPassword = passwordEncoder.encode(newPassword);
+
+                    // Update the user's password and email with the hashed password
+                    authenticatedUser.setPassword(hashedPassword);
+                } if (newEmail != null && !newEmail.isEmpty()) {
+                if (!isValidEmail(newEmail)) {
+                        return "Invalid email";
+                    }
+                    // Update only the user's password with the hashed password
+                    authenticatedUser.setEmail(newEmail);
                 }
-                // Hash the new password
-                String hashedPassword = passwordEncoder.encode(newPassword);
-
-                // Update the user's password and email with the hashed password
-                authenticatedUser.setPassword(hashedPassword);
-            } if (newEmail != null && !newEmail.isEmpty()) {
-              if (!isValidEmail(newEmail)) {
-                    return "Invalid email";
-                }
-                // Update only the user's password with the hashed password
-                authenticatedUser.setEmail(newEmail);
-            }
-            } 
-            userRepo.saveUser(authenticatedUser); // Save the updated user to the database
-            return "Success";
-        }  else {
-        throw new EntityNotFoundException("You are not an authenticated user", User.class);
-    }}catch (Exception e) {
-        e.printStackTrace(); // Log the exception stack trace
-        return "An error occurred: " + e.getMessage(); // Return the exception message
+                } 
+                userRepo.saveUser(authenticatedUser); // Save the updated user to the database
+                return "Success";
+            }  else {
+            throw new EntityNotFoundException("You are not an authenticated user", User.class);
+        }}catch (Exception e) {
+            e.printStackTrace(); // Log the exception stack trace
+            return "An error occurred: " + e.getMessage(); // Return the exception message
+        }
     }
-}
     // Custom validation logic for password
     private boolean isPasswordValid(String password) {
         // Check if the password contains at least one alphabet character, one number,

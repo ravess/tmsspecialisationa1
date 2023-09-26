@@ -70,34 +70,15 @@ public class TmsService {
     public String updateApp(String appacronym, Application app) {
         Application existingApp = tmsRepo.findByApp(appacronym);
         if (existingApp != null) {
-            // Update the app's information
-            // String plainTextPassword = user.getPassword();
-            // String email = user.getEmail();
-            // String groupToUpdate = user.getGroups();
-            // int isActive = user.getIsActive();
-
-            // Hash the new password using BCrypt if provided and not empty
-            // if (plainTextPassword != null && !plainTextPassword.isEmpty()) {
-            //     if (!isPasswordValid(plainTextPassword)) {
-            //         return "Invalid password";
-            //     }
-            //     String hashedPassword = passwordEncoder.encode(plainTextPassword);
-            //     existingUser.setPassword(hashedPassword);
-            // }
-
-            // if (email != null && !email.isEmpty()) {
-            //     if (!isValidEmail(email)) {
-            //         return "Invalid email";
-            //     }
-            //     existingUser.setEmail(email);
-            // }
-
-            // existingUser.setGroups(groupToUpdate);
-            // existingUser.setIsActive(isActive);
-
-            // Save the updated user back to the repository
+            existingApp.setAppStartDate(app.getAppStartDate());
+            existingApp.setAppEndDate(app.getAppEndDate());
+            existingApp.setAppPermitOpen(app.getAppPermitOpen());
+            existingApp.setAppPermitToDoList(app.getAppPermitToDoList());
+            existingApp.setAppPermitDoing(app.getAppPermitDoing());
+            existingApp.setAppPermitDone(app.getAppPermitDone());
+            existingApp.setAppPermitCreate(app.getAppPermitCreate());
+            
             tmsRepo.saveApp(existingApp);
-
             return "Success";
         } else {
             return "App not found";
