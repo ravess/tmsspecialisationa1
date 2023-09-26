@@ -3,6 +3,8 @@ package com.tms.a1.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
@@ -53,8 +55,6 @@ public class Task {
     @Column(name = "task_owner")
     private String taskOwner;
 
-    @NotNull(message = "Task create date should not be null")
     @Column(name = "task_create_date")
     private String taskCreateDate;
 }
-

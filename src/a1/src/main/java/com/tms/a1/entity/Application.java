@@ -23,7 +23,7 @@ public class Application {
     @Column(name = "app_acronym", unique = true)
     private String appAcronym;
 
-    @NotBlank(message = "username should not be empty")
+    @NotBlank(message = "Application Description should not be empty")
     @Column(name = "app_description", unique = true)
     private String appDescription;
 
