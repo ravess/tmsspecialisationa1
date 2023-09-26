@@ -58,10 +58,7 @@ public class TmsService {
         String appStartDate = app.getAppStartDate();
         String appEndDate = app.getAppEndDate();
 
-        app.setAppDescription("To be amended accrodingly");
-        app.setAppPermitCreate("To be amended accrodingly");
-        app.setAppPermitOpen("To be amended accrodingly");
-        app.setAppStartDate("To be amended accrodingly");
+       
         tmsRepo.saveApp(app);
         return "Success";
     }

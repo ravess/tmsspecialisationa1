@@ -78,15 +78,15 @@ public class TmsController {
         String res = tmsService.newApp(requestBody);
 
         if (res.equals("Success")) {
-            resMsg = "User Successfully Created.";
+            resMsg = "Application Successfully Created.";
             response.put("msg", resMsg);
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         } else if (res.equals("Duplicate")) {
-            resMsg = "Username Already Exists.";
+            resMsg = "Application Already Exists.";
             response.put("msg", resMsg);
             return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
         } else {
-            resMsg = "An error occured when creating user";
+            resMsg = "An error occured when creating application";
             response.put("msg", resMsg);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
@@ -96,6 +96,7 @@ public class TmsController {
         //     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         // }
     }
+    
 
     @PostMapping("/hasAccess")
     public ResponseEntity<?> hasAccess(@RequestBody Map<String, String> requestBody) {
