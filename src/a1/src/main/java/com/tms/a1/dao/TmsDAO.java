@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import com.tms.a1.entity.Application;
 import com.tms.a1.entity.Plan;
 import com.tms.a1.entity.Task;
-import com.tms.a1.entity.User;
 import com.tms.a1.utils.HibernateUtil;
 
 import jakarta.persistence.Query;
@@ -198,14 +197,13 @@ public class TmsDAO {
             return null;
         }
     }
-
-    //create new plan
+    
+    // Create/Update new Plan
     public void savePlan(Plan plan) {
         Transaction transaction = null;
         try (Session session = hibernateUtil.getSessionFactory().openSession()) {
             // start a transaction
             transaction = session.beginTransaction();
-
             Plan detachedPlan = plan;
             Plan managedPlan = session.merge(detachedPlan);
             // save the Group object
@@ -319,4 +317,27 @@ public class TmsDAO {
             e.printStackTrace();
         }
     }
+
+    public List<String> getPermit(String app, String state) {
+         Transaction transaction = null;
+         try (Session session = hibernateUtil.getSessionFactory().openSession()) {
+             // start a transaction
+             transaction = session.beginTransaction();
+             String columnName = "appPermit" + state;
+             String hql = "SELECT a." + columnName +" FROM Application a WHERE a.appAcronym = :app";
+             Query query = session.createQuery(hql, String.class)
+                     .setParameter("app", app);
+             List<String> result = query.getResultList();
+             // commit transaction
+ 
+             transaction.commit();
+             return result;
+         } catch (Exception e) {
+             if (transaction != null && transaction.isActive()) {
+                 transaction.rollback();
+             }
+             e.printStackTrace();
+             return null;
+         }
+     }
 }

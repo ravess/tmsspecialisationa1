@@ -31,7 +31,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     @Autowired
     private SecurityConstants securityConstants;
-
+    
     private CustomAuthenticationManager authenticationManager;
 
     @Override
@@ -39,7 +39,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
             throws AuthenticationException {
         try {
             User user = new ObjectMapper().readValue(request.getInputStream(), User.class);
-
+            
             // The below code is to create an authentication object and pass to our authentication manager to authenticate the user from our database record.
             Authentication authentication = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
 
@@ -81,6 +81,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         cookie.setPath("/"); // Set the cookie path to "/" to make it accessible to all paths
         cookie.setMaxAge(securityConstants.getTokenExp() / 1000); // Set the cookie's max age in seconds
         cookie.setHttpOnly(true); // Make the cookie HTTP-only for added security frontend js cannot access
+        System.out.println();
         
         // Add the cookie to the response
         response.addCookie(cookie);
