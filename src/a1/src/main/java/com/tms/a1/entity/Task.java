@@ -7,8 +7,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
 
+@Getter
+@Setter
 @Entity
 @Table(name = "task")
 public class Task {
@@ -18,34 +22,38 @@ public class Task {
     @Column(name = "task_id", unique = true)
     private String taskID;
 
-    // @NotNull(message = "Task name should not be null")
-    // @NotBlank
-    // @Column(name = "task_name")
-    // private String taskName;
+    @NotNull(message = "Task name should not be null")
+    @NotBlank
+    @Column(name = "task_name")
+    private String taskName;
 
-    // @NotNull(message = "RNumber should not be null")
-    // @Column(name = "task_", unique = true)
-    // private long taskDescription;
+    @NotNull(message = "Task Description should not be null")
+    @Column(name = "task_description")
+    private String taskDescription;
 
-    // @Column(name = "app_start_date")
-    // private String taskNotes;
+    @Column(name = "task_notes")
+    private String taskNotes;
 
-    // @Column(name = "app_end_date")
-    // private int taskPlan;
+    @Column(name = "task_plan")
+    private String taskPlan;
 
-    // @Column(name = "app_permit_open")
-    // private String taskAppAcronym;
+    @NotNull(message = "Task acronym should not be null")
+    @Column(name = "task_app_acronym")
+    private String taskAppAcronym;
 
-    // @Column(name = "app_permit_open")
-    // private String taskState;
+    @NotNull(message = "Task state should not be null")
+    @Column(name = "task_state")
+    private String taskState;
 
-    // @Column(name = "app_permit_open")
-    // private String taskCreator;
+    @NotNull(message = "Task creator should not be null")
+    @Column(name = "task_creator")
+    private String taskCreator;
 
-    // @Column(name = "app_permit_open")
-    // private String taskOwner;
+    @NotNull(message = "Task owner should not be null")
+    @Column(name = "task_owner")
+    private String taskOwner;
 
-    // @Column(name = "app_permit_open")
-    // private String taskCreateDate;
+    @NotNull(message = "Task create date should not be null")
+    @Column(name = "task_create_date")
+    private String taskCreateDate;
 }
-

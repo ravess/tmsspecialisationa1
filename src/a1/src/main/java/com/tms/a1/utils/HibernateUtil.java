@@ -5,10 +5,12 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
+import com.tms.a1.entity.Application;
 import com.tms.a1.entity.Group;
+import com.tms.a1.entity.Plan;
+import com.tms.a1.entity.Task;
 import com.tms.a1.entity.User;
 
 @Component
@@ -53,6 +55,9 @@ public class HibernateUtil {
 
                 configuration.addAnnotatedClass(User.class);
                 configuration.addAnnotatedClass(Group.class);
+                configuration.addAnnotatedClass(Application.class);
+                configuration.addAnnotatedClass(Task.class);
+                configuration.addAnnotatedClass(Plan.class);
                 ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                         .applySettings(configuration.getProperties()).build();
 

@@ -6,7 +6,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+// import lombok.AllArgsConstructor;
 import lombok.Getter;
+// import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
@@ -21,9 +23,9 @@ public class Application {
     @Column(name = "app_acronym", unique = true)
     private String appAcronym;
 
-    @NotBlank(message = "username should not be empty")
+    @NotBlank(message = "Application Description should not be empty")
     @Column(name = "app_description", unique = true)
-    private Long appDescription;
+    private String appDescription;
 
     @NotNull(message = "RNumber should not be null")
     @Column(name = "app_rnumber", unique = true)
@@ -33,7 +35,7 @@ public class Application {
     private String appStartDate;
 
     @Column(name = "app_end_date")
-    private int appEndDate;
+    private String appEndDate;
 
     @Column(name = "app_permit_open")
     private String appPermitOpen;
