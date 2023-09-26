@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.CookieClearingLogoutHandler;
@@ -50,13 +51,15 @@ public class SecurityConfig {
     .cors(withDefaults())
     .csrf(csrf -> csrf.disable())
     .authorizeHttpRequests(authorize -> authorize
-        .requestMatchers(HttpMethod.POST, "/**").authenticated()
-        .requestMatchers(HttpMethod.PUT, "/**").authenticated()
-        .requestMatchers("/users/**").authenticated() 
-        .requestMatchers("/users").authenticated() 
+        // .requestMatchers(HttpMethod.POST, "/**").authenticated()
+        // .requestMatchers(HttpMethod.PUT, "/**").authenticated()
+        .requestMatchers("/users/**").authenticated()
+        .requestMatchers("/users").authenticated()
         .requestMatchers("/getUser").authenticated() 
-        .requestMatchers("/getGroups").authenticated() 
-        .anyRequest().permitAll())
+        // .requestMatchers("/getGroups").authenticated() 
+        .requestMatchers("/getGroups").hasAuthority("admin")
+        .anyRequest().permitAll()
+        )
     .addFilterBefore(new ExceptionHandlerFilter(), AuthenticationFilter.class)
     .addFilter(authenticationFilter)
     .addFilterAfter(new JWTAuthorizationFilter(securityConstants,userService), AuthenticationFilter.class)
@@ -84,5 +87,10 @@ public class SecurityConfig {
 		source.registerCorsConfiguration("/**", configuration);
 		return source;
 	}
+
+  @Bean
+  static GrantedAuthorityDefaults grantedAuthorityDefaults() {
+    return new GrantedAuthorityDefaults("");
+  }
 
 }

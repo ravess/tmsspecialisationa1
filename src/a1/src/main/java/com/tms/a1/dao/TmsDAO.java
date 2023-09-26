@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import com.tms.a1.entity.Application;
 import com.tms.a1.entity.Plan;
+import com.tms.a1.entity.Task;
 import com.tms.a1.utils.HibernateUtil;
 
 import jakarta.persistence.Query;
@@ -170,19 +171,14 @@ public class TmsDAO {
     }
 
     //Get single Plan
-    public Plan findByPlan(String planid, String appacronym) {
-        System.out.println("************");
-        System.out.println("In DAO layer");
-        System.out.println(planid);
-        System.out.println("*************");
+    public Plan findByPlan(String planid, String acronym) {
         Transaction transaction = null;
         try (Session session = hibernateUtil.getSessionFactory().openSession()) {
             // start a transaction
             transaction = session.beginTransaction();
-            String hql = "FROM Plan p WHERE p.planMVPName = :planid AND p.planAppAcronym = :appacronym";
+            String hql = "FROM Plan p WHERE p.planid = :planid ";
             TypedQuery<Plan> query = session.createQuery(hql, Plan.class)
-                    .setParameter("planid", planid)
-                    .setParameter("appacronym", appacronym);
+                    .setParameter("planid", planid);
 
             List<Plan> resultList = query.getResultList();
             if (!resultList.isEmpty()) {
@@ -202,7 +198,7 @@ public class TmsDAO {
         }
     }
     
-    // create and Update new Plan
+    // Create/Update new Plan
     public void savePlan(Plan plan) {
         Transaction transaction = null;
         try (Session session = hibernateUtil.getSessionFactory().openSession()) {
@@ -222,5 +218,126 @@ public class TmsDAO {
         }
     }
 
+     // Check for existing Task
+    public Boolean existByTaskID(String taskid) {
+        Transaction transaction = null;
+        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
+            // start a transaction
+            transaction = session.beginTransaction();
+            String hql = "FROM Task t WHERE t.taskID = :taskid ";
+            TypedQuery<Task> query = session.createQuery(hql, Task.class)
+                    .setParameter("taskid", taskid);
+
+            List<Task> resultList = query.getResultList();
+            if (!resultList.isEmpty()) {
+                Boolean result = true; // Get the first result
+                transaction.commit();
+                return result;
+            } else {
+                transaction.commit();
+                return false;
+            }
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            return null;
+        }
+    }
     
+
+    //Get All Tasks
+    public List<Task> findAllTasks(String appacronym) {
+        Transaction transaction = null;
+        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
+            // start a transaction
+            transaction = session.beginTransaction();
+            // save the User object
+            String hql = "FROM Task t WHERE t.taskAppAcronym = :appacronym ";
+            TypedQuery<Task> query = session.createQuery(hql, Task.class)
+                    .setParameter("appacronym", appacronym);
+            List<Task> tasks = query.getResultList();
+            // commit transaction
+            transaction.commit();
+            return tasks;
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+     //Get single Task
+     public Task findByTask(String taskid, String acronym) {
+         Transaction transaction = null;
+         try (Session session = hibernateUtil.getSessionFactory().openSession()) {
+             // start a transaction
+             transaction = session.beginTransaction();
+             String hql = "FROM Task t WHERE t.taskid = :taskid ";
+             TypedQuery<Task> query = session.createQuery(hql, Task.class)
+                     .setParameter("taskid", taskid);
+
+             List<Task> resultList = query.getResultList();
+             if (!resultList.isEmpty()) {
+                 Task result = resultList.get(0); // Get the first result
+                 transaction.commit();
+                 return result;
+             } else {
+                 transaction.commit();
+                 return null;
+             }
+         } catch (Exception e) {
+             if (transaction != null) {
+                 transaction.rollback();
+             }
+             e.printStackTrace();
+             return null;
+         }
+     }
+    
+    // Create/Update new Plan
+    public void saveTask(Task task) {
+        Transaction transaction = null;
+        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
+            // start a transaction
+            transaction = session.beginTransaction();
+            Task detachedTask = task;
+            Task managedTask = session.merge(detachedTask);
+            // save the Group object
+            session.persist(managedTask);
+            // commit transaction
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+        }
+    }
+
+    public List<String> getPermit(String app, String state) {
+         Transaction transaction = null;
+         try (Session session = hibernateUtil.getSessionFactory().openSession()) {
+             // start a transaction
+             transaction = session.beginTransaction();
+             String columnName = "appPermit" + state;
+             String hql = "SELECT a." + columnName +" FROM Application a WHERE a.appAcronym = :app";
+             Query query = session.createQuery(hql, String.class)
+                     .setParameter("app", app);
+             List<String> result = query.getResultList();
+             // commit transaction
+ 
+             transaction.commit();
+             return result;
+         } catch (Exception e) {
+             if (transaction != null && transaction.isActive()) {
+                 transaction.rollback();
+             }
+             e.printStackTrace();
+             return null;
+         }
+     }
 }

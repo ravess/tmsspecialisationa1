@@ -145,7 +145,7 @@ public class UserDAO {
             // save the Group object
             session.persist(managedUser);
             // commit transaction
-            transaction.commit();
+            transaction.commit(); 
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
