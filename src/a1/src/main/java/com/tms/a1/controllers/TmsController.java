@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.tms.a1.entity.Application;
 import com.tms.a1.entity.Plan;
 import com.tms.a1.entity.Task;
-import com.tms.a1.entity.User;
-import com.tms.a1.exception.ForbiddenException;
 import com.tms.a1.service.TmsService;
 
 import jakarta.validation.Valid;

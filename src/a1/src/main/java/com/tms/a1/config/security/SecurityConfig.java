@@ -51,13 +51,15 @@ public class SecurityConfig {
     .cors(withDefaults())
     .csrf(csrf -> csrf.disable())
     .authorizeHttpRequests(authorize -> authorize
-        .requestMatchers(HttpMethod.POST, "/**").authenticated()
+        // .requestMatchers(HttpMethod.POST, "/**").authenticated()
         // .requestMatchers(HttpMethod.PUT, "/**").authenticated()
-        .requestMatchers("/users/**").authenticated() 
-        .requestMatchers("/users").authenticated() 
+        .requestMatchers("/users/**").authenticated()
+        .requestMatchers("/users").authenticated()
         .requestMatchers("/getUser").authenticated() 
-        .requestMatchers("/getGroups").hasAnyAuthority("admin")
-        .anyRequest().permitAll())
+        // .requestMatchers("/getGroups").authenticated() 
+        .requestMatchers("/getGroups").hasAuthority("admin")
+        .anyRequest().permitAll()
+        )
     .addFilterBefore(new ExceptionHandlerFilter(), AuthenticationFilter.class)
     .addFilter(authenticationFilter)
     .addFilterAfter(new JWTAuthorizationFilter(securityConstants,userService), AuthenticationFilter.class)
@@ -75,20 +77,19 @@ public class SecurityConfig {
   }
 
   @Bean
-  CorsConfigurationSource corsConfigurationSource() {
-    CorsConfiguration configuration = new CorsConfiguration();
-    configuration.setAllowedOrigins(Arrays.asList(securityConstants.getFrontendURL())); // Specify the exact origin
-    configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT"));
-    configuration.setAllowCredentials(true);
-    configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
-    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-    source.registerCorsConfiguration("/**", configuration);
-    return source;
-  }
-  
+	CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration configuration = new CorsConfiguration();
+		configuration.setAllowedOrigins(Arrays.asList(securityConstants.getFrontendURL())); // Specify the exact origin
+		configuration.setAllowedMethods(Arrays.asList("GET","POST", "PUT"));
+        configuration.setAllowCredentials(true);
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", configuration);
+		return source;
+	}
+
   @Bean
   static GrantedAuthorityDefaults grantedAuthorityDefaults() {
-
     return new GrantedAuthorityDefaults("");
   }
 

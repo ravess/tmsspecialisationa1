@@ -128,16 +128,16 @@ public class TmsService {
     //Create New Plan
     public String newPlan(Plan plan, String appacronym) {
         //Do something here, you have a appacronym  below is just boilerplate for you to amend accordingly
+        //check if app exists
+        if(!tmsRepo.existByAppAcronym(appacronym)){
+            return "NonexistentApp";
+        }
+        
+        //check for duplicate plan name
         if (tmsRepo.existByPlanMVPName(plan.getPlanMVPName())) {
             return "Duplicate";
         }
-        String planColor = plan.getPlanColor();
-        String planEndDate = plan.getPlanEndDate();
-        String planStartDate = plan.getPlanStartDate();
-
-        plan.setPlanEndDate("To be amended accrodingly");
-        plan.setPlanColor("To be amended accrodingly");
-        plan.setPlanStartDate("To be amended accrodingly");
+        
         tmsRepo.savePlan(plan);
         return "Success";
     }

@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import com.tms.a1.entity.Application;
 import com.tms.a1.entity.Plan;
 import com.tms.a1.entity.Task;
-import com.tms.a1.entity.User;
 import com.tms.a1.utils.HibernateUtil;
 
 import jakarta.persistence.Query;
