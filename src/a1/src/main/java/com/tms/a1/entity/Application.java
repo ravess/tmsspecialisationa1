@@ -23,7 +23,7 @@ public class Application {
 
     @NotBlank(message = "username should not be empty")
     @Column(name = "app_description", unique = true)
-    private Long appDescription;
+    private String appDescription;
 
     @NotNull(message = "RNumber should not be null")
     @Column(name = "app_rnumber", unique = true)
@@ -33,7 +33,7 @@ public class Application {
     private String appStartDate;
 
     @Column(name = "app_end_date")
-    private int appEndDate;
+    private String appEndDate;
 
     @Column(name = "app_permit_open")
     private String appPermitOpen;
