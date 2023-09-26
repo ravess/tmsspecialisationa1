@@ -99,7 +99,7 @@ public class TmsDAO {
         }
     }
 
-    // Create/Update new App
+    // Create new / Update App
     public void saveApp(Application app) {
         Transaction transaction = null;
         try (Session session = hibernateUtil.getSessionFactory().openSession()) {
