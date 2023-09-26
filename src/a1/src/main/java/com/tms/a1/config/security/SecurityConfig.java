@@ -57,7 +57,7 @@ public class SecurityConfig {
         .requestMatchers("/users").authenticated()
         .requestMatchers("/getUser").authenticated() 
         // .requestMatchers("/getGroups").authenticated() 
-        .requestMatchers("/getGroups").hasRole("admin")
+        .requestMatchers("/getGroups").hasAuthority("admin")
         .anyRequest().permitAll()
         )
     .addFilterBefore(new ExceptionHandlerFilter(), AuthenticationFilter.class)

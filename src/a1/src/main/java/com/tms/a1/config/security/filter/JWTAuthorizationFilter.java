@@ -92,10 +92,9 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
         //1st param: authenticated user's username, 2nd param: user's credentials, set as null as pw not needed after authentication, 3rd param list of roles associated with user. use Arrays.asList() for none. 
         Authentication authentication;
         if(rolesArray.length!=0){
-            // System.out.println("has roles");
+            System.out.println("has roles");
             authentication = new UsernamePasswordAuthenticationToken(username, null, authorities);
-            // System.out.println(authentication.getAuthorities());
-            
+            System.out.println(authentication.getAuthorities());
         }else{
             // System.out.println("no roles");
             authentication = new UsernamePasswordAuthenticationToken(username, null, Arrays.asList());
