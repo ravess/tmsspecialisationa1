@@ -2,10 +2,14 @@ package com.tms.a1.config.security.filter;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
+import org.hibernate.mapping.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -62,7 +66,13 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
         
         String user = decodedJWT.getSubject();
         User user2 = userService.login(user);
-        
+
+        String[] rolesArray = user2.getGroups().split("\\.");
+        java.util.List<GrantedAuthority> authorities = Arrays.stream(rolesArray)
+                .filter(role -> !role.isEmpty())
+                .map(role -> new SimpleGrantedAuthority(role))
+                .collect(Collectors.toList());
+
       
         if(user2.getIsActive()==0){
             throw new ForbiddenException("Your account is inactive");
@@ -81,9 +91,12 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
         //"Authentication token"
         //UsernamePWAuthToken = "app-wide authentication token"
         //1st param: authenticated user's username, 2nd param: user's credentials, set as null as pw not needed after authentication, 3rd param list of roles associated with user. use Arrays.asList() for none. 
-        Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, Arrays.asList());
-
+        Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, authorities);
+        // Extract roles from user.getGroups() and create GrantedAuthority objects
+        
+       
         //the following stores details of currently authenticated user, providing a way to access the authenticated info throughout the app
+        
         SecurityContextHolder.getContext().setAuthentication(authentication);
         filterChain.doFilter(request, response);
     }
