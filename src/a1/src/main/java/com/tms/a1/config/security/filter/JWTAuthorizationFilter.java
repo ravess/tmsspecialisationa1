@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.hibernate.mapping.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -64,17 +66,17 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
             .build()
             .verify(token);
         
-        String username = decodedJWT.getSubject();
-        User userObject = userService.login(username);
-        String[] groupList = Arrays.stream((userObject.getGroups()).split("\\.")).filter(s->!s.isEmpty()).toArray(String[]::new);
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        if(groupList.length!=0){
-            for (String g : groupList){
-                authorities.add(new SimpleGrantedAuthority("ROLE_"+g));
-            }
-        }
+        String user = decodedJWT.getSubject();
+        User user2 = userService.login(user);
+
+        String[] rolesArray = user2.getGroups().split("\\.");
+        java.util.List<GrantedAuthority> authorities = Arrays.stream(rolesArray)
+                .filter(role -> !role.isEmpty())
+                .map(role -> new SimpleGrantedAuthority(role))
+                .collect(Collectors.toList());
+
       
-        if(userObject.getIsActive()==0){
+        if(user2.getIsActive()==0){
             throw new ForbiddenException("Your account is inactive");
         }
         String ipAddress = decodedJWT.getClaim("ipAddress").asString();
@@ -103,6 +105,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
         }
 
         //the following stores details of currently authenticated user, providing a way to access the authenticated info throughout the app
+        
         SecurityContextHolder.getContext().setAuthentication(authentication);
         filterChain.doFilter(request, response);
     }
