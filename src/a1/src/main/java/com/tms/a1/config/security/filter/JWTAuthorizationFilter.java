@@ -1,12 +1,9 @@
 package com.tms.a1.config.security.filter;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
 
-import org.hibernate.mapping.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -66,17 +63,17 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
             .build()
             .verify(token);
         
-        String user = decodedJWT.getSubject();
-        User user2 = userService.login(user);
+        String username = decodedJWT.getSubject();
+        User userObj = userService.login(username);
 
-        String[] rolesArray = user2.getGroups().split("\\.");
+        String[] rolesArray = userObj.getGroups().split("\\.");
         java.util.List<GrantedAuthority> authorities = Arrays.stream(rolesArray)
                 .filter(role -> !role.isEmpty())
                 .map(role -> new SimpleGrantedAuthority(role))
                 .collect(Collectors.toList());
 
       
-        if(user2.getIsActive()==0){
+        if(userObj.getIsActive()==0){
             throw new ForbiddenException("Your account is inactive");
         }
         String ipAddress = decodedJWT.getClaim("ipAddress").asString();
@@ -94,7 +91,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
         //UsernamePWAuthToken = "app-wide authentication token"
         //1st param: authenticated user's username, 2nd param: user's credentials, set as null as pw not needed after authentication, 3rd param list of roles associated with user. use Arrays.asList() for none. 
         Authentication authentication;
-        if(groupList.length!=0){
+        if(rolesArray.length!=0){
             // System.out.println("has roles");
             authentication = new UsernamePasswordAuthenticationToken(username, null, authorities);
             // System.out.println(authentication.getAuthorities());
