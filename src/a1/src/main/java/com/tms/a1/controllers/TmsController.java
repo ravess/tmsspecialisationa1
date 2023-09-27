@@ -312,7 +312,7 @@ public class TmsController {
     public ResponseEntity<Object> getTask(@PathVariable String appacronym, @PathVariable String taskid) {
         String resMsg;
         Map<String, Object> response = new HashMap<>();
-        Task task = tmsService.getTask(appacronym, taskid);
+        Task task = tmsService.getTask(taskid, appacronym);
         if (task != null) {
             return new ResponseEntity<>(task, HttpStatus.OK);
         } else {

@@ -172,10 +172,6 @@ public class TmsDAO {
 
     //Get single Plan
     public Plan findByPlan(String planid, String appacronym) {
-        System.out.println("************");
-        System.out.println("In DAO layer");
-        System.out.println(planid);
-        System.out.println("*************");
         Transaction transaction = null;
         try (Session session = hibernateUtil.getSessionFactory().openSession()) {
             // start a transaction
@@ -276,12 +272,12 @@ public class TmsDAO {
     }
     
      //Get single Task
-     public Task findByTask(String appacronym, String taskid) {
+     public Task findByTask(String taskid, String appacronym) {
          Transaction transaction = null;
          try (Session session = hibernateUtil.getSessionFactory().openSession()) {
              // start a transaction
              transaction = session.beginTransaction();
-             String hql = "FROM Task t WHERE t.taskID = :taskid AND t.taskAppAcronym = :appacronym ";
+             String hql = "FROM Task t WHERE t.taskID = :taskid AND t.taskAppAcronym = :appacronym";
              TypedQuery<Task> query = session.createQuery(hql, Task.class)
                      .setParameter("taskid", taskid)
                      .setParameter("appacronym", appacronym);
