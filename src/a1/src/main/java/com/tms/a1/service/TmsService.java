@@ -45,6 +45,21 @@ public class TmsService {
         }
     }
 
+    // Get Single App
+    public Application getAppPermit(String appacronym) {
+        try {
+            Application app = tmsRepo.findAppPermitsByApp(appacronym);
+            if (app != null) {
+                return app;
+            } else {
+                throw new EntityNotFoundException(appacronym, Application.class);
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+
     // Create New App
     public String newApp(Application app) {
         if (tmsRepo.existByAppAcronym(app.getAppAcronym())) {
@@ -168,7 +183,7 @@ public class TmsService {
     // Get Single Task
     public Task getTask(String taskid, String appacronym) {
         try {
-            Task task = tmsRepo.findByTask(appacronym, taskid);
+            Task task = tmsRepo.findByTask(taskid, appacronym);
             if (task != null) {
                 return task;
             } else {

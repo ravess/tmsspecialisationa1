@@ -40,5 +40,23 @@ public class Plan {
 
     @Column(name = "plan_color")
     private String planColor;
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this)
+            return true;
+        if (!(o instanceof Plan)) {
+            return false;
+        }
+        Plan plan = (Plan) o;
+        return Objects.equals(planMVPName, plan.planMVPName) && Objects.equals(planStartDate, plan.planStartDate) && Objects.equals(planEndDate, plan.planEndDate) && Objects.equals(planAppAcronym, plan.planAppAcronym) && Objects.equals(planColor, plan.planColor);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(planMVPName, planStartDate, planEndDate, planAppAcronym, planColor);
+    }
+
     
 }
