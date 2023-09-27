@@ -23,7 +23,6 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
-// @CrossOrigin(origins = "http://localhost:3000", maxAge = 1600, allowedHeaders = "*")
 @AllArgsConstructor
 @NoArgsConstructor
 @RestController
