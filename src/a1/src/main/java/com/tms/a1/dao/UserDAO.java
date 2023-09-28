@@ -108,6 +108,29 @@ public class UserDAO {
         }
     }
 
+    public Boolean checkgroup2(String username, String usergroup) {
+        Transaction transaction = null;
+        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
+            // start a transaction
+            transaction = session.beginTransaction();
+            String hql = "SELECT u.username FROM User u WHERE u.username = :username AND u.groups LIKE :userGroupPattern";
+            Query query = session.createQuery(hql, String.class)
+                    .setParameter("username", username)
+                    .setParameter("userGroupPattern", "%." + usergroup + ".%");
+            List<?> result = query.getResultList();
+            // commit transaction
+            transaction.commit();
+            return !result.isEmpty(); // Return true if there is a result, false otherwise
+        } catch (Exception e) {
+            if (transaction != null && transaction.isActive()) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            return false; // Return false in case of an exception
+        }
+    }
+
+
     public Boolean existByUsername(String username) {
         Transaction transaction = null;
         try (Session session = hibernateUtil.getSessionFactory().openSession()) {
@@ -151,6 +174,28 @@ public class UserDAO {
                 transaction.rollback();
             }
             e.printStackTrace();
+        }
+    }
+
+    public List<User> findEmail(String group) {
+        Transaction transaction = null;
+        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
+            // start a transaction
+            transaction = session.beginTransaction();
+            // save the User object
+            String hql = "FROM User u WHERE u.groups LIKE :userGroupPattern";
+            List<User> Users = session.createQuery(hql, User.class)
+                    .setParameter("userGroupPattern", "%."+ group +".%")
+                    .getResultList();
+            // commit transaction
+            transaction.commit();
+            return Users;
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            return null;
         }
     }
   

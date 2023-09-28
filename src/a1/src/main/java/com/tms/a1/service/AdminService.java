@@ -63,9 +63,7 @@ public class AdminService {
         String hashedPassword = passwordEncoder.encode(plainTextPassword);
         user.setPassword(hashedPassword);
 
-        System.out.println(user.getGroups());
-
-        // userRepo.saveUser(user);
+        userRepo.saveUser(user);
         return "Success";
     }
 

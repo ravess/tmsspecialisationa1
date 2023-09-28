@@ -20,10 +20,13 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.tms.a1.config.security.filter.AppPermitFilter;
 import com.tms.a1.config.security.filter.AuthenticationFilter;
 import com.tms.a1.config.security.filter.ExceptionHandlerFilter;
 import com.tms.a1.config.security.filter.JWTAuthorizationFilter;
 import com.tms.a1.config.security.manager.CustomAuthenticationManager;
+import com.tms.a1.service.AuthService;
+import com.tms.a1.service.TmsService;
 import com.tms.a1.service.UserService;
 
 import lombok.AllArgsConstructor;
@@ -37,6 +40,10 @@ public class SecurityConfig {
   private SecurityConstants securityConstants;
   @Autowired
   private UserService userService;
+  @Autowired
+  private TmsService tmsService;
+  @Autowired
+  private AuthService authService;
 
   private CustomAuthenticationManager customAuthenticationManager;
 
@@ -51,18 +58,22 @@ public class SecurityConfig {
     .cors(withDefaults())
     .csrf(csrf -> csrf.disable())
     .authorizeHttpRequests(authorize -> authorize
-        // .requestMatchers(HttpMethod.POST, "/**").authenticated()
-        // .requestMatchers(HttpMethod.PUT, "/**").authenticated()
+        .requestMatchers(HttpMethod.POST, "/apps/new").hasAuthority("ProjectLead")
+        .requestMatchers(HttpMethod.PUT, "/apps/*/edit").hasAuthority("ProjectLead")
+        .requestMatchers(HttpMethod.POST,"/apps/*/plans/new").hasAuthority("ProjectManager")
+        .requestMatchers(HttpMethod.PUT,"/apps/*/plans/*/edit").hasAuthority("ProjectManager")
         .requestMatchers("/users/**").authenticated()
         .requestMatchers("/users").authenticated()
-        .requestMatchers("/getUser").authenticated() 
+        .requestMatchers("/getUser").authenticated()
+        .requestMatchers("/apps/**").authenticated()
         // .requestMatchers("/getGroups").authenticated() 
-        .requestMatchers("/getGroups").hasAuthority("admin")
+        .requestMatchers("/getGroups").hasAuthority("Admin")
         .anyRequest().permitAll()
         )
     .addFilterBefore(new ExceptionHandlerFilter(), AuthenticationFilter.class)
     .addFilter(authenticationFilter)
     .addFilterAfter(new JWTAuthorizationFilter(securityConstants,userService), AuthenticationFilter.class)
+    .addFilterAfter(new AppPermitFilter(authService, tmsService), JWTAuthorizationFilter.class)
     .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
     .logout(logout -> logout
             .logoutUrl("/logout") // Configure the logout URL
