@@ -6,6 +6,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 // import lombok.AllArgsConstructor;
 import lombok.Getter;
 // import lombok.NoArgsConstructor;
@@ -28,6 +29,7 @@ public class Application {
     private String appDescription;
 
     @NotNull(message = "RNumber should not be null")
+    @Positive(message ="RNumber should have only postive integer" )
     @Column(name = "app_rnumber", unique = true)
     private int appRNumber;
 
