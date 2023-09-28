@@ -147,8 +147,8 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMap);
         }
 
-        List permitted = adminService.checkGroup();
-        if(permitted != null && !permitted.isEmpty()){
+        // List permitted = adminService.checkGroup();
+        // if(permitted != null && !permitted.isEmpty()){
             String res = adminService.newUser(requestBody);
 
             if (res.equals("Success")) {
@@ -164,11 +164,11 @@ public class AdminController {
                 response.put("msg", resMsg);
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
             }
-        }else{
-            resMsg = "You are unauthorized for this action.";
-            response.put("msg", resMsg);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        }
+        // }else{
+        //     resMsg = "You are unauthorized for this action.";
+        //     response.put("msg", resMsg);
+        //     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        // }
     }
 
     //admin update user

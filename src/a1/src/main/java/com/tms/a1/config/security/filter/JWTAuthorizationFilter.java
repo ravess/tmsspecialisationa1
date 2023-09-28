@@ -97,11 +97,10 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
             System.out.println(authentication.getAuthorities());
         }else{
             // System.out.println("no roles");
-            authentication = new UsernamePasswordAuthenticationToken(username, null, Arrays.asList());
+            authentication = new UsernamePasswordAuthenticationToken(username, null, null);
         }
 
         //the following stores details of currently authenticated user, providing a way to access the authenticated info throughout the app
-        
         SecurityContextHolder.getContext().setAuthentication(authentication);
         filterChain.doFilter(request, response);
     }

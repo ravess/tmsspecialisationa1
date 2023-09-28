@@ -3,8 +3,6 @@ package com.tms.a1.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
@@ -39,19 +37,19 @@ public class Task {
     @Column(name = "task_plan")
     private String taskPlan;
 
-    @NotNull(message = "Task acronym should not be null")
+    // @NotNull(message = "Task acronym should not be null")
     @Column(name = "task_app_acronym")
     private String taskAppAcronym;
 
-    @NotNull(message = "Task state should not be null")
+    // @NotNull(message = "Task state should not be null")
     @Column(name = "task_state")
     private String taskState;
 
-    @NotNull(message = "Task creator should not be null")
+    // @NotNull(message = "Task creator should not be null")
     @Column(name = "task_creator")
     private String taskCreator;
 
-    @NotNull(message = "Task owner should not be null")
+    // @NotNull(message = "Task owner should not be null")
     @Column(name = "task_owner")
     private String taskOwner;
 
