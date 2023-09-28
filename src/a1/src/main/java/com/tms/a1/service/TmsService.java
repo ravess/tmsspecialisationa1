@@ -2,6 +2,8 @@ package com.tms.a1.service;
 
 import java.util.List;
 import java.util.Map;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -219,40 +221,80 @@ public class TmsService {
     }
 
     // Update Task
-    public String updateTask(String appacronym, String taskid, Task task) {
+    public String updateTask(String appacronym, String taskid, Map<String, String> requestBody) {
         Task existingTask = tmsRepo.findByTask(taskid, appacronym);
         if (existingTask != null) {
-            // Update the user's information
-            // String plainTextPassword = user.getPassword();
-            // String email = user.getEmail();
-            // String groupToUpdate = user.getGroups();
-            // int isActive = user.getIsActive();
+            String task_action_message = "";
+            if(requestBody.get("task_action") == "Edit"){
+               task_action_message = "Modified";
+            }
+            if(requestBody.get("task_action") == "Promote"){
+            task_action_message = "Promoted";
+            }
 
-            // Hash the new password using BCrypt if provided and not empty
-            // if (plainTextPassword != null && !plainTextPassword.isEmpty()) {
-            // if (!isPasswordValid(plainTextPassword)) {
-            // return "Invalid password";
-            // }
-            // String hashedPassword = passwordEncoder.encode(plainTextPassword);
-            // existingUser.setPassword(hashedPassword);
-            // }
+            if(requestBody.get("task_action") == "Demote"){
+                task_action_message = "Demoted";
+            }
 
-            // if (email != null && !email.isEmpty()) {
-            // if (!isValidEmail(email)) {
-            // return "Invalid email";
-            // }
-            // existingUser.setEmail(email);
-            // }
+            String task_state_new = requestBody.get("task_state");
+            if(task_action_message == "Promoted"){
+                switch(requestBody.get("task_state")){
+                    case "OPEN":
+                    task_state_new = "TODO";
+                    break;
+                    case "TODO":
+                    task_state_new = "DOING";
+                    break;
+                    case "DOING":
+                    task_state_new = "DONE";
+                    break;
+                    case "DONE":
+                    task_state_new = "CLOSED";
+                    break;
+                }
+            }
+            else if(task_action_message == "Demoted"){
+                switch(requestBody.get("task_state")){
+                    
+                    case "DOING":
+                    task_state_new = "TODO";
+                    break;
+                    case "DONE":
+                    task_state_new = "DOING";
+                    break;
+                }
+            }
 
-            // existingUser.setGroups(groupToUpdate);
-            // existingUser.setIsActive(isActive);
+            String varState = (task_action_message == "Modified")?"[" + requestBody.get("task_state") + "]":"[" + requestBody.get("task_state") + "] >>> ["+ task_state_new +"]";
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z");
+            ZonedDateTime currentZonedDateTime = ZonedDateTime.now();
+            String formattedDateTime = currentZonedDateTime.format(formatter);
+            String updateMessage = "________________________________________________________\n"
+            + task_action_message + "by:" + requestBody.get("task_owner") + "\n" + task_action_message +"on:" + formattedDateTime + "\n" + "State:" + varState + "\n";
+            if(requestBody.get("task_plan_current") != requestBody.get("task_plan_new")){
+                updateMessage += "Plane changed from [" + requestBody.get("task_plan_current") + "] to [ " + requestBody.get("task_plan_new")+"]\n";
+                updateMessage += "_______________________________________________________________________\n";
 
-            // Save the updated user back to the repository
-            // userRepo.saveUser(existingUser);
-
+            }else{
+                updateMessage += "_______________________________________________________________________\n";
+            }
+            String updatedNotes = "";
+            if (requestBody.get("task_notes_new") != ""){
+               updatedNotes = updateMessage + requestBody.get("task_notes_new") + "\n" + requestBody.get("task_notes_current");
+            }
+            else if(task_action_message == "Modified" || requestBody.get("task_plan_current") != requestBody.get("task_plan_new") ){
+               updatedNotes = updateMessage  + "\n" + requestBody.get("task_notes_current");
+            }
+            existingTask.setTaskNotes(updatedNotes);
+            existingTask.setTaskPlan(requestBody.get("task_plan_new"));
+            existingTask.setTaskOwner(requestBody.get("task_owner"));
+            existingTask.setTaskState(task_state_new);
+            tmsRepo.saveTask(existingTask);
+            
+            
             return "Success";
         } else {
-            return "User not found";
+            return "Task update error";
         }
     }
 
