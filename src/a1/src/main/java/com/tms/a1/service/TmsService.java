@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 
 import com.tms.a1.dao.TmsDAO;
 import com.tms.a1.dao.UserDAO;
@@ -304,8 +306,24 @@ public class TmsService {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (authentication != null && authentication.isAuthenticated()) {
                 String username = authentication.getName();
-                String app = requestBody.get("app_acronym");
-                String state = requestBody.get("app_state");
+                String app = requestBody.get("appAcronym");
+                String state = requestBody.get("appState");
+                switch(state){
+                    case "OPEN":
+                    state = "Open";
+                    break;
+                    case "TODO":
+                    state = "ToDoList";
+                    break;
+                    case "DOING":
+                    state = "Doing";
+                    break;
+                    case "DONE":
+                    state = "Done";
+                    case "CLOSED":
+                    state = "Closed";
+                    break;
+                }
                 List<String> grouplist = tmsRepo.getPermit(app, state);
                 String group = grouplist.get(0);
                 List result = userRepo.checkgroup(username, group);
