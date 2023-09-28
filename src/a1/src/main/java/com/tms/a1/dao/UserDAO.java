@@ -153,5 +153,27 @@ public class UserDAO {
             e.printStackTrace();
         }
     }
+
+    public List<User> findEmail(String group) {
+        Transaction transaction = null;
+        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
+            // start a transaction
+            transaction = session.beginTransaction();
+            // save the User object
+            String hql = "FROM User u WHERE u.groups LIKE :userGroupPattern";
+            List<User> Users = session.createQuery(hql, User.class)
+                    .setParameter("userGroupPattern", "%."+ group +".%")
+                    .getResultList();
+            // commit transaction
+            transaction.commit();
+            return Users;
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            return null;
+        }
+    }
   
 }

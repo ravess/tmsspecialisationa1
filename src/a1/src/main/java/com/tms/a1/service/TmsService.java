@@ -1,5 +1,6 @@
 package com.tms.a1.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.time.ZonedDateTime;
@@ -11,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 
 import com.tms.a1.dao.TmsDAO;
 import com.tms.a1.dao.UserDAO;
@@ -27,6 +29,9 @@ public class TmsService {
 
     @Autowired
     private UserDAO userRepo;
+
+    @Autowired
+    private JavaMailSender javaMailSender;
 
     // Get All Apps
     public List<Application> getAllApps() {
@@ -223,23 +228,28 @@ public class TmsService {
     }
 
     // Update Task
-    public String updateTask(String appacronym, String taskid, Map<String, String> requestBody) {
+    public Map<String, String> updateTask(String appacronym, String taskid, Map<String, String> requestBody) {
+        try{
         Task existingTask = tmsRepo.findByTask(taskid, appacronym);
         if (existingTask != null) {
             String task_action_message = "";
-            if(requestBody.get("task_action") == "Edit"){
+            System.out.println(requestBody.get("task_action"));
+            if(requestBody.get("task_action").equals("Edit")){
                task_action_message = "Modified";
             }
-            if(requestBody.get("task_action") == "Promote"){
+            if(requestBody.get("task_action").equals("Promote")){
             task_action_message = "Promoted";
+            System.out.println(task_action_message);
             }
 
-            if(requestBody.get("task_action") == "Demote"){
+            if(requestBody.get("task_action").equals("Demote")){
                 task_action_message = "Demoted";
             }
 
             String task_state_new = requestBody.get("task_state");
-            if(task_action_message == "Promoted"){
+            System.out.println(task_state_new);
+            System.out.println(task_action_message);
+            if(task_action_message.equals("Promoted")){
                 switch(requestBody.get("task_state")){
                     case "OPEN":
                     task_state_new = "TODO";
@@ -255,7 +265,7 @@ public class TmsService {
                     break;
                 }
             }
-            else if(task_action_message == "Demoted"){
+            else if(task_action_message.equals("Demoted")){
                 switch(requestBody.get("task_state")){
                     
                     case "DOING":
@@ -266,25 +276,25 @@ public class TmsService {
                     break;
                 }
             }
-
-            String varState = (task_action_message == "Modified")?"[" + requestBody.get("task_state") + "]":"[" + requestBody.get("task_state") + "] >>> ["+ task_state_new +"]";
+System.out.println(task_state_new);
+            String varState = (task_action_message.equals("Modified"))?"[" + requestBody.get("task_state") + "]":"[" + requestBody.get("task_state") + "] >>> ["+ task_state_new +"]";
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z");
             ZonedDateTime currentZonedDateTime = ZonedDateTime.now();
             String formattedDateTime = currentZonedDateTime.format(formatter);
             String updateMessage = "________________________________________________________\n"
-            + task_action_message + "by:" + requestBody.get("task_owner") + "\n" + task_action_message +"on:" + formattedDateTime + "\n" + "State:" + varState + "\n";
+            + task_action_message + " by:" + requestBody.get("task_owner") + "\n" + task_action_message +" on:" + formattedDateTime + "\n" + "State:" + varState + "\n";
             if(requestBody.get("task_plan_current") != requestBody.get("task_plan_new")){
-                updateMessage += "Plane changed from [" + requestBody.get("task_plan_current") + "] to [ " + requestBody.get("task_plan_new")+"]\n";
+                updateMessage += "Plan changed from [" + requestBody.get("task_plan_current") + "] to [ " + requestBody.get("task_plan_new")+"]\n";
                 updateMessage += "_______________________________________________________________________\n";
 
             }else{
                 updateMessage += "_______________________________________________________________________\n";
             }
             String updatedNotes = "";
-            if (requestBody.get("task_notes_new") != ""){
+            if (!requestBody.get("task_notes_new").isEmpty()){
                updatedNotes = updateMessage + requestBody.get("task_notes_new") + "\n" + requestBody.get("task_notes_current");
             }
-            else if(task_action_message == "Modified" || requestBody.get("task_plan_current") != requestBody.get("task_plan_new") ){
+            else if(task_action_message.equals("Modified") || !requestBody.get("task_plan_current").equals(requestBody.get("task_plan_new")) ){
                updatedNotes = updateMessage  + "\n" + requestBody.get("task_notes_current");
             }
             existingTask.setTaskNotes(updatedNotes);
@@ -292,11 +302,22 @@ public class TmsService {
             existingTask.setTaskOwner(requestBody.get("task_owner"));
             existingTask.setTaskState(task_state_new);
             tmsRepo.saveTask(existingTask);
-            
-            
-            return "Success";
+            Map<String, String> response = new HashMap<>();
+            response.put("msg","Success");
+            if((requestBody.get("task_action").equals("Promote"))&& (task_state_new.equals("DONE"))) {
+                response.put("email","true");
+            }else{
+                response.put("email","false");
+            }
+
+            return response;
         } else {
-            return "Task update error";
+            return null;
+        }}catch (
+
+        Exception e) {
+            e.printStackTrace(); // Log the exception stack trace
+            return null; // Return the exception message
         }
     }
 
@@ -313,7 +334,7 @@ public class TmsService {
                     state = "Open";
                     break;
                     case "TODO":
-                    state = "ToDoList";
+                    state = "Todolist";
                     break;
                     case "DOING":
                     state = "Doing";
@@ -342,4 +363,24 @@ public class TmsService {
         }
     }
 
+    @Async
+    public void sendEmail(String app, String task_id) {
+            List<String> grouplist = tmsRepo.getPermit(app, "Done");
+            String group = grouplist.get(0);
+            List<User> emails = userRepo.findEmail(group);
+            for (User user :emails){
+                if(!user.getEmail().isEmpty()){
+                String to = user.getEmail();
+                String subject = "Task Promoted";
+                String text = task_id + " Has been promoted to Done";
+                SimpleMailMessage message = new SimpleMailMessage();
+                message.setTo(to);
+                message.setSubject(subject);
+                message.setText(text);
+                javaMailSender.send(message);
+            }
+        }
+            
+        }
+    
 }

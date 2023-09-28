@@ -377,22 +377,27 @@ public class TmsController {
 
         // List permitted = adminService.checkGroup();
         // if(permitted != null && !permitted.isEmpty()){
-        String res = tmsService.updateTask(appacronym, taskid, requestBody);
-        if (res.equals("Success")) {
-
+        Map<String, String> res = tmsService.updateTask(appacronym, taskid, requestBody);
+        if (res.get("msg") == "Success") {
+            
             resMsg = taskid + " Task Successfully Updated.";
             response.put("msg", resMsg);
+            if(res.get("email") == "true"){
+                tmsService.sendEmail(appacronym,taskid);
+
+            }
             return new ResponseEntity<>(response, HttpStatus.OK);
-        } else if (res.equals("Change some stuff here")) {
-            System.out.println(res);
-            resMsg = "Invalid some stuff";
-            response.put("msg", resMsg);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        } else if (res.equals("Change some stuff here")) {
-            resMsg = "Invalid some stuff";
-            response.put("msg", resMsg);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        } else {
+        // } else if (res.equals("Change some stuff here")) {
+        //     System.out.println(res);
+        //     resMsg = "Invalid some stuff";
+        //     response.put("msg", resMsg);
+        //     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        // } else if (res.equals("Change some stuff here")) {
+        //     resMsg = "Invalid some stuff";
+        //     response.put("msg", resMsg);
+        //     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        } 
+        else {
             resMsg = "An error occurred when updating Task.";
             response.put("msg", resMsg);
             System.out.println(resMsg);
