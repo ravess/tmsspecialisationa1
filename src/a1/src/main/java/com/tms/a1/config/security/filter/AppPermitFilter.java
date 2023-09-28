@@ -14,6 +14,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.tms.a1.entity.Application;
 import com.tms.a1.entity.Task;
 import com.tms.a1.exception.ForbiddenException;
+import com.tms.a1.service.AuthService;
 import com.tms.a1.service.TmsService;
 
 import jakarta.servlet.FilterChain;
@@ -25,6 +26,10 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public class AppPermitFilter extends OncePerRequestFilter {
+
+    @Autowired
+    private AuthService authService;
+
     @Autowired
     private TmsService tmsService;
 
@@ -46,20 +51,20 @@ public class AppPermitFilter extends OncePerRequestFilter {
             Application app = tmsService.getApp(appacronym);
 
             if(authorities.isEmpty()){
-                throw new ForbiddenException("unauthorized");
+                throw new ForbiddenException("You are not permitted!");
             }
 
             // new task
             if (parts.length == 5) {
                 String permitCreate = app.getAppPermitCreate();
                 if (permitCreate == null){
-                    throw new ForbiddenException("unauthorized");
+                    throw new ForbiddenException("No permit.");
                 }
 
                 GrantedAuthority therole = new SimpleGrantedAuthority(permitCreate);
                     
                 if(!authorities.contains(therole)){
-                    throw new ForbiddenException("unauthorized");
+                    throw new ForbiddenException("You are not permitted!");
                 }
             } else if (parts.length == 6) {
                 //update task
@@ -79,25 +84,25 @@ public class AppPermitFilter extends OncePerRequestFilter {
                     GrantedAuthority therole = new SimpleGrantedAuthority(permitOpen);
                     
                     if(!authorities.contains(therole)){
-                        throw new ForbiddenException("unauthorized");
+                        throw new ForbiddenException("You are not permitted!");
                     }
                 } else if (taskCurrentState.equals("TODO") && permitTodo!=null){
                     GrantedAuthority therole = new SimpleGrantedAuthority(permitTodo);
                     
                     if(!authorities.contains(therole)){
-                        throw new ForbiddenException("unauthorized");
+                        throw new ForbiddenException("You are not permitted!");
                     }
                 } else if (taskCurrentState.equals("DOING") && permitDoing!=null){
                     GrantedAuthority therole = new SimpleGrantedAuthority(permitDoing);
                     
                     if(!authorities.contains(therole)){
-                        throw new ForbiddenException("unauthorized");
+                        throw new ForbiddenException("You are not permitted!");
                     }
                 } else if (taskCurrentState.equals("DONE") && permitDone!=null){
                     GrantedAuthority therole = new SimpleGrantedAuthority(permitDone);
                     
                     if(!authorities.contains(therole)){
-                        throw new ForbiddenException("unauthorized");
+                        throw new ForbiddenException("You are not permitted!");
                     }
                 }
             }

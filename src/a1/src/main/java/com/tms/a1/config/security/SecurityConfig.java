@@ -73,7 +73,7 @@ public class SecurityConfig {
     .addFilterBefore(new ExceptionHandlerFilter(), AuthenticationFilter.class)
     .addFilter(authenticationFilter)
     .addFilterAfter(new JWTAuthorizationFilter(securityConstants,userService), AuthenticationFilter.class)
-    .addFilterAfter(new AppPermitFilter(tmsService), JWTAuthorizationFilter.class)
+    .addFilterAfter(new AppPermitFilter(authService, tmsService), JWTAuthorizationFilter.class)
     .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
     .logout(logout -> logout
             .logoutUrl("/logout") // Configure the logout URL
