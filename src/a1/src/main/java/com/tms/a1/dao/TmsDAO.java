@@ -171,14 +171,15 @@ public class TmsDAO {
     }
 
     //Get single Plan
-    public Plan findByPlan(String planid, String acronym) {
+    public Plan findByPlan(String planid, String appacronym) {
         Transaction transaction = null;
         try (Session session = hibernateUtil.getSessionFactory().openSession()) {
             // start a transaction
             transaction = session.beginTransaction();
-            String hql = "FROM Plan p WHERE p.planid = :planid ";
+            String hql = "FROM Plan p WHERE p.planMVPName = :planid AND p.planAppAcronym = :appacronym";
             TypedQuery<Plan> query = session.createQuery(hql, Plan.class)
-                    .setParameter("planid", planid);
+                    .setParameter("planid", planid)
+                    .setParameter("appacronym", appacronym);
 
             List<Plan> resultList = query.getResultList();
             if (!resultList.isEmpty()) {
@@ -271,14 +272,15 @@ public class TmsDAO {
     }
     
      //Get single Task
-     public Task findByTask(String taskid, String acronym) {
+     public Task findByTask(String taskid, String appacronym) {
          Transaction transaction = null;
          try (Session session = hibernateUtil.getSessionFactory().openSession()) {
              // start a transaction
              transaction = session.beginTransaction();
-             String hql = "FROM Task t WHERE t.taskid = :taskid ";
+             String hql = "FROM Task t WHERE t.taskID = :taskid AND t.taskAppAcronym = :appacronym";
              TypedQuery<Task> query = session.createQuery(hql, Task.class)
-                     .setParameter("taskid", taskid);
+                     .setParameter("taskid", taskid)
+                     .setParameter("appacronym", appacronym);
 
              List<Task> resultList = query.getResultList();
              if (!resultList.isEmpty()) {
