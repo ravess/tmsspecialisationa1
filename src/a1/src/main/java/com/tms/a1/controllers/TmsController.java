@@ -319,7 +319,7 @@ public class TmsController {
 
     // Update Single Task
     @PutMapping("/apps/{appacronym}/tasks/{taskid}/edit")
-    public ResponseEntity<?> updateTaskByTaskID(@PathVariable String appacronym, @PathVariable String taskid, @RequestBody Task requestBody, BindingResult bindingResult) {
+    public ResponseEntity<?> updateTaskByTaskID(@PathVariable String appacronym, @PathVariable String taskid, @RequestBody Map<String, String> requestBody, BindingResult bindingResult) {
         Map<String, Object> response = new HashMap<>();
         String resMsg;
 
@@ -336,7 +336,8 @@ public class TmsController {
         // if(permitted != null && !permitted.isEmpty()){
         String res = tmsService.updateTask(appacronym, taskid, requestBody);
         if (res.equals("Success")) {
-            resMsg = "Task Successfully Updated.";
+
+            resMsg = taskid + " Task Successfully Updated.";
             response.put("msg", resMsg);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } else if (res.equals("Change some stuff here")) {
