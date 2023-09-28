@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -51,9 +50,17 @@ public class AppPermitFilter extends OncePerRequestFilter {
             String appacronym = parts[2];
             Application app = tmsService.getApp(appacronym);
 
+            if(authorities.isEmpty()){
+                throw new ForbiddenException("unauthorized");
+            }
+
             // new task
             if (parts.length == 5) {
                 String permitCreate = app.getAppPermitCreate();
+                if (permitCreate == null){
+                    throw new ForbiddenException("unauthorized");
+                }
+
                 GrantedAuthority therole = new SimpleGrantedAuthority(permitCreate);
                     
                 if(!authorities.contains(therole)){
@@ -73,25 +80,25 @@ public class AppPermitFilter extends OncePerRequestFilter {
 
                 System.out.println("user's roles: "+ authorities);
 
-                if(taskCurrentState.equals("OPEN")){
+                if(taskCurrentState.equals("OPEN") && permitOpen!=null){
                     GrantedAuthority therole = new SimpleGrantedAuthority(permitOpen);
                     
                     if(!authorities.contains(therole)){
                         throw new ForbiddenException("unauthorized");
                     }
-                } else if (taskCurrentState.equals("TODO")){
+                } else if (taskCurrentState.equals("TODO") && permitTodo!=null){
                     GrantedAuthority therole = new SimpleGrantedAuthority(permitTodo);
                     
                     if(!authorities.contains(therole)){
                         throw new ForbiddenException("unauthorized");
                     }
-                } else if (taskCurrentState.equals("DOING")){
+                } else if (taskCurrentState.equals("DOING") && permitDoing!=null){
                     GrantedAuthority therole = new SimpleGrantedAuthority(permitDoing);
                     
                     if(!authorities.contains(therole)){
                         throw new ForbiddenException("unauthorized");
                     }
-                } else if (taskCurrentState.equals("DONE")){
+                } else if (taskCurrentState.equals("DONE") && permitDone!=null){
                     GrantedAuthority therole = new SimpleGrantedAuthority(permitDone);
                     
                     if(!authorities.contains(therole)){

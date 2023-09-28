@@ -294,10 +294,8 @@ public class TmsController {
         Map<String, Object> response = new HashMap<>();
         String resMsg;
 
-        // List permitted = adminService.checkGroup();
-        // if(permitted != null && !permitted.isEmpty()){
         String res = tmsService.newTask(requestBody, appacronym);
-
+        
         if (res.equals("Success")) {
             resMsg = "Task Successfully Created.";
             response.put("msg", resMsg);
@@ -317,11 +315,6 @@ public class TmsController {
             response.put("msg", resMsg);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
-        // }else{
-        // resMsg = "You are unauthorized for this action.";
-        // response.put("msg", resMsg);
-        // return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        // }
     }
 
     // Update Single Task

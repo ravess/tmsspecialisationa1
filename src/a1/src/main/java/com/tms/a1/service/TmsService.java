@@ -65,15 +65,6 @@ public class TmsService {
         if (tmsRepo.existByAppAcronym(app.getAppAcronym())) {
             return "Duplicate";
         }
-        String appDescription = app.getAppDescription();
-        String appPermitCreate = app.getAppPermitCreate();
-        String appPermitOpen = app.getAppPermitOpen();
-        String appPermitToDoList = app.getAppPermitToDoList();
-        String appPermitDoing = app.getAppPermitDoing();
-        String appPermitDone = app.getAppPermitDone();
-        String appStartDate = app.getAppStartDate();
-        String appEndDate = app.getAppEndDate();
-
        
         tmsRepo.saveApp(app);
         return "Success";
@@ -198,7 +189,7 @@ public class TmsService {
 
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (authentication != null && authentication.isAuthenticated()) {
+            // if (authentication != null && authentication.isAuthenticated()) {
                 String username = authentication.getName();
                 task.setTaskCreator(username);
                 task.setTaskOwner(username);
@@ -222,9 +213,9 @@ public class TmsService {
                 System.out.println(application);
                 System.out.println(task);
                 return "Success";
-            } else {
-                throw new EntityNotFoundException("You are not an authenticated user", User.class);
-            }
+            // } else {
+            //     throw new EntityNotFoundException("You are not an authenticated user", User.class);
+            // }
         } catch (
 
         Exception e) {
