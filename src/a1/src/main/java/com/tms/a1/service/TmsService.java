@@ -133,7 +133,7 @@ public class TmsService {
         if (tmsRepo.existByPlanMVPName(plan.getPlanMVPName())) {
             return "Duplicate";
         }
-
+        plan.setPlanAppAcronym(appacronym);
         tmsRepo.savePlan(plan);
         return "Success";
     }

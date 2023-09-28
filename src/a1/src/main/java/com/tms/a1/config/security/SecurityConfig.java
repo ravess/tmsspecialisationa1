@@ -58,9 +58,10 @@ public class SecurityConfig {
     .cors(withDefaults())
     .csrf(csrf -> csrf.disable())
     .authorizeHttpRequests(authorize -> authorize
-        .requestMatchers(HttpMethod.POST, "/apps/new").hasAnyAuthority("ProjectLead")
-        .requestMatchers(HttpMethod.POST,"/apps/**/plans/new").hasAnyAuthority("ProjectManager")
-        .requestMatchers(HttpMethod.PUT,"/apps/**/plans/**/edit").hasAnyAuthority("ProjectManager")
+        .requestMatchers(HttpMethod.POST, "/apps/new").hasAuthority("ProjectLead")
+        .requestMatchers(HttpMethod.PUT, "/apps/*/edit").hasAuthority("ProjectLead")
+        .requestMatchers(HttpMethod.POST,"/apps/*/plans/new").hasAuthority("ProjectManager")
+        .requestMatchers(HttpMethod.PUT,"/apps/*/plans/*/edit").hasAuthority("ProjectManager")
         .requestMatchers("/users/**").authenticated()
         .requestMatchers("/users").authenticated()
         .requestMatchers("/getUser").authenticated()
