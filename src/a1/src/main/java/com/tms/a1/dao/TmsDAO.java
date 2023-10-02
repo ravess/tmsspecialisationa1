@@ -23,7 +23,7 @@ public class TmsDAO {
     // Check for existing App
     public Boolean existByAppAcronym(String appacronym) {
         Transaction transaction = null;
-        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = hibernateUtil.getSessionFactory().getCurrentSession()) {
             // start a transaction
             transaction = session.beginTransaction();
             String hql = "FROM Application a WHERE a.appAcronym = :appacronym ";
@@ -51,7 +51,7 @@ public class TmsDAO {
     //Get All Apps
     public List<Application> findAllApps() {
         Transaction transaction = null;
-        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = hibernateUtil.getSessionFactory().getCurrentSession()) {
             // start a transaction
             transaction = session.beginTransaction();
             // save the User object
@@ -66,15 +66,13 @@ public class TmsDAO {
             }
             e.printStackTrace();
             return null;
-        } finally {
-
         }
     }
 
     //Get Single App
     public Application findByApp(String appacronym) {
         Transaction transaction = null;
-        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = hibernateUtil.getSessionFactory().getCurrentSession()) {
             // start a transaction
             transaction = session.beginTransaction();
             String hql = "FROM Application a WHERE a.appAcronym = :appacronym ";
@@ -102,7 +100,7 @@ public class TmsDAO {
     // Create new / Update App
     public void saveApp(Application app) {
         Transaction transaction = null;
-        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = hibernateUtil.getSessionFactory().getCurrentSession()) {
             // start a transaction
             transaction = session.beginTransaction();
             Application detachedApp = app;
@@ -123,7 +121,7 @@ public class TmsDAO {
     // Check for existing Plan
     public Boolean existByPlanMVPName(String planmvpname) {
         Transaction transaction = null;
-        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = hibernateUtil.getSessionFactory().getCurrentSession()) {
             // start a transaction
             transaction = session.beginTransaction();
             String hql = "FROM Plan p WHERE p.planMVPName = :planmvpname ";
@@ -151,7 +149,7 @@ public class TmsDAO {
     //Get All Plans
     public List<Plan> findAllPlans(String appacronym) {
         Transaction transaction = null;
-        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = hibernateUtil.getSessionFactory().getCurrentSession()) {
             // start a transaction
             transaction = session.beginTransaction();
             // save the User object
@@ -174,7 +172,7 @@ public class TmsDAO {
     //Get single Plan
     public Plan findByPlan(String planid, String appacronym) {
         Transaction transaction = null;
-        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = hibernateUtil.getSessionFactory().getCurrentSession()) {
             // start a transaction
             transaction = session.beginTransaction();
             String hql = "FROM Plan p WHERE p.planMVPName = :planid AND p.planAppAcronym = :appacronym";
@@ -203,7 +201,7 @@ public class TmsDAO {
     // Create/Update new Plan
     public void savePlan(Plan plan) {
         Transaction transaction = null;
-        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = hibernateUtil.getSessionFactory().getCurrentSession()) {
             // start a transaction
             transaction = session.beginTransaction();
             Plan detachedPlan = plan;
@@ -224,7 +222,7 @@ public class TmsDAO {
      // Check for existing Task
     public Boolean existByTaskID(String taskid) {
         Transaction transaction = null;
-        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = hibernateUtil.getSessionFactory().getCurrentSession()) {
             // start a transaction
             transaction = session.beginTransaction();
             String hql = "FROM Task t WHERE t.taskID = :taskid ";
@@ -253,7 +251,7 @@ public class TmsDAO {
     //Get All Tasks
     public List<Task> findAllTasks(String appacronym) {
         Transaction transaction = null;
-        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = hibernateUtil.getSessionFactory().getCurrentSession()) {
             // start a transaction
             transaction = session.beginTransaction();
             // save the User object
@@ -276,7 +274,7 @@ public class TmsDAO {
      //Get single Task
      public Task findByTask(String taskid, String appacronym) {
          Transaction transaction = null;
-         try (Session session = hibernateUtil.getSessionFactory().openSession()) {
+         try (Session session = hibernateUtil.getSessionFactory().getCurrentSession()) {
              // start a transaction
              transaction = session.beginTransaction();
              String hql = "FROM Task t WHERE t.taskID = :taskid AND t.taskAppAcronym = :appacronym";
@@ -305,7 +303,7 @@ public class TmsDAO {
     // Create/Update new Plan
     public void saveTask(Task task) {
         Transaction transaction = null;
-        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = hibernateUtil.getSessionFactory().getCurrentSession()) {
             // start a transaction
             transaction = session.beginTransaction();
             Task detachedTask = task;
@@ -325,7 +323,7 @@ public class TmsDAO {
 
     public List<String> getPermit(String app, String state) {
          Transaction transaction = null;
-         try (Session session = hibernateUtil.getSessionFactory().openSession()) {
+         try (Session session = hibernateUtil.getSessionFactory().getCurrentSession()) {
              // start a transaction
              transaction = session.beginTransaction();
              String columnName = "appPermit" + state;
