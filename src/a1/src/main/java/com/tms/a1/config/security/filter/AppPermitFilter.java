@@ -3,6 +3,7 @@ package com.tms.a1.config.security.filter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -72,6 +73,8 @@ public class AppPermitFilter extends OncePerRequestFilter {
                 String permitTodo = app.getAppPermitToDoList();
                 String permitDoing = app.getAppPermitDoing();
                 String permitDone = app.getAppPermitDone();
+                String[] permits = {permitOpen, permitTodo, permitDoing, permitDone};
+                String[] states = {"OPEN", "TODO", "DOING", "DONE"};
 
                 String taskid = parts[4];
                 Task task = tmsService.getTask(taskid, appacronym);
@@ -80,39 +83,58 @@ public class AppPermitFilter extends OncePerRequestFilter {
 
                 System.out.println("user's roles: "+ authorities);
 
-                if(taskCurrentState.equals("OPEN")){
-                    if(permitOpen == null){
+                Consumer<String> checkPermit = (permit) -> {
+                    if (permit == null) {
                         throw new ForbiddenException("No permits allowed.");
-                    }
-                    GrantedAuthority therole = new SimpleGrantedAuthority(permitOpen);
-                    if(!authorities.contains(therole)){
+                    };
+                };
+
+                if (Arrays.asList(states).contains(taskCurrentState)) {
+                    int stateIndex = Arrays.asList(states).indexOf(taskCurrentState);
+                    checkPermit.accept(permits[stateIndex]);
+
+                    GrantedAuthority taskRole = new SimpleGrantedAuthority(permits[stateIndex]);
+                    
+                    if (!authorities.contains(taskRole)) {
                         throw new ForbiddenException("You are not permitted!");
                     }
-                } else if (taskCurrentState.equals("TODO")){
-                    if(permitTodo == null){
-                        throw new ForbiddenException("No permits allowed.");
-                    }
-                    GrantedAuthority therole = new SimpleGrantedAuthority(permitTodo);
-                    if(!authorities.contains(therole)){
-                        throw new ForbiddenException("You are not permitted!");
-                    }
-                } else if (taskCurrentState.equals("DOING")){
-                    if(permitDoing == null){
-                        throw new ForbiddenException("No permits allowed.");
-                    }
-                    GrantedAuthority therole = new SimpleGrantedAuthority(permitDoing);
-                    if(!authorities.contains(therole)){
-                        throw new ForbiddenException("You are not permitted!");
-                    }
-                } else if (taskCurrentState.equals("DONE")){
-                    if(permitDone == null){
-                        throw new ForbiddenException("No permits allowed.");
-                    }
-                    GrantedAuthority therole = new SimpleGrantedAuthority(permitDone);
-                    if(!authorities.contains(therole)){
-                        throw new ForbiddenException("You are not permitted!");
-                    }
+                } else {
+                    throw new ForbiddenException("Invalid task state");
                 }
+
+                // if(taskCurrentState.equals("OPEN")){
+                //     if(permitOpen == null){
+                //         throw new ForbiddenException("No permits allowed.");
+                //     }
+                //     GrantedAuthority therole = new SimpleGrantedAuthority(permitOpen);
+                //     if(!authorities.contains(therole)){
+                //         throw new ForbiddenException("You are not permitted!");
+                //     }
+                // } else if (taskCurrentState.equals("TODO")){
+                //     if(permitTodo == null){
+                //         throw new ForbiddenException("No permits allowed.");
+                //     }
+                //     GrantedAuthority therole = new SimpleGrantedAuthority(permitTodo);
+                //     if(!authorities.contains(therole)){
+                //         throw new ForbiddenException("You are not permitted!");
+                //     }
+                // } else if (taskCurrentState.equals("DOING")){
+                //     if(permitDoing == null){
+                //         throw new ForbiddenException("No permits allowed.");
+                //     }
+                //     GrantedAuthority therole = new SimpleGrantedAuthority(permitDoing);
+                //     if(!authorities.contains(therole)){
+                //         throw new ForbiddenException("You are not permitted!");
+                //     }
+                // } else if (taskCurrentState.equals("DONE")){
+                //     if(permitDone == null){
+                //         throw new ForbiddenException("No permits allowed.");
+                //     }
+                //     GrantedAuthority therole = new SimpleGrantedAuthority(permitDone);
+                //     if(!authorities.contains(therole)){
+                //         throw new ForbiddenException("You are not permitted!");
+                //     }
+                // }
             }
         }
         filterChain.doFilter(request, response);
