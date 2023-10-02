@@ -1,19 +1,19 @@
 package com.tms.a1.service;
 
 import java.lang.reflect.Field;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
 
 import com.tms.a1.dao.TmsDAO;
 import com.tms.a1.dao.UserDAO;
@@ -74,7 +74,7 @@ public class TmsService {
         if (tmsRepo.existByAppAcronym(app.getAppAcronym())) {
             return "Duplicate";
         }
-       
+
         tmsRepo.saveApp(app);
         return "Success";
     }
@@ -90,7 +90,7 @@ public class TmsService {
             existingApp.setAppPermitDoing(app.getAppPermitDoing());
             existingApp.setAppPermitDone(app.getAppPermitDone());
             existingApp.setAppPermitCreate(app.getAppPermitCreate());
-            
+
             tmsRepo.saveApp(existingApp);
             return "Success";
         } else {
@@ -199,31 +199,41 @@ public class TmsService {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             // if (authentication != null && authentication.isAuthenticated()) {
-                String username = authentication.getName();
-                task.setTaskCreator(username);
-                task.setTaskOwner(username);
-                task.setTaskState("Open");
-                task.setTaskAppAcronym(appacronym);
-                Application application = tmsRepo.findByApp(appacronym);
-                int appRNumber = application.getAppRNumber();
-                task.setTaskID(appacronym + "_" + appRNumber);
+            String username = authentication.getName();
+            String task_action_message = "Created";
+            String task_state = "Open";
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z");
+            ZonedDateTime currentZonedDateTime = ZonedDateTime.now();
+            String formattedDateTime = currentZonedDateTime.format(formatter);
+            String updateMessage = task_action_message + " by: " + username + "\n" + task_action_message
+                    + " on: " + formattedDateTime + "\n" + "State: " + task_state
+                    + "\n";
+            task.setTaskCreator(username);
+            task.setTaskOwner(username);
+            task.setTaskState(task_state);
+            task.setTaskAppAcronym(appacronym);
+            task.setTaskNotes(updateMessage);
+            Application application = tmsRepo.findByApp(appacronym);
+            int appRNumber = application.getAppRNumber();
+            task.setTaskID(appacronym + "_" + appRNumber);
 
-                if (task.getTaskName() == null || task.getTaskName().isEmpty()){
-                    return "Please input task name";
-                }
-                if (task.getTaskDescription() == null || task.getTaskDescription().isEmpty()){
-                    return "Please input task description";
-                }
+            if (task.getTaskName() == null || task.getTaskName().isEmpty()) {
+                return "Please input task name";
+            }
+            if (task.getTaskDescription() == null || task.getTaskDescription().isEmpty()) {
+                return "Please input task description";
+            }
 
-                tmsRepo.saveTask(task);
-                application.setAppRNumber(appRNumber + 1);
-                tmsRepo.saveApp(application);
+            tmsRepo.saveTask(task);
+            application.setAppRNumber(appRNumber + 1);
+            tmsRepo.saveApp(application);
 
-                System.out.println(application);
-                System.out.println(task);
-                return "Success";
+            System.out.println(application);
+            System.out.println(task);
+            return "Success";
             // } else {
-            //     throw new EntityNotFoundException("You are not an authenticated user", User.class);
+            // throw new EntityNotFoundException("You are not an authenticated user",
+            // User.class);
             // }
         } catch (
 
@@ -235,91 +245,95 @@ public class TmsService {
 
     // Update Task
     public Map<String, String> updateTask(String appacronym, String taskid, Map<String, String> requestBody) {
-        try{
-        Task existingTask = tmsRepo.findByTask(taskid, appacronym);
-        if (existingTask != null) {
-            String task_action_message = "";
-            System.out.println(requestBody.get("task_action"));
-            if(requestBody.get("task_action").equals("Edit")){
-               task_action_message = "Modified";
-            }
-            if(requestBody.get("task_action").equals("Promote")){
-            task_action_message = "Promoted";
-            System.out.println(task_action_message);
-            }
-
-            if(requestBody.get("task_action").equals("Demote")){
-                task_action_message = "Demoted";
-            }
-
-            String task_state_new = requestBody.get("task_state");
-            System.out.println(task_state_new);
-            System.out.println(task_action_message);
-            if(task_action_message.equals("Promoted")){
-                switch(requestBody.get("task_state")){
-                    case "OPEN":
-                    task_state_new = "TODO";
-                    break;
-                    case "TODO":
-                    task_state_new = "DOING";
-                    break;
-                    case "DOING":
-                    task_state_new = "DONE";
-                    break;
-                    case "DONE":
-                    task_state_new = "CLOSED";
-                    break;
+        try {
+            Task existingTask = tmsRepo.findByTask(taskid, appacronym);
+            if (existingTask != null) {
+                String task_action_message = "";
+                System.out.println(requestBody.get("task_action"));
+                if (requestBody.get("task_action").equals("Edit")) {
+                    task_action_message = "Modified";
                 }
-            }
-            else if(task_action_message.equals("Demoted")){
-                switch(requestBody.get("task_state")){
-                    
-                    case "DOING":
-                    task_state_new = "TODO";
-                    break;
-                    case "DONE":
-                    task_state_new = "DOING";
-                    break;
+                if (requestBody.get("task_action").equals("Promote")) {
+                    task_action_message = "Promoted";
+                    System.out.println(task_action_message);
                 }
-            }
-System.out.println(task_state_new);
-            String varState = (task_action_message.equals("Modified"))?"[" + requestBody.get("task_state") + "]":"[" + requestBody.get("task_state") + "] >>> ["+ task_state_new +"]";
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z");
-            ZonedDateTime currentZonedDateTime = ZonedDateTime.now();
-            String formattedDateTime = currentZonedDateTime.format(formatter);
-            String updateMessage = "________________________________________________________\n"
-            + task_action_message + " by:" + requestBody.get("task_owner") + "\n" + task_action_message +" on:" + formattedDateTime + "\n" + "State:" + varState + "\n";
-            if(requestBody.get("task_plan_current") != requestBody.get("task_plan_new")){
-                updateMessage += "Plan changed from [" + requestBody.get("task_plan_current") + "] to [ " + requestBody.get("task_plan_new")+"]\n";
-                updateMessage += "_______________________________________________________________________\n";
 
-            }else{
-                updateMessage += "_______________________________________________________________________\n";
-            }
-            String updatedNotes = "";
-            if (!requestBody.get("task_notes_new").isEmpty()){
-               updatedNotes = updateMessage + requestBody.get("task_notes_new") + "\n" + requestBody.get("task_notes_current");
-            }
-            else if(task_action_message.equals("Modified") || !requestBody.get("task_plan_current").equals(requestBody.get("task_plan_new")) ){
-               updatedNotes = updateMessage  + "\n" + requestBody.get("task_notes_current");
-            }
-            existingTask.setTaskNotes(updatedNotes);
-            existingTask.setTaskPlan(requestBody.get("task_plan_new"));
-            existingTask.setTaskOwner(requestBody.get("task_owner"));
-            existingTask.setTaskState(task_state_new);
-            tmsRepo.saveTask(existingTask);
-            Map<String, String> response = new HashMap<>();
-            response.put("msg","Success");
-            if((requestBody.get("task_action").equals("Promote"))&& (task_state_new.equals("DONE"))) {
-                response.put("email","true");
-            }else{
-                response.put("email","false");
-            }
+                if (requestBody.get("task_action").equals("Demote")) {
+                    task_action_message = "Demoted";
+                }
 
-            return response;
-        } else {
-            return null;
-        }}catch (
+                String task_state_new = requestBody.get("task_state");
+                System.out.println(task_state_new);
+                System.out.println(task_action_message);
+                if (task_action_message.equals("Promoted")) {
+                    switch (requestBody.get("task_state")) {
+                        case "OPEN":
+                            task_state_new = "TODO";
+                            break;
+                        case "TODO":
+                            task_state_new = "DOING";
+                            break;
+                        case "DOING":
+                            task_state_new = "DONE";
+                            break;
+                        case "DONE":
+                            task_state_new = "CLOSED";
+                            break;
+                    }
+                } else if (task_action_message.equals("Demoted")) {
+                    switch (requestBody.get("task_state")) {
+
+                        case "DOING":
+                            task_state_new = "TODO";
+                            break;
+                        case "DONE":
+                            task_state_new = "DOING";
+                            break;
+                    }
+                }
+                System.out.println(task_state_new);
+                String varState = (task_action_message.equals("Modified")) ? "[" + requestBody.get("task_state") + "]"
+                        : "[" + requestBody.get("task_state") + "] >>> [" + task_state_new + "]";
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z");
+                ZonedDateTime currentZonedDateTime = ZonedDateTime.now();
+                String formattedDateTime = currentZonedDateTime.format(formatter);
+                String updateMessage = "________________________________________________________\n"
+                        + task_action_message + " by:" + requestBody.get("task_owner") + "\n" + task_action_message
+                        + " on:" + formattedDateTime + "\n" + "State:" + varState + "\n";
+                if (requestBody.get("task_plan_current") != requestBody.get("task_plan_new")) {
+                    updateMessage += "Plan changed from [" + requestBody.get("task_plan_current") + "] to [ "
+                            + requestBody.get("task_plan_new") + "]\n";
+                    updateMessage += "_______________________________________________________________________\n";
+
+                } else {
+                    updateMessage += "_______________________________________________________________________\n";
+                }
+                String updatedNotes = "";
+                if (!requestBody.get("task_notes_new").isEmpty()) {
+                    updatedNotes = updateMessage + requestBody.get("task_notes_new") + "\n"
+                            + requestBody.get("task_notes_current");
+                } else if (task_action_message.equals("Modified")
+                        || !requestBody.get("task_plan_current").equals(requestBody.get("task_plan_new"))) {
+                    updatedNotes = updateMessage + "\n" + requestBody.get("task_notes_current");
+                }
+                existingTask.setTaskNotes(updatedNotes);
+                existingTask.setTaskPlan(requestBody.get("task_plan_new"));
+                existingTask.setTaskOwner(requestBody.get("task_owner"));
+                existingTask.setTaskState(task_state_new);
+                tmsRepo.saveTask(existingTask);
+                Map<String, String> response = new HashMap<>();
+                response.put("msg", "Success");
+                if ((requestBody.get("task_action").equals("Promote")) && (task_state_new.equals("DONE"))) {
+                    response.put("email", "true");
+                } else {
+                    response.put("email", "false");
+                }
+
+                return response;
+            } else {
+                return null;
+            }
+        } catch (
 
         Exception e) {
             e.printStackTrace(); // Log the exception stack trace
@@ -335,21 +349,21 @@ System.out.println(task_state_new);
                 String username = authentication.getName();
                 String app = requestBody.get("appAcronym");
                 String state = requestBody.get("appState");
-                switch(state){
+                switch (state) {
                     case "OPEN":
-                    state = "Open";
-                    break;
+                        state = "Open";
+                        break;
                     case "TODO":
-                    state = "Todolist";
-                    break;
+                        state = "Todolist";
+                        break;
                     case "DOING":
-                    state = "Doing";
-                    break;
+                        state = "Doing";
+                        break;
                     case "DONE":
-                    state = "Done";
+                        state = "Done";
                     case "CLOSED":
-                    state = "Closed";
-                    break;
+                        state = "Closed";
+                        break;
                 }
                 List<String> grouplist = tmsRepo.getPermit(app, state);
                 String group = grouplist.get(0);
@@ -371,11 +385,11 @@ System.out.println(task_state_new);
 
     @Async
     public void sendEmail(String app, String task_id) {
-            List<String> grouplist = tmsRepo.getPermit(app, "Done");
-            String group = grouplist.get(0);
-            List<User> emails = userRepo.findEmail(group);
-            for (User user :emails){
-                if(!user.getEmail().isEmpty()){
+        List<String> grouplist = tmsRepo.getPermit(app, "Done");
+        String group = grouplist.get(0);
+        List<User> emails = userRepo.findEmail(group);
+        for (User user : emails) {
+            if (!user.getEmail().isEmpty()) {
                 String to = user.getEmail();
                 String subject = "Task Promoted";
                 String text = task_id + " Has been promoted to Done";
@@ -386,7 +400,7 @@ System.out.println(task_state_new);
                 javaMailSender.send(message);
             }
         }
-            
-        }
-    
+
+    }
+
 }
