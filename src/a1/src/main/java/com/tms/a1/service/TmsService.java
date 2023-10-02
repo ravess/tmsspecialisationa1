@@ -201,7 +201,7 @@ public class TmsService {
                 updateMessage = updateMessage + "________________________________________________________\n"
                         + taskNotes;
             }
-
+            task.setTaskCreateDate(formattedDateTime);
             task.setTaskCreator(username);
             task.setTaskOwner(username);
             task.setTaskState(task_state);
@@ -322,7 +322,7 @@ public class TmsService {
                 }
                 String updatedNotes = "";
                 if (!requestBody.get("task_notes_new").isEmpty()) {
-                    updatedNotes = updateMessage +"Notes: " + requestBody.get("task_notes_new") + "\n"
+                    updatedNotes = updateMessage + "Notes: " + requestBody.get("task_notes_new") + "\n"
                             + requestBody.get("task_notes_current");
                 } else if (task_action_message.equals("Modified")
                         || !requestBody.get("task_plan_current").equals(requestBody.get("task_plan_new"))) {
