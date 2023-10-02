@@ -54,9 +54,9 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
         }
 
         if (token == null ) {
-            // throw new ForbiddenException("You are not logged in!");
-            filterChain.doFilter(request, response);
-            return;
+            throw new ForbiddenException("You are not logged in!");
+            // filterChain.doFilter(request, response);
+            // return;
         }
 
         DecodedJWT  decodedJWT = JWT.require(Algorithm.HMAC512(securityConstants.getSecretKey()))

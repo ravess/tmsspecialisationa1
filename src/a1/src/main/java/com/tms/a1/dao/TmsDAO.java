@@ -99,37 +99,6 @@ public class TmsDAO {
         }
     }
 
-    //Get App Permit for Single App
-    public Application findAppPermitsByApp(String appAcronym) {
-        Transaction transaction = null;
-        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
-            // Start a transaction
-            transaction = session.beginTransaction();
-            
-            String hql = "SELECT a.appPermitOpen, a.appPermitToDoList, a.appPermitDoing, a.appPermitDone, a.appPermitCreate " +
-                         "FROM Application a WHERE a.appAcronym = :appAcronym";
-            
-            TypedQuery<Application> query = session.createQuery(hql, Application.class)
-                    .setParameter("appAcronym", appAcronym);
-    
-            List<Application> resultList = query.getResultList();
-            if (!resultList.isEmpty()) {
-                Application result = resultList.get(0); // Get the first result
-                transaction.commit();
-                return result;
-            } else {
-                transaction.commit();
-                return null;
-            }
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            e.printStackTrace();
-            return null;
-        }
-    }
-
     // Create new / Update App
     public void saveApp(Application app) {
         Transaction transaction = null;
