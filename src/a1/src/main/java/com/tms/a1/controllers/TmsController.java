@@ -107,8 +107,7 @@ public class TmsController {
 
     // Update Single App
     @PutMapping("/apps/{appacronym}/edit")
-    public ResponseEntity<?> updateAppByAppAcronym(@PathVariable String appacronym,
-            @RequestBody Application requestBody, BindingResult bindingResult) {
+    public ResponseEntity<?> updateAppByAppAcronym(@PathVariable String appacronym, @RequestBody Application requestBody, BindingResult bindingResult) {
         Map<String, Object> response = new HashMap<>();
         String resMsg;
 
@@ -121,8 +120,6 @@ public class TmsController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMap);
         }
 
-        // List permitted = adminService.checkGroup();
-        // if(permitted != null && !permitted.isEmpty()){
         String res = tmsService.updateApp(appacronym, requestBody);
         if (res.equals("Success")) {
             resMsg = "App Successfully Updated.";
@@ -143,11 +140,6 @@ public class TmsController {
             System.out.println(resMsg);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
-        // }else{
-        // resMsg = "You are unauthorized for this action.";
-        // response.put("msg", resMsg);
-        // return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        // }
     }
 
     // Get All Plans
@@ -183,8 +175,7 @@ public class TmsController {
 
     // Create new Plan
     @PostMapping("/apps/{appacronym}/plans/new")
-    public ResponseEntity<?> addNewPlan(@Valid @RequestBody Plan requestBody, @PathVariable String appacronym,
-            BindingResult bindingResult) {
+    public ResponseEntity<?> addNewPlan(@Valid @RequestBody Plan requestBody,  @PathVariable String appacronym, BindingResult bindingResult) {
         System.out.println("new plan entered");
         Map<String, Object> response = new HashMap<>();
         String resMsg;
