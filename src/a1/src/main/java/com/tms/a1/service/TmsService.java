@@ -189,7 +189,7 @@ public class TmsService {
             // if (authentication != null && authentication.isAuthenticated()) {
             String username = authentication.getName();
             String task_action_message = "Created";
-            String task_state = "Open";
+            String task_state = "OPEN";
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z");
             ZonedDateTime currentZonedDateTime = ZonedDateTime.now();
             String formattedDateTime = currentZonedDateTime.format(formatter);
@@ -310,27 +310,30 @@ public class TmsService {
                 if (requestBody.get("task_plan_current") != requestBody.get("task_plan_new")) {
                     updateMessage += "Plan changed from [" + requestBody.get("task_plan_current") + "] to [ "
                             + requestBody.get("task_plan_new") + "]\n";
-                    updateMessage += "_______________________________________________________________________\n";
+                    
 
-                } else {
-                    updateMessage += "_______________________________________________________________________\n";
-                }
+                } 
                 String updatedNotes = "";
                 if (!requestBody.get("task_notes_new").isEmpty()) {
-                    updatedNotes = updateMessage + "Notes: " + requestBody.get("task_notes_new") + "\n"
-                            + requestBody.get("task_notes_current");
+                    updatedNotes = updateMessage + "Notes: " + requestBody.get("task_notes_new") + "\n";
+                            
+                    updatedNotes += "_______________________________________________________________________\n";
+                    updatedNotes += requestBody.get("task_notes_current");
                     existingTask.setTaskOwner(requestBody.get("task_owner"));
                 } else if (task_action_message.equals("Modified")
                         && !requestBody.get("task_plan_current").equals(requestBody.get("task_plan_new"))) {
-                    updatedNotes = updateMessage + "\n" + requestBody.get("task_notes_current");
+                    updatedNotes = updateMessage + "\n";
+                    updatedNotes += "_______________________________________________________________________\n";
+                    updatedNotes += requestBody.get("task_notes_current");
+
                     existingTask.setTaskOwner(requestBody.get("task_owner"));
-                }else{
+                } else {
                     updatedNotes = requestBody.get("task_notes_current");
                 }
                 existingTask.setTaskNotes(updatedNotes);
                 System.out.println(updatedNotes);
                 existingTask.setTaskPlan(requestBody.get("task_plan_new"));
-                
+
                 existingTask.setTaskState(task_state_new);
 
                 tmsRepo.saveTask(existingTask);
