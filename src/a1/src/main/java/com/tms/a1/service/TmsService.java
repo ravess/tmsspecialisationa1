@@ -188,6 +188,10 @@ public class TmsService {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             // if (authentication != null && authentication.isAuthenticated()) {
             String username = authentication.getName();
+            Application application = tmsRepo.findByApp(appacronym);
+            List<Plan> plans = getAllPlans(appacronym);
+            int appRNumber = application.getAppRNumber();
+            task.setTaskID(appacronym + "_" + appRNumber);
             String task_action_message = "Created";
             String task_state = "OPEN";
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z");
@@ -197,7 +201,8 @@ public class TmsService {
                     + formattedDateTime + "\n" + "State: " + task_state + "\n";
             String taskNotes = task.getTaskNotes();
             if (taskNotes != null && !taskNotes.isEmpty()) {
-                updateMessage = "________________________________________________________\n" + updateMessage + "Notes: "
+                updateMessage = "________________________________________________________\n" + "Task ID: "
+                        + task.getTaskID() + "\n" + updateMessage + "Notes: "
                         + taskNotes + "\n"
                         + "________________________________________________________\n";
             }
@@ -207,10 +212,6 @@ public class TmsService {
             task.setTaskState(task_state);
             task.setTaskAppAcronym(appacronym);
             task.setTaskNotes(updateMessage);
-            Application application = tmsRepo.findByApp(appacronym);
-            List<Plan> plans = getAllPlans(appacronym);
-            int appRNumber = application.getAppRNumber();
-            task.setTaskID(appacronym + "_" + appRNumber);
 
             if (task.getTaskName() == null || task.getTaskName().isEmpty()) {
                 return "Please input task name";
