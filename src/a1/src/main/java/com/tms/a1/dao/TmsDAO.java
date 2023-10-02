@@ -116,6 +116,7 @@ public class TmsDAO {
                 transaction.rollback();
             }
             e.printStackTrace();
+            throw e;
         }
     }
 
@@ -216,6 +217,7 @@ public class TmsDAO {
                 transaction.rollback();
             }
             e.printStackTrace();
+            throw e;
         }
     }
 
