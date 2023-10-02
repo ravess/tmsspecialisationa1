@@ -15,7 +15,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.tms.a1.entity.Application;
 import com.tms.a1.entity.Task;
 import com.tms.a1.exception.ForbiddenException;
-import com.tms.a1.service.AuthService;
 import com.tms.a1.service.TmsService;
 
 import jakarta.servlet.FilterChain;
@@ -27,9 +26,6 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public class AppPermitFilter extends OncePerRequestFilter {
-
-    @Autowired
-    private AuthService authService;
 
     @Autowired
     private TmsService tmsService;

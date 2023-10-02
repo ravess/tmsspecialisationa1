@@ -25,7 +25,6 @@ import com.tms.a1.config.security.filter.AuthenticationFilter;
 import com.tms.a1.config.security.filter.ExceptionHandlerFilter;
 import com.tms.a1.config.security.filter.JWTAuthorizationFilter;
 import com.tms.a1.config.security.manager.CustomAuthenticationManager;
-import com.tms.a1.service.AuthService;
 import com.tms.a1.service.TmsService;
 import com.tms.a1.service.UserService;
 
@@ -42,8 +41,6 @@ public class SecurityConfig {
   private UserService userService;
   @Autowired
   private TmsService tmsService;
-  @Autowired
-  private AuthService authService;
 
   private CustomAuthenticationManager customAuthenticationManager;
 
@@ -62,11 +59,15 @@ public class SecurityConfig {
         .requestMatchers(HttpMethod.PUT, "/apps/*/edit").hasAuthority("ProjectLead")
         .requestMatchers(HttpMethod.POST,"/apps/*/plans/new").hasAuthority("ProjectManager")
         .requestMatchers(HttpMethod.PUT,"/apps/*/plans/*/edit").hasAuthority("ProjectManager")
-        .requestMatchers(HttpMethod.POST,"/user/new").hasAuthority("Admin")
+
         .requestMatchers("/users/*").hasAuthority("Admin")
-        .requestMatchers("/users").hasAuthority("Admin")
-        .requestMatchers("/createGroup").hasAuthority("Admin")
-        .requestMatchers("/getGroups").hasAuthority("Admin")
+
+        // .requestMatchers(HttpMethod.POST,"/user/new").hasAuthority("Admin")
+        // .requestMatchers("/users/*").hasAuthority("Admin")
+        // .requestMatchers("/users").hasAuthority("Admin")
+        // .requestMatchers("/createGroup").hasAuthority("Admin")
+        // .requestMatchers("/getGroups").hasAuthority("Admin")
+
         // .requestMatchers("/getUser").authenticated()
         // .requestMatchers("/apps/**").authenticated()
         // .requestMatchers("/getGroups").authenticated()
@@ -75,7 +76,7 @@ public class SecurityConfig {
     .addFilterBefore(new ExceptionHandlerFilter(), AuthenticationFilter.class)
     .addFilter(authenticationFilter)
     .addFilterAfter(new JWTAuthorizationFilter(securityConstants,userService), AuthenticationFilter.class)
-    .addFilterAfter(new AppPermitFilter(authService, tmsService), JWTAuthorizationFilter.class)
+    .addFilterAfter(new AppPermitFilter(tmsService), JWTAuthorizationFilter.class)
     .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
     .logout(logout -> logout
             .logoutUrl("/logout") // Configure the logout URL

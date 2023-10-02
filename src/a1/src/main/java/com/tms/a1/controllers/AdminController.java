@@ -56,27 +56,19 @@ public class AdminController {
     }
 
     // get all groups
-    @GetMapping("/getGroups")
+    @GetMapping("/users/getGroups")
     public ResponseEntity<?> getAllGroups() {
         String resMsg;
         Map<String, Object> response = new HashMap<>();
-
-        // List permitted = adminService.checkGroup();
-        // if(permitted != null && !permitted.isEmpty()){
-            List<Group> allgroups = adminService.getAllGroups();
-            if (allgroups != null && !allgroups.isEmpty()) {
-                response.put("data", allgroups);
-                return new ResponseEntity<>(response, HttpStatus.OK);
-            }else{
-                resMsg = "No Groups Found.";
-                response.put("msg", resMsg);
-                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-            }
-        // } else {
-        //     resMsg = "You are unauthorized for this action";
-        //     response.put("msg", resMsg);
-        //     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        // }
+        List<Group> allgroups = adminService.getAllGroups();
+        if (allgroups != null && !allgroups.isEmpty()) {
+            response.put("data", allgroups);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }else{
+            resMsg = "No Groups Found.";
+            response.put("msg", resMsg);
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
     }
 
     // get user by username
@@ -103,7 +95,7 @@ public class AdminController {
     }
 
     // create new group
-    @PostMapping("/createGroup")
+    @PostMapping("/users/createGroup")
     public ResponseEntity<?> createGroup(@RequestBody Group requestBodyGroup) {
         String resMsg;
         Map<String, Object> response = new HashMap<>();
@@ -133,7 +125,7 @@ public class AdminController {
     }
 
     // create new user
-    @PostMapping("/user/new")
+    @PostMapping("/users/new")
     public ResponseEntity<?> addNewUser(@Valid @RequestBody User requestBody, BindingResult bindingResult) {
         Map<String, Object> response = new HashMap<>();
         String resMsg;
