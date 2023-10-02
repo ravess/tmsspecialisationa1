@@ -260,24 +260,24 @@ public class TmsService {
             Task existingTask = tmsRepo.findByTask(taskid, appacronym);
             if (existingTask != null) {
                 String task_action_message = "";
-                System.out.println(requestBody.get("task_action"));
-                if (requestBody.get("task_action").equals("Edit")) {
+                System.out.println(requestBody.get("taskAction"));
+                if (requestBody.get("taskAction").equals("Edit")) {
                     task_action_message = "Modified";
                 }
-                if (requestBody.get("task_action").equals("Promote")) {
+                if (requestBody.get("taskAction").equals("Promote")) {
                     task_action_message = "Promoted";
                     System.out.println(task_action_message);
                 }
 
-                if (requestBody.get("task_action").equals("Demote")) {
+                if (requestBody.get("taskAction").equals("Demote")) {
                     task_action_message = "Demoted";
                 }
 
-                String task_state_new = requestBody.get("task_state");
+                String task_state_new = requestBody.get("taskState");
                 System.out.println(task_state_new);
                 System.out.println(task_action_message);
                 if (task_action_message.equals("Promoted")) {
-                    switch (requestBody.get("task_state")) {
+                    switch (requestBody.get("taskState")) {
                         case "OPEN":
                             task_state_new = "TODO";
                             break;
@@ -292,7 +292,7 @@ public class TmsService {
                             break;
                     }
                 } else if (task_action_message.equals("Demoted")) {
-                    switch (requestBody.get("task_state")) {
+                    switch (requestBody.get("taskState")) {
 
                         case "DOING":
                             task_state_new = "TODO";
@@ -303,46 +303,46 @@ public class TmsService {
                     }
                 }
                 System.out.println(task_state_new);
-                String varState = (task_action_message.equals("Modified")) ? "[" + requestBody.get("task_state") + "]"
-                        : "[" + requestBody.get("task_state") + "] >>> [" + task_state_new + "]";
+                String varState = (task_action_message.equals("Modified")) ? "[" + requestBody.get("taskState") + "]"
+                        : "[" + requestBody.get("taskState") + "] >>> [" + task_state_new + "]";
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z");
                 ZonedDateTime currentZonedDateTime = ZonedDateTime.now();
                 String formattedDateTime = currentZonedDateTime.format(formatter);
                 String updateMessage = "________________________________________________________\n"
-                        + task_action_message + " by:" + requestBody.get("task_owner") + "\n" + task_action_message
+                        + task_action_message + " by:" + requestBody.get("taskOwner") + "\n" + task_action_message
                         + " on:" + formattedDateTime + "\n" + "State:" + varState + "\n";
-                if (requestBody.get("task_plan_current") != requestBody.get("task_plan_new")) {
-                    updateMessage += "Plan changed from [" + requestBody.get("task_plan_current") + "] to [ "
-                            + requestBody.get("task_plan_new") + "]\n";
+                if (requestBody.get("taskPlanCurrent") != requestBody.get("taskPlanNew")) {
+                    updateMessage += "Plan changed from [" + requestBody.get("taskPlanCurrent") + "] to [ "
+                            + requestBody.get("taskPlanNew") + "]\n";
 
                 }
                 String updatedNotes = "";
-                if (!requestBody.get("task_notes_new").isEmpty()) {
-                    updatedNotes = updateMessage + "Notes: " + requestBody.get("task_notes_new") + "\n";
+                if (!requestBody.get("taskNotesNew").isEmpty()) {
+                    updatedNotes = updateMessage + "Notes: " + requestBody.get("taskNotesNew") + "\n";
 
                     updatedNotes += "_______________________________________________________________________\n";
-                    updatedNotes += requestBody.get("task_notes_current");
-                    existingTask.setTaskOwner(requestBody.get("task_owner"));
+                    updatedNotes += requestBody.get("taskNotesCurrent");
+                    existingTask.setTaskOwner(requestBody.get("taskOwner"));
                 } else if (task_action_message.equals("Modified")
-                        && !requestBody.get("task_plan_current").equals(requestBody.get("task_plan_new"))) {
+                        && !requestBody.get("taskPlanCurrent").equals(requestBody.get("taskPlanNew"))) {
                     updatedNotes = updateMessage + "\n";
                     updatedNotes += "_______________________________________________________________________\n";
-                    updatedNotes += requestBody.get("task_notes_current");
+                    updatedNotes += requestBody.get("taskNotesCurrent");
 
-                    existingTask.setTaskOwner(requestBody.get("task_owner"));
+                    existingTask.setTaskOwner(requestBody.get("taskOwner"));
                 } else {
-                    updatedNotes = requestBody.get("task_notes_current");
+                    updatedNotes = requestBody.get("taskNotesCurrent");
                 }
                 existingTask.setTaskNotes(updatedNotes);
                 System.out.println(updatedNotes);
-                existingTask.setTaskPlan(requestBody.get("task_plan_new"));
+                existingTask.setTaskPlan(requestBody.get("taskPlanNew"));
 
                 existingTask.setTaskState(task_state_new);
 
                 tmsRepo.saveTask(existingTask);
                 Map<String, String> response = new HashMap<>();
                 response.put("msg", "Success");
-                if ((requestBody.get("task_action").equals("Promote")) && (task_state_new.equals("DONE"))) {
+                if ((requestBody.get("taskAction").equals("Promote")) && (task_state_new.equals("DONE"))) {
                     response.put("email", "true");
                 } else {
                     response.put("email", "false");
