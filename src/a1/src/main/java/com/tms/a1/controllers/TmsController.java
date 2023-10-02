@@ -1,5 +1,6 @@
 package com.tms.a1.controllers;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +51,8 @@ public class TmsController {
         Map<String, Object> response = new HashMap<>();
         Application app = tmsService.getApp(appacronym);
         if (app != null) {
-            response.put("data", app);
+            List<Application> appList = Collections.singletonList(app);
+            response.put("data", appList);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
             resMsg = "No Apps Found.";
@@ -108,18 +110,9 @@ public class TmsController {
     // Update Single App
     @PutMapping("/apps/{appacronym}/edit")
     public ResponseEntity<?> updateAppByAppAcronym(@PathVariable String appacronym,
-            @RequestBody Application requestBody, BindingResult bindingResult) {
+            @RequestBody Application requestBody) {
         Map<String, Object> response = new HashMap<>();
         String resMsg;
-
-        if (bindingResult.hasErrors()) {
-            // Handle validation errors here
-            Map<String, String> errorMap = new HashMap<>();
-            bindingResult.getFieldErrors().forEach(fieldError -> {
-                errorMap.put("msg", fieldError.getDefaultMessage());
-            });
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMap);
-        }
 
         // List permitted = adminService.checkGroup();
         // if(permitted != null && !permitted.isEmpty()){
@@ -132,16 +125,16 @@ public class TmsController {
             System.out.println(res);
             resMsg = "Invalid some stuff";
             response.put("msg", resMsg);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         } else if (res.equals("Change some stuff here")) {
             resMsg = "Invalid some stuff";
             response.put("msg", resMsg);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         } else {
             resMsg = "An error occurred when updating app.";
             response.put("msg", resMsg);
             System.out.println(resMsg);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
         // }else{
         // resMsg = "You are unauthorized for this action.";
@@ -173,11 +166,13 @@ public class TmsController {
         Map<String, Object> response = new HashMap<>();
         Plan plan = tmsService.getPlan(planid, appacronym);
         if (plan != null) {
-            return new ResponseEntity<>(plan, HttpStatus.OK);
+            List<Plan> planList = Collections.singletonList(plan);
+            response.put("data", planList);
+            return new ResponseEntity<>(planList, HttpStatus.OK);
         } else {
             resMsg = "Plan does not exist";
             response.put("msg", resMsg);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
 
@@ -205,11 +200,11 @@ public class TmsController {
         } else if (res.equals("Duplicate")) {
             resMsg = "Plan Already Exists.";
             response.put("msg", resMsg);
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+            return new ResponseEntity<>(response, HttpStatus.CONFLICT);
         } else {
             resMsg = "An error occured when creating plan";
             response.put("msg", resMsg);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
 
     }
@@ -217,18 +212,9 @@ public class TmsController {
     // Update Plan
     @PutMapping("/apps/{appacronym}/plans/{planid}/edit")
     public ResponseEntity<?> updatePlanByPlanID(@PathVariable String appacronym, @PathVariable String planid,
-            @RequestBody Plan requestBody, BindingResult bindingResult) {
+            @RequestBody Plan requestBody) {
         Map<String, Object> response = new HashMap<>();
         String resMsg;
-
-        if (bindingResult.hasErrors()) {
-            // Handle validation errors here
-            Map<String, String> errorMap = new HashMap<>();
-            bindingResult.getFieldErrors().forEach(fieldError -> {
-                errorMap.put("msg", fieldError.getDefaultMessage());
-            });
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMap);
-        }
 
         // List permitted = adminService.checkGroup();
         // if(permitted != null && !permitted.isEmpty()){
@@ -237,11 +223,11 @@ public class TmsController {
             resMsg = "Plan Successfully Updated.";
             response.put("msg", resMsg);
             return new ResponseEntity<>(response, HttpStatus.OK);
-        } else if (res.equals("Change some stuff here")) {
+        } else if (res.equals("Error updating plan")) {
             System.out.println(res);
             resMsg = "Invalid some stuff";
             response.put("msg", resMsg);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         } else if (res.equals("Change some stuff here")) {
             resMsg = "Invalid some stuff";
             response.put("msg", resMsg);
@@ -282,11 +268,13 @@ public class TmsController {
         Map<String, Object> response = new HashMap<>();
         Task task = tmsService.getTask(taskid, appacronym);
         if (task != null) {
-            return new ResponseEntity<>(task, HttpStatus.OK);
+            List<Task> taskList = Collections.singletonList(task);
+            response.put("data", taskList);
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
             resMsg = "Task does not exist";
             response.put("msg", resMsg);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
 
