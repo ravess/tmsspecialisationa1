@@ -182,6 +182,9 @@ public class TmsService {
     public String newTask(Task task, String appacronym) {
 
         try {
+            if (task == null) {
+                return "Task object is null"; // Handle the case where task is null
+            }
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             // if (authentication != null && authentication.isAuthenticated()) {
             String username = authentication.getName();
@@ -193,6 +196,12 @@ public class TmsService {
             String updateMessage = task_action_message + " by: " + username + "\n" + task_action_message
                     + " on: " + formattedDateTime + "\n" + "State: " + task_state
                     + "\n";
+            String taskNotes = task.getTaskNotes();
+            if (taskNotes != null && !taskNotes.isEmpty()) {
+                updateMessage = updateMessage + "________________________________________________________\n"
+                        + taskNotes;
+            }
+
             task.setTaskCreator(username);
             task.setTaskOwner(username);
             task.setTaskState(task_state);
@@ -210,18 +219,22 @@ public class TmsService {
                 return "Please input task description";
             }
             String plan = task.getTaskPlan();
-            boolean isValidPlan = false;
+            if (plan != null && !plan.isEmpty()) {
+                boolean isValidPlan = false;
 
-            for (Plan availablePlan : plans) {
-                if (availablePlan.getPlanMVPName().equals(plan)) {
-                    isValidPlan = true;
-                    break; // Exit the loop since a match is found
+                for (Plan availablePlan : plans) {
+                    if (availablePlan.getPlanMVPName().equals(plan)) {
+                        isValidPlan = true;
+                        break; // Exit the loop since a match is found
+                    }
+                }
+
+                if (!isValidPlan) {
+                    return "Invalid task plan"; // Return an error message if no match is found
                 }
             }
 
-            if (!isValidPlan) {
-                return "Invalid task plan"; // Return an error message if no match is found
-            }
+            // Rest of your code for saving the task and returning success
 
             tmsRepo.saveTask(task);
             application.setAppRNumber(appRNumber + 1);
