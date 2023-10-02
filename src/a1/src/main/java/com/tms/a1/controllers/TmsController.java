@@ -168,7 +168,7 @@ public class TmsController {
         if (plan != null) {
             List<Plan> planList = Collections.singletonList(plan);
             response.put("data", planList);
-            return new ResponseEntity<>(planList, HttpStatus.OK);
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
             resMsg = "Plan does not exist";
             response.put("msg", resMsg);

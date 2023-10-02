@@ -91,10 +91,6 @@ public class TmsService {
     // Get single Plan
     public Plan getPlan(String planid, String appacronym) {
         try {
-            System.out.println("********************");
-            System.out.println("In plan service layer");
-            System.out.println(planid);
-            System.out.println("*********************");
             Plan plan = tmsRepo.findByPlan(planid, appacronym);
             if (plan != null) {
                 return plan;
