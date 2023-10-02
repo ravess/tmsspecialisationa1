@@ -96,7 +96,6 @@ public class TmsController {
         // return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         // }
     }
-    
 
     @PostMapping("/hasAccess")
     public ResponseEntity<?> hasAccess(@RequestBody Map<String, String> requestBody) {
@@ -109,9 +108,9 @@ public class TmsController {
     // Update Single App
     @PutMapping("/apps/{appacronym}/edit")
     public ResponseEntity<?> updateAppByAppAcronym(@PathVariable String appacronym,
-    @RequestBody Application requestBody, BindingResult bindingResult) {
-    Map<String, Object> response = new HashMap<>();
-    String resMsg;
+            @RequestBody Application requestBody, BindingResult bindingResult) {
+        Map<String, Object> response = new HashMap<>();
+        String resMsg;
 
         if (bindingResult.hasErrors()) {
             // Handle validation errors here
@@ -121,29 +120,29 @@ public class TmsController {
             });
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMap);
         }
-        
+
         // List permitted = adminService.checkGroup();
         // if(permitted != null && !permitted.isEmpty()){
-            String res = tmsService.updateApp(appacronym, requestBody);
-            if (res.equals("Success")) {
-                resMsg = "App Successfully Updated.";
-                response.put("msg", resMsg);
-                return new ResponseEntity<>(response, HttpStatus.OK);
-            } else if (res.equals("Change some stuff here")) {
-                System.out.println(res);
-                resMsg = "Invalid some stuff";
-                response.put("msg", resMsg);
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-            }else if (res.equals("Change some stuff here")) {
-                resMsg = "Invalid some stuff";
-                response.put("msg", resMsg);
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-            } else {
-                resMsg = "An error occurred when updating app.";
-                response.put("msg", resMsg);
-                System.out.println(resMsg);
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-            }
+        String res = tmsService.updateApp(appacronym, requestBody);
+        if (res.equals("Success")) {
+            resMsg = "App Successfully Updated.";
+            response.put("msg", resMsg);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } else if (res.equals("Change some stuff here")) {
+            System.out.println(res);
+            resMsg = "Invalid some stuff";
+            response.put("msg", resMsg);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        } else if (res.equals("Change some stuff here")) {
+            resMsg = "Invalid some stuff";
+            response.put("msg", resMsg);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        } else {
+            resMsg = "An error occurred when updating app.";
+            response.put("msg", resMsg);
+            System.out.println(resMsg);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
         // }else{
         // resMsg = "You are unauthorized for this action.";
         // response.put("msg", resMsg);
@@ -184,7 +183,8 @@ public class TmsController {
 
     // Create new Plan
     @PostMapping("/apps/{appacronym}/plans/new")
-    public ResponseEntity<?> addNewPlan(@Valid @RequestBody Plan requestBody, @PathVariable String appacronym, BindingResult bindingResult) {
+    public ResponseEntity<?> addNewPlan(@Valid @RequestBody Plan requestBody, @PathVariable String appacronym,
+            BindingResult bindingResult) {
         System.out.println("new plan entered");
         Map<String, Object> response = new HashMap<>();
         String resMsg;
@@ -211,11 +211,13 @@ public class TmsController {
             response.put("msg", resMsg);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
+
     }
 
     // Update Plan
     @PutMapping("/apps/{appacronym}/plans/{planid}/edit")
-    public ResponseEntity<?> updatePlanByPlanID(@PathVariable String appacronym, @PathVariable String planid, @RequestBody Plan requestBody, BindingResult bindingResult) {
+    public ResponseEntity<?> updatePlanByPlanID(@PathVariable String appacronym, @PathVariable String planid,
+            @RequestBody Plan requestBody, BindingResult bindingResult) {
         Map<String, Object> response = new HashMap<>();
         String resMsg;
 
@@ -295,7 +297,7 @@ public class TmsController {
         String resMsg;
 
         String res = tmsService.newTask(requestBody, appacronym);
-        
+
         if (res.equals("Success")) {
             resMsg = "Task Successfully Created.";
             response.put("msg", resMsg);
@@ -305,6 +307,11 @@ public class TmsController {
             resMsg = "Please input task name";
             response.put("msg", resMsg);
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        if (res.equals("Invalid task plan")) {
+            resMsg = "Invalid Task Plan.";
+            response.put("msg", resMsg);
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
         if (res.equals("Please input task description")) {
             resMsg = "Please input task description";
@@ -319,7 +326,8 @@ public class TmsController {
 
     // Update Single Task
     @PutMapping("/apps/{appacronym}/tasks/{taskid}/edit")
-    public ResponseEntity<?> updateTaskByTaskID(@PathVariable String appacronym, @PathVariable String taskid, @RequestBody Map<String, String> requestBody, BindingResult bindingResult) {
+    public ResponseEntity<?> updateTaskByTaskID(@PathVariable String appacronym, @PathVariable String taskid,
+            @RequestBody Map<String, String> requestBody, BindingResult bindingResult) {
         Map<String, Object> response = new HashMap<>();
         String resMsg;
 
@@ -336,25 +344,24 @@ public class TmsController {
         // if(permitted != null && !permitted.isEmpty()){
         Map<String, String> res = tmsService.updateTask(appacronym, taskid, requestBody);
         if (res.get("msg") == "Success") {
-            
+
             resMsg = taskid + " Task Successfully Updated.";
             response.put("msg", resMsg);
-            if(res.get("email") == "true"){
-                tmsService.sendEmail(appacronym,taskid);
+            if (res.get("email") == "true") {
+                tmsService.sendEmail(appacronym, taskid);
 
             }
             return new ResponseEntity<>(response, HttpStatus.OK);
-        // } else if (res.equals("Change some stuff here")) {
-        //     System.out.println(res);
-        //     resMsg = "Invalid some stuff";
-        //     response.put("msg", resMsg);
-        //     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        // } else if (res.equals("Change some stuff here")) {
-        //     resMsg = "Invalid some stuff";
-        //     response.put("msg", resMsg);
-        //     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        } 
-        else {
+            // } else if (res.equals("Change some stuff here")) {
+            // System.out.println(res);
+            // resMsg = "Invalid some stuff";
+            // response.put("msg", resMsg);
+            // return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            // } else if (res.equals("Change some stuff here")) {
+            // resMsg = "Invalid some stuff";
+            // response.put("msg", resMsg);
+            // return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        } else {
             resMsg = "An error occurred when updating Task.";
             response.put("msg", resMsg);
             System.out.println(resMsg);

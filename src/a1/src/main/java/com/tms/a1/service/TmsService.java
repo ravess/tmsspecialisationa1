@@ -199,6 +199,7 @@ public class TmsService {
             task.setTaskAppAcronym(appacronym);
             task.setTaskNotes(updateMessage);
             Application application = tmsRepo.findByApp(appacronym);
+            List<Plan> plans = getAllPlans(appacronym);
             int appRNumber = application.getAppRNumber();
             task.setTaskID(appacronym + "_" + appRNumber);
 
@@ -207,6 +208,19 @@ public class TmsService {
             }
             if (task.getTaskDescription() == null || task.getTaskDescription().isEmpty()) {
                 return "Please input task description";
+            }
+            String plan = task.getTaskPlan();
+            boolean isValidPlan = false;
+
+            for (Plan availablePlan : plans) {
+                if (availablePlan.getPlanMVPName().equals(plan)) {
+                    isValidPlan = true;
+                    break; // Exit the loop since a match is found
+                }
+            }
+
+            if (!isValidPlan) {
+                return "Invalid task plan"; // Return an error message if no match is found
             }
 
             tmsRepo.saveTask(task);
