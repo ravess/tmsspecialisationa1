@@ -193,10 +193,13 @@ public class TmsService {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z");
             ZonedDateTime currentZonedDateTime = ZonedDateTime.now();
             String formattedDateTime = currentZonedDateTime.format(formatter);
-            String updateMessage = task_action_message + " by: " + username + "\n" + task_action_message + " on: " + formattedDateTime + "\n" + "State: " + task_state + "\n";
+            String updateMessage = task_action_message + " by: " + username + "\n" + task_action_message + " on: "
+                    + formattedDateTime + "\n" + "State: " + task_state + "\n";
             String taskNotes = task.getTaskNotes();
             if (taskNotes != null && !taskNotes.isEmpty()) {
-                updateMessage = updateMessage +  "________________________________________________________\n" + taskNotes;
+                updateMessage = "________________________________________________________\n" + updateMessage + "Notes: "
+                        + taskNotes + "\n"
+                        + "________________________________________________________\n";
             }
             task.setTaskCreateDate(formattedDateTime);
             task.setTaskCreator(username);
@@ -244,7 +247,7 @@ public class TmsService {
             // throw new EntityNotFoundException("You are not an authenticated user",
             // User.class);
             // }
-        } catch ( Exception e) {
+        } catch (Exception e) {
             e.printStackTrace(); // Log the exception stack trace
             return "An error occurred: " + e.getMessage(); // Return the exception message
         }
@@ -310,13 +313,12 @@ public class TmsService {
                 if (requestBody.get("task_plan_current") != requestBody.get("task_plan_new")) {
                     updateMessage += "Plan changed from [" + requestBody.get("task_plan_current") + "] to [ "
                             + requestBody.get("task_plan_new") + "]\n";
-                    
 
-                } 
+                }
                 String updatedNotes = "";
                 if (!requestBody.get("task_notes_new").isEmpty()) {
                     updatedNotes = updateMessage + "Notes: " + requestBody.get("task_notes_new") + "\n";
-                            
+
                     updatedNotes += "_______________________________________________________________________\n";
                     updatedNotes += requestBody.get("task_notes_current");
                     existingTask.setTaskOwner(requestBody.get("task_owner"));
