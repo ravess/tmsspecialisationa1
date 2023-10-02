@@ -72,10 +72,10 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
                 .map(role -> new SimpleGrantedAuthority(role))
                 .collect(Collectors.toList());
 
-      
         if(userObj.getIsActive()==0){
             throw new ForbiddenException("Your account is inactive");
         }
+
         String ipAddress = decodedJWT.getClaim("ipAddress").asString();
         String browser = decodedJWT.getClaim("userAgent").asString(); 
         System.out.println(browser + "Testing browser");

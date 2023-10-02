@@ -67,7 +67,6 @@ public class SecurityConfig {
         .requestMatchers("/users").hasAuthority("Admin")
         .requestMatchers("/createGroup").hasAuthority("Admin")
         .requestMatchers("/getGroups").hasAuthority("Admin")
-        .requestMatchers("/getGroups").hasAuthority("Admin")
         // .requestMatchers("/getUser").authenticated()
         // .requestMatchers("/apps/**").authenticated()
         // .requestMatchers("/getGroups").authenticated()

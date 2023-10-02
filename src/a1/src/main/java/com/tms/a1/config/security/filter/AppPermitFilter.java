@@ -55,18 +55,18 @@ public class AppPermitFilter extends OncePerRequestFilter {
             }
 
             // new task
-            if (parts.length == 5) {
+            if (parts[(parts.length-1)].equals("new")) {
                 String permitCreate = app.getAppPermitCreate();
                 if (permitCreate == null){
-                    throw new ForbiddenException("No permit.");
+                    throw new ForbiddenException("No permits allowed.");
                 }
 
                 GrantedAuthority therole = new SimpleGrantedAuthority(permitCreate);
-                    
+                
                 if(!authorities.contains(therole)){
                     throw new ForbiddenException("You are not permitted!");
                 }
-            } else if (parts.length == 6) {
+            } else if (parts[(parts.length-1)].equals("edit")) {
                 //update task
                 String permitOpen = app.getAppPermitOpen();
                 String permitTodo = app.getAppPermitToDoList();
@@ -80,27 +80,35 @@ public class AppPermitFilter extends OncePerRequestFilter {
 
                 System.out.println("user's roles: "+ authorities);
 
-                if(taskCurrentState.equals("OPEN") && permitOpen!=null){
+                if(taskCurrentState.equals("OPEN")){
+                    if(permitOpen == null){
+                        throw new ForbiddenException("No permits allowed.");
+                    }
                     GrantedAuthority therole = new SimpleGrantedAuthority(permitOpen);
-                    
                     if(!authorities.contains(therole)){
                         throw new ForbiddenException("You are not permitted!");
                     }
-                } else if (taskCurrentState.equals("TODO") && permitTodo!=null){
+                } else if (taskCurrentState.equals("TODO")){
+                    if(permitTodo == null){
+                        throw new ForbiddenException("No permits allowed.");
+                    }
                     GrantedAuthority therole = new SimpleGrantedAuthority(permitTodo);
-                    
                     if(!authorities.contains(therole)){
                         throw new ForbiddenException("You are not permitted!");
                     }
-                } else if (taskCurrentState.equals("DOING") && permitDoing!=null){
+                } else if (taskCurrentState.equals("DOING")){
+                    if(permitDoing == null){
+                        throw new ForbiddenException("No permits allowed.");
+                    }
                     GrantedAuthority therole = new SimpleGrantedAuthority(permitDoing);
-                    
                     if(!authorities.contains(therole)){
                         throw new ForbiddenException("You are not permitted!");
                     }
-                } else if (taskCurrentState.equals("DONE") && permitDone!=null){
+                } else if (taskCurrentState.equals("DONE")){
+                    if(permitDone == null){
+                        throw new ForbiddenException("No permits allowed.");
+                    }
                     GrantedAuthority therole = new SimpleGrantedAuthority(permitDone);
-                    
                     if(!authorities.contains(therole)){
                         throw new ForbiddenException("You are not permitted!");
                     }

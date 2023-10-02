@@ -326,8 +326,7 @@ public class TmsController {
 
     // Update Single Task
     @PutMapping("/apps/{appacronym}/tasks/{taskid}/edit")
-    public ResponseEntity<?> updateTaskByTaskID(@PathVariable String appacronym, @PathVariable String taskid,
-            @RequestBody Map<String, String> requestBody, BindingResult bindingResult) {
+    public ResponseEntity<?> updateTaskByTaskID(@PathVariable String appacronym, @PathVariable String taskid, @RequestBody Map<String, String> requestBody, BindingResult bindingResult) {
         Map<String, Object> response = new HashMap<>();
         String resMsg;
 
