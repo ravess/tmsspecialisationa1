@@ -308,7 +308,7 @@ public class TmsService {
                 String updateMessage = "________________________________________________________\n"
                         + task_action_message + " by:" + requestBody.get("taskOwner") + "\n" + task_action_message
                         + " on:" + formattedDateTime + "\n" + "State:" + varState + "\n";
-                if (requestBody.get("taskPlanCurrent") != requestBody.get("taskPlanNew")) {
+                if (!requestBody.get("taskPlanCurrent").equals(requestBody.get("taskPlanNew"))) {
                     updateMessage += "Plan changed from [" + requestBody.get("taskPlanCurrent") + "] to [ "
                             + requestBody.get("taskPlanNew") + "]\n";
 
