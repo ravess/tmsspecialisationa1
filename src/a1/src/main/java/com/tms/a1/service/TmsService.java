@@ -328,7 +328,9 @@ public class TmsService {
                     updatedNotes += requestBody.get("taskNotesCurrent");
 
                     existingTask.setTaskOwner(requestBody.get("taskOwner"));
-                } else {
+                } else if (!task_action_message.equals("Modified")) {
+                    updatedNotes = updateMessage + requestBody.get("taskNotesCurrent");
+                } else{
                     updatedNotes = requestBody.get("taskNotesCurrent");
                 }
                 existingTask.setTaskNotes(updatedNotes);
