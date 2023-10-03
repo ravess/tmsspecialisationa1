@@ -302,6 +302,7 @@ public class TmsService {
                 System.out.println(task_state_new);
                 String varState = (task_action_message.equals("Modified")) ? "[" + requestBody.get("taskState") + "]"
                         : "[" + requestBody.get("taskState") + "] >>> [" + task_state_new + "]";
+                        System.out.println(varState);
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z");
                 ZonedDateTime currentZonedDateTime = ZonedDateTime.now();
                 String formattedDateTime = currentZonedDateTime.format(formatter);
