@@ -365,23 +365,23 @@ public class TmsService {
                 String username = authentication.getName();
                 String app = requestBody.get("appAcronym");
                 String state = requestBody.get("appState");
+                System.out.println(state);
                 switch (state) {
                     case "OPEN":
                         state = "Open";
                         break;
                     case "TODO":
-                        state = "Todolist";
+                        state = "ToDoList";
                         break;
                     case "DOING":
                         state = "Doing";
                         break;
                     case "DONE":
                         state = "Done";
-                    case "CLOSED":
-                        state = "Closed";
                         break;
                 }
-                List<String> grouplist = tmsRepo.getPermit(app, state);
+                System.out.println(state);
+                List<String> grouplist = tmsRepo.getPermit(app,state);
                 String group = grouplist.get(0);
                 List result = userRepo.checkgroup(username, group);
                 if (result != null && !result.isEmpty()) {

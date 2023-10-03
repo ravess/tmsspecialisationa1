@@ -327,7 +327,9 @@ public class TmsDAO {
              // start a transaction
              transaction = session.beginTransaction();
              String columnName = "appPermit" + state;
+             System.out.println(columnName);
              String hql = "SELECT a." + columnName +" FROM Application a WHERE a.appAcronym = :app";
+             System.out.println(hql);
              Query query = session.createQuery(hql, String.class)
                      .setParameter("app", app);
              List<String> result = query.getResultList();
