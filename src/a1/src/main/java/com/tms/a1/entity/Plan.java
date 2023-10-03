@@ -8,6 +8,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,8 +24,8 @@ import lombok.Setter;
 @Table(name = "plan")
 public class Plan {
     @Id
-    // @NotNull(message = "plan MVP name should not be null")
-    // @NotBlank
+    @NotNull(message = "plan MVP name should not be null")
+    @NotBlank
     @Column(name = "plan_mvp_name", unique = true)
     private String planMVPName;
 
