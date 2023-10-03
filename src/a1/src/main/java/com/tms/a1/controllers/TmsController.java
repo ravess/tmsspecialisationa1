@@ -31,17 +31,13 @@ public class TmsController {
     // Get All Apps
     @GetMapping("/apps")
     public ResponseEntity<?> getAllApps() {
-        String resMsg = "";
+      
         Map<String, Object> response = new HashMap<>();
         List<Application> apps = tmsService.getAllApps();
-        if (apps != null && !apps.isEmpty()) {
-            response.put("data", apps);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } else {
-            resMsg = "No Apps Found.";
-            response.put("msg", resMsg);
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-        }
+       
+        response.put("data", apps);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
     }
 
     // Get Single App
@@ -132,19 +128,13 @@ public class TmsController {
     // Get All Plans
     @GetMapping("/apps/{appacronym}/plans")
     public ResponseEntity<?> getAllPlans(@PathVariable String appacronym) {
-        String resMsg = "";
+      
         Map<String, Object> response = new HashMap<>();
         List<Plan> plans = tmsService.getAllPlans(appacronym);
-        if (plans != null && !plans.isEmpty()) {
+       
             response.put("data", plans);
             return new ResponseEntity<>(response, HttpStatus.OK);
-        } else {
-            resMsg = "No Plans Found.";
-            response.put("msg", resMsg);
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-        }
     }
-
     // Get Single Plan
     @GetMapping("/apps/{appacronym}/plans/{planMVPName}")
     public ResponseEntity<Object> getPlan(@PathVariable String appacronym, @PathVariable String planMVPName) {
@@ -214,17 +204,13 @@ public class TmsController {
     // Get All Tasks
     @GetMapping("/apps/{appacronym}/tasks")
     public ResponseEntity<?> getAllTasks(@PathVariable String appacronym) {
-        String resMsg = "";
+        
         Map<String, Object> response = new HashMap<>();
         List<Task> tasks = tmsService.getAllTasks(appacronym);
-        if (tasks != null && !tasks.isEmpty()) {
-            response.put("data", tasks);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } else {
-            resMsg = "No Tasks Found.";
-            response.put("msg", resMsg);
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-        }
+       
+        response.put("data", tasks);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+         
     }
 
     // Get Single Task
