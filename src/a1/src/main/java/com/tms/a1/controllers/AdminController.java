@@ -56,7 +56,7 @@ public class AdminController {
     }
 
     // get all groups
-    @GetMapping("/users/getGroups")
+    @GetMapping("/getGroups")
     public ResponseEntity<?> getAllGroups() {
         String resMsg;
         Map<String, Object> response = new HashMap<>();
@@ -138,29 +138,22 @@ public class AdminController {
             });
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMap);
         }
+        
+        String res = adminService.newUser(requestBody);
 
-        // List permitted = adminService.checkGroup();
-        // if(permitted != null && !permitted.isEmpty()){
-            String res = adminService.newUser(requestBody);
-
-            if (res.equals("Success")) {
-                resMsg = "User Successfully Created.";
-                response.put("msg", resMsg);
-                return new ResponseEntity<>(response, HttpStatus.CREATED);
-            } else if (res.equals("Duplicate")) {
-                resMsg = "Username Already Exists.";
-                response.put("msg", resMsg);
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
-            } else {
-                resMsg = "An error occured when creating user";
-                response.put("msg", resMsg);
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-            }
-        // }else{
-        //     resMsg = "You are unauthorized for this action.";
-        //     response.put("msg", resMsg);
-        //     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        // }
+        if (res.equals("Success")) {
+            resMsg = "User Successfully Created.";
+            response.put("msg", resMsg);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } else if (res.equals("Duplicate")) {
+            resMsg = "Username Already Exists.";
+            response.put("msg", resMsg);
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+        } else {
+            resMsg = "An error occured when creating user";
+            response.put("msg", resMsg);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
     }
 
     //admin update user
