@@ -42,24 +42,4 @@ public class AuthService {
             return null;
         }
     }
-
-    public boolean checkgroup2(String username, String usergroup) {
-        try {
-            Boolean result = userRepo.checkgroup2(username, usergroup);
-            if (result != null) {
-                String resMsg = "True";
-                Map<String, Object> response = new HashMap<>();
-                response.put("ingroup", resMsg);
-                return true;
-            } else {
-                String resMsg = "False";
-                Map<String, Object> response = new HashMap<>();
-                response.put("ingroup", resMsg);
-                return false;
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-            return false;
-        }
-    }
 }

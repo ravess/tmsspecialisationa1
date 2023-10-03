@@ -108,29 +108,6 @@ public class UserDAO {
         }
     }
 
-    public Boolean checkgroup2(String username, String usergroup) {
-        Transaction transaction = null;
-        try (Session session = hibernateUtil.getSessionFactory().openSession()) {
-            // start a transaction
-            transaction = session.beginTransaction();
-            String hql = "SELECT u.username FROM User u WHERE u.username = :username AND u.groups LIKE :userGroupPattern";
-            Query query = session.createQuery(hql, String.class)
-                    .setParameter("username", username)
-                    .setParameter("userGroupPattern", "%." + usergroup + ".%");
-            List<?> result = query.getResultList();
-            // commit transaction
-            transaction.commit();
-            return !result.isEmpty(); // Return true if there is a result, false otherwise
-        } catch (Exception e) {
-            if (transaction != null && transaction.isActive()) {
-                transaction.rollback();
-            }
-            e.printStackTrace();
-            return false; // Return false in case of an exception
-        }
-    }
-
-
     public Boolean existByUsername(String username) {
         Transaction transaction = null;
         try (Session session = hibernateUtil.getSessionFactory().openSession()) {
