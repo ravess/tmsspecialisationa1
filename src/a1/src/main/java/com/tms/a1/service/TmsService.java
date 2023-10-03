@@ -380,6 +380,9 @@ public class TmsService {
                     case "DONE":
                         state = "Done";
                         break;
+                    case "CREATE":
+                        state = "Create";
+                        break;
                 }
                 System.out.println(state);
                 List<String> grouplist = tmsRepo.getPermit(app,state);
