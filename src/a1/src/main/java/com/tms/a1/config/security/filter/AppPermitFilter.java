@@ -1,6 +1,8 @@
 package com.tms.a1.config.security.filter;
 
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
@@ -34,15 +36,21 @@ public class AppPermitFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         // Retrieve the current URL
         String requestURI = request.getRequestURI();
+
+        // Decode the URL-encoded path elements
+        String decodedURI = URLDecoder.decode(requestURI, StandardCharsets.UTF_8);
+        
         // Get the Authentication object from the SecurityContextHolder
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         // Get the authorities (roles) associated with the authenticated user
         List<GrantedAuthority> authorities = (List<GrantedAuthority>) authentication.getAuthorities();
-
+        System.out.println("It came to apppermit Filter");
+        System.out.println(decodedURI);
         //url startsWith apps, is a PUT/POST method & is task related
-        if (requestURI.startsWith("/apps/") && (request.getMethod().equalsIgnoreCase("PUT") || request.getMethod().equalsIgnoreCase("POST")) && requestURI.contains("tasks")) {
+        if (decodedURI.startsWith("/apps/") && (request.getMethod().equalsIgnoreCase("PUT") || request.getMethod().equalsIgnoreCase("POST")) && decodedURI.contains("tasks")) {
+            System.out.println("It came into this if state /apps");
             // Extract the {appacronym} part from the URL
-            String[] parts = requestURI.split("/");
+            String[] parts = decodedURI.split("/");
             System.out.println(Arrays.toString(parts));
             String appacronym = parts[2];
             Application app = tmsService.getApp(appacronym);
