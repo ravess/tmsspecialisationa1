@@ -59,18 +59,7 @@ public class SecurityConfig {
         .requestMatchers(HttpMethod.PUT, "/apps/*/edit").hasAuthority("ProjectLead")
         .requestMatchers(HttpMethod.POST,"/apps/*/plans/new").hasAuthority("ProjectManager")
         .requestMatchers(HttpMethod.PUT,"/apps/*/plans/*/edit").hasAuthority("ProjectManager")
-
         .requestMatchers("/users/*").hasAuthority("Admin")
-
-        // .requestMatchers(HttpMethod.POST,"/user/new").hasAuthority("Admin")
-        // .requestMatchers("/users/*").hasAuthority("Admin")
-        // .requestMatchers("/users").hasAuthority("Admin")
-        // .requestMatchers("/createGroup").hasAuthority("Admin")
-        // .requestMatchers("/getGroups").hasAuthority("Admin")
-
-        // .requestMatchers("/getUser").authenticated()
-        // .requestMatchers("/apps/**").authenticated()
-        // .requestMatchers("/getGroups").authenticated()
         .anyRequest().authenticated()
         )
     .addFilterBefore(new ExceptionHandlerFilter(), AuthenticationFilter.class)
