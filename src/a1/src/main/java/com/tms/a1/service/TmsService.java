@@ -114,7 +114,7 @@ public class TmsService {
         if (tmsRepo.existByPlanMVPName(plan.getPlanMVPName())) {
             return "Duplicate";
         }
-        
+
         plan.setPlanAppAcronym(appacronym);
         tmsRepo.savePlan(plan);
         return "Success";
@@ -198,10 +198,11 @@ public class TmsService {
                     + formattedDateTime + "\n" + "State: " + task_state + "\n";
             String taskNotes = task.getTaskNotes();
             if (taskNotes != null && !taskNotes.isEmpty()) {
-                updateMessage = "________________________________________________________\n" + "Task ID: "
+                updateMessage = "_____________________________________________________________________________\n"
+                        + "Task ID: "
                         + task.getTaskID() + "\n" + updateMessage + "Notes: "
                         + taskNotes + "\n"
-                        + "________________________________________________________\n";
+                        + "_____________________________________________________________________________\n";
             }
             task.setTaskCreateDate(formattedDateTime);
             task.setTaskCreator(username);
@@ -216,21 +217,23 @@ public class TmsService {
             if (task.getTaskDescription() == null || task.getTaskDescription().isEmpty()) {
                 return "Please input task description";
             }
-            String plan = task.getTaskPlan();
-            if (plan != null && !plan.isEmpty()) {
-                boolean isValidPlan = false;
 
-                for (Plan availablePlan : plans) {
-                    if (availablePlan.getPlanMVPName().equals(plan)) {
-                        isValidPlan = true;
-                        break; // Exit the loop since a match is found
-                    }
-                }
+            // check if plan exists in app, removed because plan needs to be "none"
+            // String plan = task.getTaskPlan();
+            // if (plan != null && !plan.isEmpty()) {
+            // boolean isValidPlan = false;
 
-                if (!isValidPlan) {
-                    return "Invalid task plan"; // Return an error message if no match is found
-                }
-            }
+            // for (Plan availablePlan : plans) {
+            // if (availablePlan.getPlanMVPName().equals(plan)) {
+            // isValidPlan = true;
+            // break; // Exit the loop since a match is found
+            // }
+            // }
+
+            // if (!isValidPlan) {
+            // return "Invalid task plan"; // Return an error message if no match is found
+            // }
+            // }
 
             // Rest of your code for saving the task and returning success
 
@@ -302,15 +305,15 @@ public class TmsService {
                 System.out.println(task_state_new);
                 String varState = (task_action_message.equals("Modified")) ? "[" + requestBody.get("taskState") + "]"
                         : "[" + requestBody.get("taskState") + "] >>> [" + task_state_new + "]";
-                        System.out.println(varState);
+                System.out.println(varState);
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z");
                 ZonedDateTime currentZonedDateTime = ZonedDateTime.now();
                 String formattedDateTime = currentZonedDateTime.format(formatter);
-                String updateMessage = "________________________________________________________\n"
-                        + task_action_message + " by:" + requestBody.get("taskOwner") + "\n" + task_action_message
-                        + " on:" + formattedDateTime + "\n" + "State:" + varState + "\n";
+                String updateMessage = "_____________________________________________________________________________\n"
+                        + task_action_message + " by: " + requestBody.get("taskOwner") + "\n" + task_action_message
+                        + " on: " + formattedDateTime + "\n" + "State: " + varState + "\n";
                 if (!requestBody.get("taskPlanCurrent").equals(requestBody.get("taskPlanNew"))) {
-                    updateMessage += "Plan changed from [" + requestBody.get("taskPlanCurrent") + "] to [ "
+                    updateMessage += "Plan changed from [" + requestBody.get("taskPlanCurrent") + "] to ["
                             + requestBody.get("taskPlanNew") + "]\n";
 
                 }
@@ -318,19 +321,19 @@ public class TmsService {
                 if (!requestBody.get("taskNotesNew").isEmpty()) {
                     updatedNotes = updateMessage + "Notes: " + requestBody.get("taskNotesNew") + "\n";
 
-                    updatedNotes += "_______________________________________________________________________\n";
+                    updatedNotes += "_____________________________________________________________________________\n";
                     updatedNotes += requestBody.get("taskNotesCurrent");
                     existingTask.setTaskOwner(requestBody.get("taskOwner"));
                 } else if (task_action_message.equals("Modified")
                         && !requestBody.get("taskPlanCurrent").equals(requestBody.get("taskPlanNew"))) {
                     updatedNotes = updateMessage + "\n";
-                    updatedNotes += "_______________________________________________________________________\n";
+                    updatedNotes += "_____________________________________________________________________________\n";
                     updatedNotes += requestBody.get("taskNotesCurrent");
 
                     existingTask.setTaskOwner(requestBody.get("taskOwner"));
                 } else if (!task_action_message.equals("Modified")) {
                     updatedNotes = updateMessage + requestBody.get("taskNotesCurrent");
-                } else{
+                } else {
                     updatedNotes = requestBody.get("taskNotesCurrent");
                 }
                 existingTask.setTaskNotes(updatedNotes);
@@ -387,7 +390,7 @@ public class TmsService {
                         break;
                 }
                 System.out.println(state);
-                List<String> grouplist = tmsRepo.getPermit(app,state);
+                List<String> grouplist = tmsRepo.getPermit(app, state);
                 String group = grouplist.get(0);
                 List result = userRepo.checkgroup(username, group);
                 if (result != null && !result.isEmpty()) {
