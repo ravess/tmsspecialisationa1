@@ -16,7 +16,6 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "application")
-
 public class Application {
     @Id
     @NotNull(message = "app acronym should not be null")

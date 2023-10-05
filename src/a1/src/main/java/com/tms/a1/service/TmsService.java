@@ -111,7 +111,7 @@ public class TmsService {
         }
 
         // check for duplicate plan name
-        if (tmsRepo.existByPlanMVPName(plan.getPlanMVPName())) {
+        if (tmsRepo.existByPlanMVPName(plan.getPlanMVPName(), appacronym)) {
             return "Duplicate";
         }
 

@@ -26,7 +26,7 @@ public class Plan {
     @Id
     @NotNull(message = "plan MVP name should not be null")
     @NotBlank
-    @Column(name = "plan_mvp_name", unique = true)
+    @Column(name = "plan_mvp_name")
     private String planMVPName;
 
     @Column(name = "plan_start_date")
@@ -37,6 +37,7 @@ public class Plan {
 
     // @NotNull(message = "Plan App Acronym should not be null")
     // @NotBlank
+    @Id
     @Column(name = "plan_app_acronym")
     private String planAppAcronym;
 

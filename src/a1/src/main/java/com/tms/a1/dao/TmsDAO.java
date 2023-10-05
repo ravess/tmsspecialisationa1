@@ -119,14 +119,15 @@ public class TmsDAO {
     }
 
     // Check for existing Plan
-    public Boolean existByPlanMVPName(String planmvpname) {
+    public Boolean existByPlanMVPName(String planmvpname, String appAcronym) {
         Transaction transaction = null;
         try (Session session = hibernateUtil.getSessionFactory().getCurrentSession()) {
             // start a transaction
             transaction = session.beginTransaction();
-            String hql = "FROM Plan p WHERE p.planMVPName = :planmvpname ";
+            String hql = "FROM Plan p WHERE p.planMVPName = :planmvpname AND p.planAppAcronym = :appAcronym";
             TypedQuery<Plan> query = session.createQuery(hql, Plan.class)
-                    .setParameter("planmvpname", planmvpname);
+                    .setParameter("planmvpname", planmvpname)
+                    .setParameter("appAcronym", appAcronym);
 
             List<Plan> resultList = query.getResultList();
             if (!resultList.isEmpty()) {
