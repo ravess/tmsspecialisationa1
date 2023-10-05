@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -22,6 +23,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Table(name = "plan")
+@IdClass(PlanId.class)
 public class Plan {
     @Id
     @NotNull(message = "plan MVP name should not be null")
@@ -45,21 +47,6 @@ public class Plan {
     private String planColor;
 
 
-    @Override
-    public boolean equals(Object o) {
-        if (o == this)
-            return true;
-        if (!(o instanceof Plan)) {
-            return false;
-        }
-        Plan plan = (Plan) o;
-        return Objects.equals(planMVPName, plan.planMVPName) && Objects.equals(planStartDate, plan.planStartDate) && Objects.equals(planEndDate, plan.planEndDate) && Objects.equals(planAppAcronym, plan.planAppAcronym) && Objects.equals(planColor, plan.planColor);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(planMVPName, planStartDate, planEndDate, planAppAcronym, planColor);
-    }
 
     
 }
