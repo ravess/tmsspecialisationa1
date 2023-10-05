@@ -89,6 +89,11 @@
     <artifactId>spring-boot-starter-mail</artifactId>
 </dependency>
 
+<dependency>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-resources-plugin</artifactId>
+    <version>3.3.1</version>
+</dependency>
 
 	</dependencies>
 
@@ -104,6 +109,19 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
+				</configuration>
+			</plugin>
+
+			<plugin> 
+			<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+    			<configuration>
+					<resources>
+                    	<resource>
+                        	<directory>../../config</directory>
+                        	<filtering>true</filtering>
+                    	</resource>
+                	</resources>
 				</configuration>
 			</plugin>
 		</plugins>
