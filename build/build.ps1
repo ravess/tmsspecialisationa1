@@ -5,7 +5,7 @@ Write-Host "build.ps1 running..."
 Write-Host $PWD
 Write-Host (Get-ChildItem)
 
-$mvnwPath = "$BUILD_SVR_PATH\$CI_COMMIT_REF_NAME\mvnw"
+$mvnwPath = "$BUILD_SVR_PATH\$CI_COMMIT_REF_NAME\src\a1\mvnw"
 
 # Run the Maven Wrapper command
 cmd /c $mvnwPath clean package
