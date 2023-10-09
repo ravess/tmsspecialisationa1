@@ -49,6 +49,26 @@ Start_build:
       }
     #     # create a tar ball of the required folders
     - tar -cf "$CI_COMMIT_REF_NAME.tar" "bin" "deploy" "config" "test"
+
+Copy_to_bin_repo:
+  stage: publish
+  script:
+    # remove tar ball if it exist in Bin_repo_svr/<internal release label> folder working dir
+    - |
+      if(Test-Path "$BIN_REPO_SVR_PATH\$CI_COMMIT_REF_NAME\$CI_COMMIT_REF_NAME.tar") {
+        Remove-Item -Path "$BIN_REPO_SVR_PATH\$CI_COMMIT_REF_NAME\$CI_COMMIT_REF_NAME.tar";
+      }
+    # create a new folder based on the internal release label in Bin repo server
+    - New-Item -Path "$BIN_REPO_SVR_PATH\$CI_COMMIT_REF_NAME" -ItemType Directory -Force;
+    # copy tar ball from the Build/<internal release label> folder to Bin_repo_svr/<internal release label> folder
+    - Copy-Item -Path "$BUILD_SVR_PATH\$CI_COMMIT_REF_NAME\$CI_COMMIT_REF_NAME.tar" -Destination "$BIN_REPO_SVR_PATH\$CI_COMMIT_REF_NAME\$CI_COMMIT_REF_NAME.tar";
+    # list the content of the tar ball
+    - tar -tf "$BUILD_SVR_PATH\$CI_COMMIT_REF_NAME\$CI_COMMIT_REF_NAME.tar";
+
+ssh_into_server:
+  stage: deliver
+  script:
+    - echo "SSH into server testing123!!"
 # # define stage sequence
 # stages:
 #   - prepare
@@ -58,20 +78,7 @@ Start_build:
 #   - test
 #   - clear
 
-# copy_to_bin_repo:
-#   stage: publish
-#   script:
-#     # remove tar ball if it exist in Bin_repo_svr/<internal release label> folder working dir
-#     - |
-#       if(Test-Path "$BIN_REPO_SVR_PATH\$CI_COMMIT_REF_NAME\$CI_COMMIT_REF_NAME.tar") {
-#         Remove-Item -Path "$BIN_REPO_SVR_PATH\$CI_COMMIT_REF_NAME\$CI_COMMIT_REF_NAME.tar";
-#       }
-#     # create a new folder based on the internal release label in Bin repo server
-#     - New-Item -Path "$BIN_REPO_SVR_PATH\$CI_COMMIT_REF_NAME" -ItemType Directory -Force;
-#     # copy tar ball from the Build/<internal release label> folder to Bin_repo_svr/<internal release label> folder
-#     - Copy-Item -Path "$BUILD_SVR_PATH\$CI_COMMIT_REF_NAME\$CI_COMMIT_REF_NAME.tar" -Destination "$BIN_REPO_SVR_PATH\$CI_COMMIT_REF_NAME\$CI_COMMIT_REF_NAME.tar";
-#     # list the content of the tar ball
-#     - tar -tf "$BUILD_SVR_PATH\$CI_COMMIT_REF_NAME\$CI_COMMIT_REF_NAME.tar";
+
 
 # setup_ssh:
 #   stage: deliver
