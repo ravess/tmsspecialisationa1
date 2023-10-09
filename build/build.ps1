@@ -19,7 +19,7 @@ echo "CD to build server folder"
 cd $BUILD_SVR_PATH\$CI_COMMIT_REF_NAME
 echo $BUILD_SVR_PATH
 echo "Running docker login soon"
-docker login -u ravess -p dckr_pat_tVFMRJHRQOSipp9z5_nllE_LEQ8
+# docker login -u ravess -p dckr_pat_tVFMRJHRQOSipp9z5_nllE_LEQ8
 docker build -t "$CI_COMMIT_REF_NAME" .
 if (Test-Path "bin\$CI_COMMIT_REF_NAME.tar") {
     Remove-Item -Path "bin\$CI_COMMIT_REF_NAME.tar" -Recurse -Force;
