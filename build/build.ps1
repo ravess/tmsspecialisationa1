@@ -9,6 +9,11 @@ $mvnwPath = "$BUILD_SVR_PATH\$CI_COMMIT_REF_NAME\src\a1\mvnw"
 
 # Run the Maven Wrapper command
 cmd /c $mvnwPath clean package
+
+Write-Host "BUILD_SVR_PATH: $BUILD_SVR_PATH"
+Write-Host "CI_COMMIT_REF_NAME: $CI_COMMIT_REF_NAME"
+Write-Host "mvnwPath: $mvnwPath"
+
 echo "Running docker login soon"
 docker login -u ravess -p dckr_pat_tVFMRJHRQOSipp9z5_nllE_LEQ8
 docker build -t "$CI_COMMIT_REF_NAME" .
