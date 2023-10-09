@@ -10,7 +10,7 @@ $mvnwPath = "$BUILD_SVR_PATH\$=CI_COMMIT_REF_NAME\mvnw"
 # Run the Maven Wrapper command
 cmd /c $mvnwPath clean package
 echo "Running docker login soon"
-docker login -u ravess -p Zcj4rz2x!
+docker login -u ravess -p Zcj4rz2x! hub.docker.com
 docker build -t "$CI_COMMIT_REF_NAME" .
 if (Test-Path "bin\$CI_COMMIT_REF_NAME.tar") {
     Remove-Item -Path "bin\$CI_COMMIT_REF_NAME.tar" -Recurse -Force;
