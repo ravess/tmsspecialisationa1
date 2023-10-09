@@ -26,7 +26,7 @@ if (Test-Path "bin\$CI_COMMIT_REF_NAME.tar") {
 }
 New-Item -Path "$BUILD_SVR_PATH\$CI_COMMIT_REF_NAME\bin" -ItemType Directory -Force;
 
-docker save -o ".\bin\$CI_COMMIT_REF_NAME.tar" "$=CI_COMMIT_REF_NAME"
+docker save -o ".\bin\$CI_COMMIT_REF_NAME.tar" "$CI_COMMIT_REF_NAME"
 
 # Copy the application.properties file into the target directory
 # Copy-Item -Path "$BUILD_SVR_PATH\$CI_COMMIT_REF_NAME\src\main\resources\application.properties" -Destination "$BUILD_SVR_PATH\$=CI_COMMIT_REF_NAME\config\application.properties"
