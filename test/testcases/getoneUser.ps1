@@ -1,5 +1,5 @@
 $expectedOutput = @{
-    "trial" = "bob1";
+    "trial" = "bob";
 }
 
 # Set the login credentials
