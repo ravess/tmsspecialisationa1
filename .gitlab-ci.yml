@@ -3,7 +3,7 @@
 # # Start the pipeline if release branch
 workflow:
   rules:
-    - if: $CI_COMMIT_REF_NAME =~ /^rel_jsb_\d+\.\d+$/
+    - if: $CI_COMMIT_REF_NAME =~ /^rel_jsb_.+$/
 
 stages:
   - build
