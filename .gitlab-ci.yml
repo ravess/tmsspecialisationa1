@@ -11,31 +11,31 @@ stages:
   - deliver
   - test
 
-# define Build & Bin server paths
+# define Build & Bin server paths w
 variables:
   BUILD_SVR_PATH: "C:\\Users\\common\\Documents\\cicd\\build_svr"
   BIN_REPO_SVR_PATH: "C:\\Users\\common\\Documents\\cicd\\bin_repo_svr"
 
 copy_gitlab_repo:
-  stage: build #
+  stage: build #Copying Files from Gitlab Repo to Build Server Folder
   script:
     - Write-Host "Copying files from gitlab repo to local"
-    #     # remove internal release label folder from Bin repo server environment if exist
+    # remove internal release label folder from Bin repo server environment if exist
     - |
       if (Test-Path "$BIN_REPO_SVR_PATH\$CI_COMMIT_REF_NAME") {
         Remove-Item -Path "$BIN_REPO_SVR_PATH\$CI_COMMIT_REF_NAME" -Recurse -Force;
       }
-    #     # remove internal release label folder from Build server environment if exist
+    # remove internal release label folder from Build server environment if exist
     - |
       if (Test-Path "$BUILD_SVR_PATH\$CI_COMMIT_REF_NAME") {
         Remove-Item -Path "$BUILD_SVR_PATH\$CI_COMMIT_REF_NAME" -Recurse -Force;
       }
-    #     # create internal release label folder in Build server and copy the cloned repository to internal release label folder
+    # create internal release label folder in Build server and copy the cloned repository to internal release label folder
     - |
       New-Item -Path "$BUILD_SVR_PATH\$CI_COMMIT_REF_NAME" -ItemType Directory -Force;
       Copy-Item -Path "$CI_PROJECT_DIR\*" -Destination "$BUILD_SVR_PATH\$CI_COMMIT_REF_NAME" -Recurse;
 
-build:
+Start_build:
   stage: build #Publish to the bin repo paths
   script:
     - Write-Host "Building files in progress..."
