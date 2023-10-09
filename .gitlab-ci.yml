@@ -69,34 +69,22 @@ ssh_into_server:
   stage: deliver
   script:
     - echo "SSH into server testing123!!"
-# # define stage sequence
-# stages:
-#   - prepare
-#   - build
-#   - publish
-#   - deliver
-#   - test
-#   - clear
+    #     # secure copy protocol the tar ball from the bin_repo_svr/<internal release label> folder into l1ds group1<internal release label> folder
+    #     - scp -v "$BIN_REPO_SVR_PATH\$CI_COMMIT_REF_NAME\$CI_COMMIT_REF_NAME.tar" "$($env:REMOTE_USER)@$($env:REMOTE_HOST):\C:\Users\l1ds\group1\"
 
+l1ds_server_untar:
+  stage: deliver
+  script:
+    - echo "Yay have untar the file"
+  # create a new folder in l1ds based on the internal release label and extract the tar ball into the folder.
+  # Run the deploy.ps1
+  #     - |
+  #       ssh "$($env:REMOTE_USER)@$($env:REMOTE_HOST)" "New-Item -Path 'C:\Users\l1ds\group1\$($CI_COMMIT_REF_NAME)' -ItemType Directory -Force;
+  #        tar -xvf 'C:\Users\l1ds\group1\$($CI_COMMIT_REF_NAME).tar' -C 'C:\Users\l1ds\group1\$($CI_COMMIT_REF_NAME)';
+  #       powershell -command 'C:\Users\l1ds\group1\$($CI_COMMIT_REF_NAME)\deploy\deploy.ps1' -CI_COMMIT_REF_NAME ${CI_COMMIT_REF_NAME};"
+  # needs:
+  #   - setup_ssh
 
-
-# setup_ssh:
-#   stage: deliver
-#   script:
-#     # secure copy protocol the tar ball from the bin_repo_svr/<internal release label> folder into l1ds group1<internal release label> folder
-#     - scp -v "$BIN_REPO_SVR_PATH\$CI_COMMIT_REF_NAME\$CI_COMMIT_REF_NAME.tar" "$($env:REMOTE_USER)@$($env:REMOTE_HOST):\C:\Users\l1ds\group1\"
-
-# untar:
-#   stage: deliver
-#   script:
-#     # create a new folder in l1ds based on the internal release label and extract the tar ball into the folder.
-#     # Run the deploy.ps1
-#     - |
-#       ssh "$($env:REMOTE_USER)@$($env:REMOTE_HOST)" "New-Item -Path 'C:\Users\l1ds\group1\$($CI_COMMIT_REF_NAME)' -ItemType Directory -Force;
-#       tar -xvf 'C:\Users\l1ds\group1\$($CI_COMMIT_REF_NAME).tar' -C 'C:\Users\l1ds\group1\$($CI_COMMIT_REF_NAME)';
-#       powershell -command 'C:\Users\l1ds\group1\$($CI_COMMIT_REF_NAME)\deploy\deploy.ps1' -CI_COMMIT_REF_NAME ${CI_COMMIT_REF_NAME};"
-#   needs:
-#     - setup_ssh
 
 # functional_testing:
 #   stage: test
@@ -106,18 +94,3 @@ ssh_into_server:
 #       echo "DELETE FROM tmsappdb.accgroup WHERE groupName='project lead';" | ssh l1ds@192.168.0.2 "mysql -u $($env:L1DS_SQL_USER) -p$($env:L1DS_SQL_PASSWORD)"
 #     - ssh "$($env:REMOTE_USER)@$($env:REMOTE_HOST)" C:\Users\l1ds\group1\$($CI_COMMIT_REF_NAME)\test\test.ps1
 
-# clear_docker:
-#   stage: clear
-#   script:
-#     # stop docker container, remove <internal release label> docker container and remove <internal release label> docker image
-#     - ssh "$($env:REMOTE_USER)@$($env:REMOTE_HOST)" "docker stop $($CI_COMMIT_REF_NAME)"
-#     - ssh "$($env:REMOTE_USER)@$($env:REMOTE_HOST)" "docker rm $($CI_COMMIT_REF_NAME)"
-#     - ssh "$($env:REMOTE_USER)@$($env:REMOTE_HOST)" "docker rmi $($CI_COMMIT_REF_NAME)"
-#   allow_failure: true
-
-# clear_folders:
-#   stage: clear
-#   script:
-#     # delete the l1ds/group1/<internal release label> folder
-#     - ssh "$($env:REMOTE_USER)@$($env:REMOTE_HOST)" "Remove-Item -Path 'C:\Users\l1ds\group1\$($CI_COMMIT_REF_NAME)' -Recurse -Force;"
-#   allow_failure: true
