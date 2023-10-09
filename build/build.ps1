@@ -8,7 +8,8 @@ Write-Host (Get-ChildItem)
 $mvnwPath = "$BUILD_SVR_PATH\$=CI_COMMIT_REF_NAME\mvnw"
 
 # Run the Maven Wrapper command
-cmd /c $mvnwPath clean package -DskipTests -Pexclude-properties
+cmd /c $mvnwPath clean package
+dir /a /l
 
 docker build -t "$CI_COMMIT_REF_NAME" .
 if (Test-Path "bin\$CI_COMMIT_REF_NAME.tar") {
