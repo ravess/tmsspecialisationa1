@@ -5,7 +5,7 @@ FROM openjdk:17-jdk-slim
 WORKDIR /app
 
 # Copy the compiled JAR file from the local machine to the container
-COPY target/*.jar /app/tmsapp.jar
+COPY src/a1/target/*.jar /app/tmsapp.jar
 
 RUN adduser -u 1100 --disabled-password dockerbuilder
 
