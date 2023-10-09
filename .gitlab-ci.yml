@@ -37,7 +37,6 @@ copy_gitlab_repo:
 
 Start_build:
   stage: build #Publish to the bin repo paths
-  image: openjdk:17-jdk-slim
   script:
     - Write-Host "Building files in progress..."
     # change working directory to Build server folder and run build.ps1
