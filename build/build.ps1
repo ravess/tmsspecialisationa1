@@ -5,7 +5,7 @@ Write-Host "build.ps1 running..."
 Write-Host $PWD
 Write-Host (Get-ChildItem)
 
-$mvnwPath = "$BUILD_SVR_PATH\$CI_COMMIT_REF_NAME\src\a1\mvnw"
+$mvnwPath = "$BUILD_SVR_PATH\$CI_COMMIT_REF_NAME\src\a1\.mvn"
 
 Write-Host "BUILD_SVR_PATH: $BUILD_SVR_PATH"
 Write-Host "CI_COMMIT_REF_NAME: $CI_COMMIT_REF_NAME"
