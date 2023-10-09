@@ -15,7 +15,9 @@ Write-Host "mvnwPath: $mvnwPath"
 # cmd /c $mvnwPath clean package
 cd $mvnwPath
 mvn clean package
-
+echo "CD to build server folder"
+cd $BUILD_SVR_PATH
+echo $BUILD_SVR_PATH
 echo "Running docker login soon"
 docker login -u ravess -p dckr_pat_tVFMRJHRQOSipp9z5_nllE_LEQ8
 docker build -t "$CI_COMMIT_REF_NAME" .
