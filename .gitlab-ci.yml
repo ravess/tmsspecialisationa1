@@ -1,9 +1,9 @@
 # .gitlab-ci.yml
 
-# # Start the pipeline if release branch
+# # Start the pipeline if release branch !!
 workflow:
   rules:
-    - if: $CI_COMMIT_REF_NAME =~ /^rel_jsb_.+$/
+    - if: $CI_COMMIT_REF_NAME =~ /^rel_jsb_\d.*$/
 
 stages:
   - build
