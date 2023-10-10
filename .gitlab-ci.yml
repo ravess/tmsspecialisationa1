@@ -11,7 +11,7 @@ stages:
   - deliver
   - test
 
-# define Build & Bin server paths
+# define Build & Bin server paths w
 variables:
   BUILD_SVR_PATH: "C:\\Users\\common\\Documents\\cicd\\build_svr"
   BIN_REPO_SVR_PATH: "C:\\Users\\common\\Documents\\cicd\\bin_repo_svr"
