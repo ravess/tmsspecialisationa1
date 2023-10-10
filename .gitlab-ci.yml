@@ -71,7 +71,7 @@ ssh_into_server:
     - echo "SSH into server testing123!!"
     # secure copy protocol the tar ball from the bin_repo_svr/<internal release label> folder into l1ds group1<internal release label> folder
     - echo "$env:REMOTE_USER"
-    - scp -v "$BIN_REPO_SVR_PATH\$CI_COMMIT_REF_NAME\$CI_COMMIT_REF_NAME.tar" "$REMOTE_USER)@$$REMOTE_HOST:\C:\Users\l1ds\bytebrigade\"
+    - scp -v "$BIN_REPO_SVR_PATH\$CI_COMMIT_REF_NAME\$CI_COMMIT_REF_NAME.tar" "$REMOTE_USER@$$REMOTE_HOST:\C:\Users\l1ds\bytebrigade\"
 
 l1ds_server_untar:
   stage: deliver
@@ -85,8 +85,6 @@ l1ds_server_untar:
   #       powershell -command 'C:\Users\l1ds\group1\$($CI_COMMIT_REF_NAME)\deploy\deploy.ps1' -CI_COMMIT_REF_NAME ${CI_COMMIT_REF_NAME};"
   # needs:
   #   - setup_ssh
-
-
 # functional_testing:
 #   stage: test
 #   script:
