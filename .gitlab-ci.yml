@@ -1,6 +1,6 @@
 # .gitlab-ci.yml
 
-# # Start the pipeline if release branch !!
+# # Start the pipeline if release branch
 workflow:
   rules:
     - if: $CI_COMMIT_REF_NAME =~ /^rel_jsb_\d.*$/
@@ -11,7 +11,7 @@ stages:
   - deliver
   - test
 
-# define Build & Bin server paths w
+# define Build & Bin server paths
 variables:
   BUILD_SVR_PATH: "C:\\Users\\common\\Documents\\cicd\\build_svr"
   BIN_REPO_SVR_PATH: "C:\\Users\\common\\Documents\\cicd\\bin_repo_svr"
@@ -63,7 +63,7 @@ variables:
 #     # copy tar ball from the Build/<internal release label> folder to Bin_repo_svr/<internal release label> folder
 #     - Copy-Item -Path "$BUILD_SVR_PATH\$CI_COMMIT_REF_NAME\$CI_COMMIT_REF_NAME.tar" -Destination "$BIN_REPO_SVR_PATH\$CI_COMMIT_REF_NAME\$CI_COMMIT_REF_NAME.tar";
 #     # list the content of the tar ball
-#     - tar -tf "$BUILD_SVR_PATH\$CI_COMMIT_REF_NAME\$CI_COMMIT_REF_NAME.tar";
+#     - tar -tf "$BUILD_SVR_PATH\$CI_COMMIT_REF_NAME\$CI_COMMIT_REF_NAME.tar"
 
 ssh_into_server:
   stage: deliver
