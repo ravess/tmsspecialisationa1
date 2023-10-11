@@ -75,7 +75,7 @@ variables:
 l1ds_server_untar:
   stage: deliver
   script:
-    - echo "Yay have untar the file!"
+    - echo "Yay have untar the file!!"
     # create a new folder in l1ds based on the internal release label and extract the tar ball into the folder.
     # Run the deploy.ps1
     - ssh "$($REMOTE_USER)@$($REMOTE_HOST)" "New-Item -Path 'C:\Users\l1ds\bytebrigade\$($CI_COMMIT_REF_NAME)' -ItemType Directory -Force"
