@@ -79,7 +79,7 @@ l1ds_server_untar:
     # create a new folder in l1ds based on the internal release label and extract the tar ball into the folder.
     # Run the deploy.ps1
     - ssh "$($REMOTE_USER)@$($REMOTE_HOST)" "New-Item -Path 'C:\Users\l1ds\bytebrigade\$($CI_COMMIT_REF_NAME)' -ItemType Directory -Force"
-    - ssh "$($REMOTE_USER)@$($REMOTE_HOST)" "cd 'C:\Users\l1ds\bytebrigade\'; ls; pwd; tar -xvf 'C:\Users\l1ds\bytebrigade\$CI_COMMIT_REF_NAME.tar' -C 'C:\Users\l1ds\bytebrigade\$CI_COMMIT_REF_NAME'; cd 'C:\Users\l1ds\bytebrigade\$CI_COMMIT_REF_NAME\deploy'; powershell -File deploy.ps1;"
+    - ssh "$($REMOTE_USER)@$($REMOTE_HOST)" "cd 'C:\Users\l1ds\bytebrigade\'; ls; pwd; tar -xvf 'C:\Users\l1ds\bytebrigade\$CI_COMMIT_REF_NAME.tar' -C 'C:\Users\l1ds\bytebrigade\$CI_COMMIT_REF_NAME'; cd 'C:\Users\l1ds\bytebrigade\$CI_COMMIT_REF_NAME\deploy'; powershell -File deploy.ps1; pwd;"
   # needs:
   #   - ssh_into_server
 # functional_testing:
