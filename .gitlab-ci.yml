@@ -72,7 +72,7 @@ ssh_into_server:
     - Write-Host "Testing123"
     - whoami
     # secure copy protocol the tar ball from the bin_repo_svr/<internal release label> folder into l1ds group1<internal release label> folder
-    - scp -v $BIN_REPO_SVR_PATH\\$CI_COMMIT_REF_NAME\\$CI_COMMIT_REF_NAME.tar $REMOTE_USER@$REMOTE_HOST:C:\\Users\\l1ds\\bytebrigade\
+    - scp -v $BIN_REPO_SVR_PATH\\$CI_COMMIT_REF_NAME\\$CI_COMMIT_REF_NAME.tar $env:REMOTE_USER@$$env:REMOTE_HOST:C:\\Users\\l1ds\\bytebrigade\
 # l1ds_server_untar:
 #   stage: deliver
 #   script:
