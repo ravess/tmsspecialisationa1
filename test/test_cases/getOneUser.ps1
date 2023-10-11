@@ -1,12 +1,12 @@
 $expectedOutput = @{
-    "trial" = "bob";
+    "getOneUser.ps1" = "bob";
 }
 
-# Set the login credentials
+# Set the login credential
 $username = "bob"
 $password = "temp1234!"
 
-# Create headers with Content-Type
+# Create headers with ContentType
 $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
 $headers.Add("Content-Type", "application/json")
 
@@ -22,18 +22,11 @@ $response = Invoke-RestMethod 'http://localhost:8080/login' -Method 'POST' -Head
 # Perform authenticated GET request using the session
 $response = Invoke-RestMethod 'http://localhost:8080/users/bob' -Method 'GET' -Headers $headers -WebSession $session
 
-if($response.username -eq $expectedOutput["trial"]) {
-        Write-Host "trial PASSED" -ForegroundColor Green
+if($response.username -eq $expectedOutput[$scriptName]) {
+        Write-Host "$scriptName PASSED" -ForegroundColor Green
     }
-else {
- $example =  $expectedOutput["trial"]
-$result = $response.username
-        Write-Host "trial FAILED. Expected: $example but got $result" -ForegroundColor Red
+    else {
+        Write-Host "$scriptName FAILED. Expected: $expectedOutput[$scriptName] but got $output" -ForegroundColor Red
     }
 
-Write-Host "Hello"
-
-Write-Host $response
-
-# Output the response
-$response | ConvertTo-Json
+return $true
