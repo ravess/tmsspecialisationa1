@@ -68,7 +68,7 @@ public class SecurityConfig {
     .addFilterAfter(new AppPermitFilter(tmsService), JWTAuthorizationFilter.class)
     .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
     .logout(logout -> logout
-            .logoutUrl("/logout") // Configure the logout URL !!!test
+            .logoutUrl("/logout") // Configure the logout URL!!!!
             .clearAuthentication(true) // Clear the user's authentication
             .invalidateHttpSession(true) // Invalidate the HTTP session
             .deleteCookies(securityConstants.getCookieName()) // List the names of cookies to be deleted upon logout
