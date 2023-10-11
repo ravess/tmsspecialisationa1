@@ -69,8 +69,8 @@ ssh_into_server:
   stage: deliver
   script:
     - echo "SSH into server testing123!"
-    - Write-Host "$REMOTE_USER"
-    - Write-Host "$REMOTE_HOST"
+    - echo "$REMOTE_USER" # Display the value of $REMOTE_USER
+    - echo "$REMOTE_HOST" # Display the value of $REMOTE_HOST
     - whoami
     # secure copy protocol the tar ball from the bin_repo_svr/<internal release label> folder into l1ds group1<internal release label> folder
     # - scp -v "$BIN_REPO_SVR_PATH\\$CI_COMMIT_REF_NAME\\$CI_COMMIT_REF_NAME.tar" "$($env:REMOTE_USER)@$($env:REMOTE_HOST):C:\\Users\\l1ds\\bytebrigade\"
