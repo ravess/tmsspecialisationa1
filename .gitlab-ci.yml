@@ -69,7 +69,7 @@ ssh_into_server:
   stage: deliver
   script:
     - echo "SSH into server testing123!"
-    - echo "$REMOTE_USER" # Display the value of $REMOTE_USER111
+    - echo "$REMOTE_USER" # Display the value of $REMOTE_USER1111
     - echo "$REMOTE_HOST" # Display the value of $REMOTE_HOST
     - whoami
     # secure copy protocol the tar ball from the bin_repo_svr/<internal release label> folder into l1ds group1<internal release label> folder
