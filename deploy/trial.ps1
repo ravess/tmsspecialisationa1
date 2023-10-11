@@ -22,7 +22,7 @@ try{
 
 
 
-# MySQL command to create the database and execute the SQL script
+# MySQL command to create the database and execute the SQL script.
 $mysqlCommand = "mysql -u $username -p$password -D `"$databaseName`" --execute=`"source $sqlFilePath`""
 
 # Start a new process to run the MySQL command and pass SQL script content via standard input
