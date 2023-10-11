@@ -1,3 +1,7 @@
+param(
+    [string]$CI_COMMIT_REF_NAME
+)
+
 $expectedOutput = @{
     "loginwith.ps1" = "bob";
 }

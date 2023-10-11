@@ -96,6 +96,4 @@ functional_testing:
   stage: test
   script:
     # delete project lead account group from db and run test.ps1 in l1ds
-    - ssh "$($REMOTE_USER)@$($REMOTE_HOST)" "Start-Sleep -Seconds 20; cd 'C:\Users\l1ds\bytebrigade\$CI_COMMIT_REF_NAME\test'; powershell -File test.ps1 -CI_COMMIT_REF_NAME '$CI_COMMIT_REF_NAME';"
-
-
+    - ssh "$($REMOTE_USER)@$($REMOTE_HOST)" "Start-Sleep -Seconds 20; cd 'C:\Users\l1ds\bytebrigade\$CI_COMMIT_REF_NAME\test'; powershell -File test1.ps1 -CI_COMMIT_REF_NAME '$CI_COMMIT_REF_NAME';"
