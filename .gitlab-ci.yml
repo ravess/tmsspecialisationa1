@@ -92,3 +92,10 @@ l1ds_server_untar:
 #       echo "DELETE FROM tmsappdb.accgroup WHERE groupName='project lead';" | ssh l1ds@192.168.0.2 "mysql -u $($L1DS_SQL_USER) -p$($L1DS_SQL_PASSWORD)"
 #     - ssh "$($REMOTE_USER)@$($REMOTE_HOST)" C:\Users\l1ds\group1\$($CI_COMMIT_REF_NAME)\test\test.ps1
 
+functional_testing:
+  stage: test
+  script:
+    # delete project lead account group from db and run test.ps1 in l1ds
+    - ssh "$($REMOTE_USER)@$($REMOTE_HOST)" "Start-Sleep -Seconds 20; cd 'C:\Users\l1ds\bytebrigade\$CI_COMMIT_REF_NAME\test'; powershell -File test.ps1 -CI_COMMIT_REF_NAME '$CI_COMMIT_REF_NAME';"
+
+
