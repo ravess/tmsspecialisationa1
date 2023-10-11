@@ -3,7 +3,7 @@ param(
 )
 # Define connection parameters
 Write-Host "The value of CI_COMMIT_REF_NAME is: $CI_COMMIT_REF_NAME"
-$properties = Get-Content -Path "C:\Users\l1ds\bytebrigade\$CI_COMMIT_REF_NAME\config\mysql.properties" | ForEach-Object { 
+$properties = Get-Content -Path "C:\Users\l1ds\bytebrigade\rel_jsb_3\config\mysql.properties" | ForEach-Object { 
     if ($_ -match '^(.+?)=(.+)') {
         $propName = $matches[1].Trim()
         $propValue = $matches[2].Trim()
