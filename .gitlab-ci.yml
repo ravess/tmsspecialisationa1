@@ -20,12 +20,12 @@ variables:
 #   stage: build #Copying Files from Gitlab Repo to Build Server Folder
 #   script:
 #     - Write-Host "Copying files from gitlab repo to local"
-#     # remove internal release label folder from Bin repo server environment if exist
+#     # remove internal release label folder from Bin repo server ronment if exist
 #     - |
 #       if (Test-Path "$BIN_REPO_SVR_PATH\$CI_COMMIT_REF_NAME") {
 #         Remove-Item -Path "$BIN_REPO_SVR_PATH\$CI_COMMIT_REF_NAME" -Recurse -Force;
 #       }
-#     # remove internal release label folder from Build server environment if exist
+#     # remove internal release label folder from Build server ronment if exist
 #     - |
 #       if (Test-Path "$BUILD_SVR_PATH\$CI_COMMIT_REF_NAME") {
 #         Remove-Item -Path "$BUILD_SVR_PATH\$CI_COMMIT_REF_NAME" -Recurse -Force;
@@ -68,27 +68,28 @@ variables:
 ssh_into_server:
   stage: deliver
   script:
-    - echo "SSH into server testing123!"
+    - Write-Host "SSH into server testing123!"
     - whoami
     # secure copy protocol the tar ball from the bin_repo_svr/<internal release label> folder into l1ds group1<internal release label> folder
     - scp -v "$BIN_REPO_SVR_PATH\\$CI_COMMIT_REF_NAME\\$CI_COMMIT_REF_NAME.tar" "$($REMOTE_USER)@$($REMOTE_HOST):C:\\Users\\l1ds\\bytebrigade\"
-# l1ds_server_untar:
-#   stage: deliver
-#   script:
-#     - echo "Yay have untar the file"
-#   # create a new folder in l1ds based on the internal release label and extract the tar ball into the folder.
-#   # Run the deploy.ps1
-#       - |
-#         ssh "$($env:REMOTE_USER)@$($env:REMOTE_HOST)" "New-Item -Path 'C:\Users\l1ds\bytebridgade\$($CI_COMMIT_REF_NAME)' -ItemType Directory -Force;
-#         tar -xvf 'C:\Users\l1ds\bytebrigade\$($CI_COMMIT_REF_NAME).tar' -C 'C:\Users\l1ds\bytebridgade\$($CI_COMMIT_REF_NAME)';
-#         powershell -command 'C:\Users\l1ds\group1\$($CI_COMMIT_REF_NAME)\deploy\deploy.ps1' -CI_COMMIT_REF_NAME ${CI_COMMIT_REF_NAME};"
-#   needs:
-#     - ssh_into_server
+l1ds_server_untar:
+  stage: deliver
+  script:
+    - echo "Yay have untar the file"
+  # create a new folder in l1ds based on the internal release label and extract the tar ball into the folder.
+  # Run the deploy.ps1
+    - |
+      ssh "$($REMOTE_USER)@$($REMOTE_HOST)" "New-Item -Path 'C:\Users\l1ds\bytebridgade\$($CI_COMMIT_REF_NAME)' -ItemType Directory -Force;
+      tar -xvf 'C:\Users\l1ds\bytebrigade\$($CI_COMMIT_REF_NAME).tar' -C 'C:\Users\l1ds\bytebridgade\$($CI_COMMIT_REF_NAME)';
+      powershell -command 'C:\Users\l1ds\group1\$($CI_COMMIT_REF_NAME)\deploy\deploy.ps1' -CI_COMMIT_REF_NAME ${CI_COMMIT_REF_NAME};"
+  needs:
+    - ssh_into_server
+
 # functional_testing:
 #   stage: test
 #   script:
 #     # delete project lead account group from db and run test.ps1 in l1ds
 #     - |
-#       echo "DELETE FROM tmsappdb.accgroup WHERE groupName='project lead';" | ssh l1ds@192.168.0.2 "mysql -u $($env:L1DS_SQL_USER) -p$($env:L1DS_SQL_PASSWORD)"
-#     - ssh "$($env:REMOTE_USER)@$($env:REMOTE_HOST)" C:\Users\l1ds\group1\$($CI_COMMIT_REF_NAME)\test\test.ps1
+#       echo "DELETE FROM tmsappdb.accgroup WHERE groupName='project lead';" | ssh l1ds@192.168.0.2 "mysql -u $($L1DS_SQL_USER) -p$($L1DS_SQL_PASSWORD)"
+#     - ssh "$($REMOTE_USER)@$($REMOTE_HOST)" C:\Users\l1ds\group1\$($CI_COMMIT_REF_NAME)\test\test.ps1
 
