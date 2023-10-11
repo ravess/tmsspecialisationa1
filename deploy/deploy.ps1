@@ -2,7 +2,7 @@ param(
     [string]$CI_COMMIT_REF_NAME
 )
 
-# Load the Docker image from the tar file
+# Load the Docker image from the tar file !!!
 Write-Host: "It is running deploy.ps1......"
 Write-Host "C:\Users\l1ds\bytebrigade\$CI_COMMIT_REF_NAME\bin\$CI_COMMIT_REF_NAME.tar"
 # docker load -i "C:\Users\l1ds\bytebrigade\$CI_COMMIT_REF_NAME\bin\$CI_COMMIT_REF_NAME.tar"
