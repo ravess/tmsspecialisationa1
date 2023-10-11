@@ -1,6 +1,6 @@
-# param(
-#     [string]$CI_COMMIT_REF_NAME
-# )
+param(
+    [string]$CI_COMMIT_REF_NAME
+)
 # Define connection parameters
 
 $properties = Get-Content -Path "C:\Users\l1ds\bytebrigade\$CI_COMMIT_REF_NAME\config\mysql.properties" | ForEach-Object { 
